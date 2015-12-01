@@ -64,7 +64,11 @@
             <version>1.0.0-beta-1103</version>
             <type>jar</type>
         </dependency>
-        
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-spi-editor-hints</artifactId>
+            <version>RELEASE802</version>
+        </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-api-annotations-common</artifactId>
