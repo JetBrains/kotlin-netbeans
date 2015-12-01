@@ -64,9 +64,10 @@ public class KotlinTokenScanner {
              
         TopComponent active = TopComponent.getRegistry().getActivated();
         DataObject dataLookup = active.getLookup().lookup(DataObject.class);
-        FileObject currFileObject = dataLookup.getPrimaryFile();
+        
         createSyntaxFile();
         try {
+            FileObject currFileObject = dataLookup.getPrimaryFile();
             ktFile = parseFile(syntaxFile);
             Map<FileObject, List<ErrorDescription>> annotations = 
                     HintsUtil.parseAnalysisResult(
@@ -79,6 +80,9 @@ public class KotlinTokenScanner {
             this.rangeEnd = (int) syntaxFile.length();
             createListOfKotlinTokens();
         } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        catch (NullPointerException ex) {
             Exceptions.printStackTrace(ex);
         }
     }

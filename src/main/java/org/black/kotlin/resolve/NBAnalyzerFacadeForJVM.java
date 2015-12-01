@@ -49,27 +49,9 @@ public class NBAnalyzerFacadeForJVM {
     {
         Set<KtFile> fileSet = Sets.newHashSet(filesToAnalyze);
         Set<KtFile> allFiles = Sets.newLinkedHashSet(fileSet);
-//        val filesSet = filesToAnalyze.toSet()
-//        if (filesSet.size != filesToAnalyze.size) {
-//            KotlinLogger.logWarning("Analyzed files have duplicates")
-//        }
-        
-//        val allFiles = LinkedHashSet<KtFile>(filesSet)
-//        
-//        
-//        val addedFiles = filesSet.map { getPath(it) }.filterNotNull().toSet();
-//        
-//        
-//                
-//                
-//        ProjectUtils.getSourceFilesWithDependencies(javaProject).filterNotTo(allFiles) {
-//            getPath(it) in addedFiles
-//        }
-//        
+
         MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule((com.intellij.openapi.project.Project) project, project.toString());
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
-       // val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, project.getName())
-        //val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, allFiles)
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
@@ -78,31 +60,7 @@ public class NBAnalyzerFacadeForJVM {
                 trace,
                 TopDownAnalysisMode.TopLevelDeclarations, 
                 PackagePartProvider.EMPTY);
-        
-//        ContainerForTopDownAnalyzerForJvm containerAndProvider = createContainerForTopDownAnalyzerForJvm
-//        (moduleContext, 
-//                trace, 
-//                providerFactory, 
-//                GlobalSearchScope.allScope((com.intellij.openapi.project.Project) project), 
-//                project, 
-//                LookupTracker.DO_NOTHING, 
-//                PackagePartProvider.EMPTY);
-//        val container = containerAndProvider.first
-//        val additionalProviders = listOf(container.javaDescriptorResolver.packageFragmentProvider)
-//        
-//        try {
-//            container.lazyTopDownAnalyzerForTopLevel.analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, filesSet, additionalProviders)
-//        } catch(e: KotlinFrontEndException) {
-////          Editor will break if we do not catch this exception
-////          and will not be able to save content without reopening it.
-////          In IDEA this exception throws only in CLI
-//            KotlinLogger.logError(e)
-//        }
-//        
-//        return AnalysisResultWithProvider(
-//                AnalysisResult.success(trace.getBindingContext(), moduleContext.module),
-//                containerAndProvider.second)
+
     }
     
-    //private fun getPath(jetFile: KtFile): String? = jetFile.getVirtualFile()?.getPath()
 }
