@@ -18,20 +18,28 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.black.kotlin.highlighter.netbeans.KotlinToken;
 import org.black.kotlin.highlighter.netbeans.KotlinTokenId;
 import org.black.kotlin.model.KotlinEnvironment;
 import org.black.kotlin.model.KotlinLightVirtualFile;
+import org.black.kotlin.resolve.KotlinAnalyzer;
+import org.black.kotlin.utils.HintsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.netbeans.api.project.ui.OpenProjects;
+import org.netbeans.spi.editor.hints.ErrorDescription;
+import org.netbeans.spi.editor.hints.HintsController;
 import org.netbeans.spi.lexer.LexerInput;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
+import org.openide.filesystems.FileObject;
+import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
+import org.openide.windows.TopComponent;
 /**
  *
  * @author Александр
@@ -53,9 +61,20 @@ public class KotlinTokenScanner {
     public KotlinTokenScanner(LexerInput input) {
         kotlinTokensFactory = new KotlinTokensFactory();
         this.input = input;
+             
+        TopComponent active = TopComponent.getRegistry().getActivated();
+        DataObject dataLookup = active.getLookup().lookup(DataObject.class);
+        FileObject currFileObject = dataLookup.getPrimaryFile();
         createSyntaxFile();
         try {
             ktFile = parseFile(syntaxFile);
+            Map<FileObject, List<ErrorDescription>> annotations = 
+                    HintsUtil.parseAnalysisResult(
+                            KotlinAnalyzer.analyzeFile(OpenProjects.getDefault().getMainProject(), 
+                            ktFile));
+            HintsController.setErrors(currFileObject, 
+                    "test", 
+                    annotations.get(currFileObject));
             deleteSyntaxFile();
             this.rangeEnd = (int) syntaxFile.length();
             createListOfKotlinTokens();
