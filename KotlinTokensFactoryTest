@@ -1,0 +1,53 @@
+package org.black.kotlin.highlighter;
+
+import com.intellij.psi.PsiElement;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author GOREZ
+ */
+public class KotlinTokensFactoryTest {
+    TokenType keywordToken = TokenType.KEYWORD;
+    TokenType identifierToken = TokenType.IDENTIFIER;
+    TokenType stringToken = TokenType.STRING;
+    TokenType singleLineCommentToken = TokenType.SINGLE_LINE_COMMENT;
+    TokenType multiLineCommentToken = TokenType.MULTI_LINE_COMMENT;
+    TokenType kdocTagNameToken = TokenType.KDOC_TAG_NAME;
+    TokenType whitespaceToken = TokenType.WHITESPACE;
+    
+    public KotlinTokensFactoryTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    /**
+     * Test of getToken method, of class KotlinTokensFactory.
+     */
+    @Test
+    public void testGetToken() {
+        System.out.println("getToken");
+        PsiElement leafElement = null;
+        KotlinTokensFactory instance = new KotlinTokensFactory();
+        TokenType expResult = null;
+        TokenType result = instance.getToken(leafElement);
+        assertEquals( leafElement, TokenType.UNDEFINED);
+        assertEquals( leafElement, keywordToken);  
+        assertEquals( leafElement, stringToken);
+        assertEquals( leafElement, whitespaceToken); 
+        assertEquals( leafElement, singleLineCommentToken);  
+        assertEquals( leafElement, multiLineCommentToken);
+        assertEquals( leafElement, kdocTagNameToken);         
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+}
