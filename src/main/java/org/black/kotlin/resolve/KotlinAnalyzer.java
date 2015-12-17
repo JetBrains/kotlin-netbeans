@@ -1,12 +1,11 @@
 package org.black.kotlin.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.project.Project;
 import java.util.Collection;
 
-import org.netbeans.api.project.Project;
-import org.netbeans.api.project.ProjectInformation;
+//import org.netbeans.api.project.Project;
 import org.jetbrains.annotations.NotNull;
-//import org.jetbrains.kotlin.core.model.KotlinAnalysisFileCache;
 import org.black.kotlin.model.KotlinEnvironment;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 
@@ -14,25 +13,35 @@ import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinAnalyzer {
     @NotNull
-    public static AnalysisResult analyzeFile(@NotNull Project javaProject, @NotNull KtFile jetFile) {
-        return analyzeFiles(javaProject, Lists.newArrayList(jetFile));
-    }
-    
-    @NotNull
-    private static AnalysisResult analyzeFiles(@NotNull Project javaProject, @NotNull KotlinEnvironment kotlinEnvironment, 
-            @NotNull Collection<KtFile> filesToAnalyze) {
+    private static AnalysisResult analyzeFile(@NotNull Project ijProject, 
+            org.netbeans.api.project.Project nbProject,
+            @NotNull KtFile jetFile) {
         return NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                javaProject, 
-                //kotlinEnvironment.getProject(), 
+                ijProject,
+                nbProject,
+                Lists.newArrayList(jetFile));
+    }
+    @NotNull
+    private static AnalysisResult analyzeFiles_t(@NotNull Project ijProject,
+            org.netbeans.api.project.Project nbProject,
+            @NotNull Collection<KtFile> filesToAnalyze) 
+    {
+        return NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                ijProject,
+                nbProject,
                 filesToAnalyze);
     }
-    
-    public static AnalysisResult analyzeFiles(@NotNull Project javaProject, @NotNull Collection<KtFile> filesToAnalyze) {
-        if (filesToAnalyze.size() == 1) {
-            return analyzeFile(javaProject, filesToAnalyze.iterator().next());
-        }
         
-        KotlinEnvironment kotlinEnvironment = KotlinEnvironment.getEnvironment(javaProject);
-        return analyzeFiles(javaProject, kotlinEnvironment, filesToAnalyze);
+    public static AnalysisResult analyzeFiles(@NotNull Project ijProject, 
+            org.netbeans.api.project.Project nbProject,
+            @NotNull Collection<KtFile> filesToAnalyze) {
+              
+        if (filesToAnalyze.size() == 1) {
+            return analyzeFile(ijProject, nbProject, filesToAnalyze.iterator().next());
+        }
+                
+        return analyzeFiles_t(ijProject, nbProject, filesToAnalyze);
     }
+    
+   
 }

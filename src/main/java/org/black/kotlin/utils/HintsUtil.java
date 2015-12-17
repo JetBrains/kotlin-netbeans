@@ -1,5 +1,6 @@
 package org.black.kotlin.utils;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,5 +55,21 @@ public class HintsUtil {
             
         }
         return annotations;
+    }
+    
+    public static List<ErrorDescription> createTestErrDesc (FileObject fileObject)
+    {
+        List errors = Lists.newArrayList();
+        errors.add(ErrorDescriptionFactory.createErrorDescription(Severity.WARNING, 
+                "test warning", 
+                fileObject, 
+                3,
+                5));
+        errors.add(ErrorDescriptionFactory.createErrorDescription(Severity.ERROR, 
+                "test error", 
+                fileObject, 
+                2,
+                5));
+        return errors;
     }
 }

@@ -1,5 +1,6 @@
 package org.black.kotlin.highlighter;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -25,6 +26,7 @@ import org.black.kotlin.highlighter.netbeans.KotlinTokenId;
 import org.black.kotlin.model.KotlinEnvironment;
 import org.black.kotlin.model.KotlinLightVirtualFile;
 import org.black.kotlin.resolve.KotlinAnalyzer;
+import org.black.kotlin.resolve.NBAnalyzerFacadeForJVM;
 import org.black.kotlin.utils.HintsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,15 +69,24 @@ public class KotlinTokenScanner {
         
         createSyntaxFile();
         try {
-            FileObject currFileObject = dataLookup.getPrimaryFile();
-            ktFile = parseFile(syntaxFile);
+            
+           FileObject currFileObject = dataLookup.getPrimaryFile();
+           ktFile = parseFile(syntaxFile);
+//           System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +currFileObject.getPath());
+           KotlinEnvironment ke = KotlinEnvironment.getEnvironment(OpenProjects.getDefault().getOpenProjects()[0]);
+//            //System.out.println("---******----" + ke.getProject().getName());
+//            //System.out.println("$£%££%         "+OpenProjects.getDefault().getMainProject().toString());
             Map<FileObject, List<ErrorDescription>> annotations = 
-                    HintsUtil.parseAnalysisResult(
-                            KotlinAnalyzer.analyzeFile(OpenProjects.getDefault().getMainProject(), 
-                            ktFile));
+                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
+                            OpenProjects.getDefault().getOpenProjects()[0], 
+                            Lists.newArrayList(ktFile)));
+            
             HintsController.setErrors(currFileObject, 
-                    "test", 
+                    "test_1", 
                     annotations.get(currFileObject));
+//            HintsController.setErrors(currFileObject, 
+//            "test", 
+//            HintsUtil.createTestErrDesc(currFileObject));
             deleteSyntaxFile();
             this.rangeEnd = (int) syntaxFile.length();
             createListOfKotlinTokens();
