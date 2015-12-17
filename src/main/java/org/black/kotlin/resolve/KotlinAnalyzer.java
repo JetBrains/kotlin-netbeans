@@ -8,12 +8,13 @@ import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 import org.black.kotlin.model.KotlinEnvironment;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
 import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinAnalyzer {
     @NotNull
-    private static AnalysisResult analyzeFile(@NotNull Project ijProject, 
+    private static AnalysisResult analyzeFileP(@NotNull Project ijProject, 
             org.netbeans.api.project.Project nbProject,
             @NotNull KtFile jetFile) {
         return NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
@@ -22,7 +23,7 @@ public class KotlinAnalyzer {
                 Lists.newArrayList(jetFile));
     }
     @NotNull
-    private static AnalysisResult analyzeFiles_t(@NotNull Project ijProject,
+    private static AnalysisResult analyzeFilesP(@NotNull Project ijProject,
             org.netbeans.api.project.Project nbProject,
             @NotNull Collection<KtFile> filesToAnalyze) 
     {
@@ -37,11 +38,17 @@ public class KotlinAnalyzer {
             @NotNull Collection<KtFile> filesToAnalyze) {
               
         if (filesToAnalyze.size() == 1) {
-            return analyzeFile(ijProject, nbProject, filesToAnalyze.iterator().next());
+            return analyzeFileP(ijProject, nbProject, filesToAnalyze.iterator().next());
         }
                 
-        return analyzeFiles_t(ijProject, nbProject, filesToAnalyze);
+        return analyzeFilesP(ijProject, nbProject, filesToAnalyze);
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeFile(@NotNull Project ijProject, 
+            org.netbeans.api.project.Project nbProject,
+            @NotNull KtFile jetFile) {
+        return JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(jetFile);
     }
     
-   
 }

@@ -182,6 +182,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
             <version>1.0.0-beta-1103</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

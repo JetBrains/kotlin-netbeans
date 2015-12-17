@@ -76,11 +76,16 @@ public class KotlinTokenScanner {
            KotlinEnvironment ke = KotlinEnvironment.getEnvironment(OpenProjects.getDefault().getOpenProjects()[0]);
 //            //System.out.println("---******----" + ke.getProject().getName());
 //            //System.out.println("$£%££%         "+OpenProjects.getDefault().getMainProject().toString());
-            Map<FileObject, List<ErrorDescription>> annotations = 
-                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
+//            Map<FileObject, List<ErrorDescription>> annotations = 
+//                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
+//                            OpenProjects.getDefault().getOpenProjects()[0], 
+//                            Lists.newArrayList(ktFile)));
+           File currentFile = FileUtil.toFile(currFileObject);
+           KtFile currKTF = parseFile(currentFile);
+           Map<FileObject, List<ErrorDescription>> annotations = 
+                    HintsUtil.parseAnalysisResult(KotlinAnalyzer.analyzeFile(ke.getProject(), 
                             OpenProjects.getDefault().getOpenProjects()[0], 
-                            Lists.newArrayList(ktFile)));
-            
+                            currKTF));
             HintsController.setErrors(currFileObject, 
                     "test_1", 
                     annotations.get(currFileObject));
