@@ -7,8 +7,11 @@ import java.util.Collection;
 //import org.netbeans.api.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.black.kotlin.model.KotlinEnvironment;
+import org.black.kotlin.utils.JVMResolveUtil;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.descriptors.PackagePartProvider;
+import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.resolve.lazy.*;
 
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -48,7 +51,7 @@ public class KotlinAnalyzer {
     public static AnalysisResult analyzeFile(@NotNull Project ijProject, 
             org.netbeans.api.project.Project nbProject,
             @NotNull KtFile jetFile) {
-        return JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(jetFile);
+        return JVMResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(jetFile, PackagePartProvider.Companion.getEMPTY());
     }
     
 }

@@ -1,6 +1,5 @@
 package org.black.kotlin.highlighter;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -28,6 +27,7 @@ import org.black.kotlin.model.KotlinLightVirtualFile;
 import org.black.kotlin.resolve.KotlinAnalyzer;
 import org.black.kotlin.resolve.NBAnalyzerFacadeForJVM;
 import org.black.kotlin.utils.HintsUtil;
+import org.black.kotlin.utils.JVMResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 /**
  *
- * @author Александр
+ * @author РђР»РµРєСЃР°РЅРґСЂ
  */
 public class KotlinTokenScanner {
 
@@ -75,17 +75,20 @@ public class KotlinTokenScanner {
 //           System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +currFileObject.getPath());
            KotlinEnvironment ke = KotlinEnvironment.getEnvironment(OpenProjects.getDefault().getOpenProjects()[0]);
 //            //System.out.println("---******----" + ke.getProject().getName());
-//            //System.out.println("$£%££%         "+OpenProjects.getDefault().getMainProject().toString());
+//            //System.out.println("$ВЈ%ВЈВЈ%         "+OpenProjects.getDefault().getMainProject().toString());
 //            Map<FileObject, List<ErrorDescription>> annotations = 
 //                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
 //                            OpenProjects.getDefault().getOpenProjects()[0], 
 //                            Lists.newArrayList(ktFile)));
-           File currentFile = FileUtil.toFile(currFileObject);
+           File currentFile = org.openide.filesystems.FileUtil.toFile(currFileObject);
            KtFile currKTF = parseFile(currentFile);
+          
            Map<FileObject, List<ErrorDescription>> annotations = 
-                    HintsUtil.parseAnalysisResult(KotlinAnalyzer.analyzeFile(ke.getProject(), 
-                            OpenProjects.getDefault().getOpenProjects()[0], 
-                            currKTF));
+                    HintsUtil.parseAnalysisResult(JVMResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(currKTF));
+//           Map<FileObject, List<ErrorDescription>> annotations = 
+//                    HintsUtil.parseAnalysisResult(KotlinAnalyzer.analyzeFile(ke.getProject(), 
+//                            OpenProjects.getDefault().getOpenProjects()[0], 
+//                            currKTF));
             HintsController.setErrors(currFileObject, 
                     "test_1", 
                     annotations.get(currFileObject));
