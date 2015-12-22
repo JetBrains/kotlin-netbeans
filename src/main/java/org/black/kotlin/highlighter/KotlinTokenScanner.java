@@ -69,35 +69,38 @@ public class KotlinTokenScanner {
         
         createSyntaxFile();
         try {
+            ktFile = parseFile(syntaxFile);
+            deleteSyntaxFile();
+            this.rangeEnd = (int) syntaxFile.length();
+            createListOfKotlinTokens();
             
-           FileObject currFileObject = dataLookup.getPrimaryFile();
-           ktFile = parseFile(syntaxFile);
-//           System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" +currFileObject.getPath());
-           KotlinEnvironment ke = KotlinEnvironment.getEnvironment(OpenProjects.getDefault().getOpenProjects()[0]);
-//            //System.out.println("---******----" + ke.getProject().getName());
-//            //System.out.println("$ВЈ%ВЈВЈ%         "+OpenProjects.getDefault().getMainProject().toString());
-//            Map<FileObject, List<ErrorDescription>> annotations = 
-//                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
-//                            OpenProjects.getDefault().getOpenProjects()[0], 
-//                            Lists.newArrayList(ktFile)));
-           File currentFile = org.openide.filesystems.FileUtil.toFile(currFileObject);
-           KtFile currKTF = parseFile(currentFile);
-          
-           Map<FileObject, List<ErrorDescription>> annotations = 
-                    HintsUtil.parseAnalysisResult(JVMResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(currKTF));
+            
+            FileObject currFileObject = dataLookup.getPrimaryFile();
+            KotlinEnvironment ke = KotlinEnvironment.getEnvironment(OpenProjects.getDefault().getOpenProjects()[0]);
+            File currentFile = org.openide.filesystems.FileUtil.toFile(currFileObject);
+            KtFile currKTF = parseFile(currentFile);
+            
+            System.out.println("--OpenProjects.getDefault().getOpenProjects()[0].getProjectDirectory().getPath()" 
+                    + OpenProjects.getDefault().getOpenProjects()[0].getProjectDirectory().getPath());
+            System.out.println("--currKTF.getText()" 
+                    + currKTF.getText()
+                    + "\n\n");
+            
+
+            Map<FileObject, List<ErrorDescription>> annotations = 
+                     HintsUtil.parseAnalysisResult(JVMResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(currKTF));
 //           Map<FileObject, List<ErrorDescription>> annotations = 
 //                    HintsUtil.parseAnalysisResult(KotlinAnalyzer.analyzeFile(ke.getProject(), 
 //                            OpenProjects.getDefault().getOpenProjects()[0], 
 //                            currKTF));
+//            Map<FileObject, List<ErrorDescription>> annotations = 
+//                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
+//                            OpenProjects.getDefault().getOpenProjects()[0], 
+//                            Lists.newArrayList(ktFile)));
             HintsController.setErrors(currFileObject, 
                     "test_1", 
                     annotations.get(currFileObject));
-//            HintsController.setErrors(currFileObject, 
-//            "test", 
-//            HintsUtil.createTestErrDesc(currFileObject));
-            deleteSyntaxFile();
-            this.rangeEnd = (int) syntaxFile.length();
-            createListOfKotlinTokens();
+          
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }

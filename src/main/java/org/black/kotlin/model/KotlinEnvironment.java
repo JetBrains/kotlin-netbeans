@@ -43,8 +43,10 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import java.util.List;
+import org.black.kotlin.resolve.NBVirtualFileFinder;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
 
 @SuppressWarnings("deprecation")
 public class KotlinEnvironment {
@@ -92,7 +94,7 @@ public class KotlinEnvironment {
 
         configureClasspath();
         
-        //project.registerService(JvmVirtualFileFinderFactory.class, new EclipseVirtualFileFinder(javaProject));
+        project.registerService(JvmVirtualFileFinderFactory.class, new NBVirtualFileFinder(kotlinProject));
         
         ExternalDeclarationsProvider.Companion.registerExtensionPoint(project);
         ExpressionCodegenExtension.Companion.registerExtensionPoint(project);
