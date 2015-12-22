@@ -93,10 +93,7 @@ public class KotlinTokenScanner {
 //                    HintsUtil.parseAnalysisResult(KotlinAnalyzer.analyzeFile(ke.getProject(), 
 //                            OpenProjects.getDefault().getOpenProjects()[0], 
 //                            currKTF));
-//            Map<FileObject, List<ErrorDescription>> annotations = 
-//                    HintsUtil.parseAnalysisResult(NBAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(ke.getProject(), 
-//                            OpenProjects.getDefault().getOpenProjects()[0], 
-//                            Lists.newArrayList(ktFile)));
+
             HintsController.setErrors(currFileObject, 
                     "test_1", 
                     annotations.get(currFileObject));
