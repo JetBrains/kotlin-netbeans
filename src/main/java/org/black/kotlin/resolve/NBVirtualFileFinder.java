@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.black.kotlin.resolve;
 
-//import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.black.kotlin.model.KotlinEnvironment;
@@ -56,7 +50,4 @@ public class NBVirtualFileFinder extends VirtualFileKotlinClassFinder implements
     public JvmVirtualFileFinder create(GlobalSearchScope gss) {
         return new NBVirtualFileFinder(nbProject); //To change body of generated methods, choose Tools | Templates.
     }
-
-   
-    
 }
