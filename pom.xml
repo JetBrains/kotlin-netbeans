@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.black</groupId>
-    <artifactId>Kotlin</artifactId>
-    <version>0.0.0.1</version>
+    <groupId>org.netbeans.modules</groupId>
+    <artifactId>nbkotlin</artifactId>
+    <name>Kotlin Support for NetBeans</name>
+    <version>0.0.0.2</version>
     <packaging>nbm</packaging>
+    
     <build>
         <plugins>
             <plugin>
@@ -28,7 +30,8 @@
                 <version>4.1</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <verifyRuntime>warn</verifyRuntime>
+                    <forcedVersion>${netbeans.version}</forcedVersion>
+                    <!--<verifyRuntime>warn</verifyRuntime>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -404,12 +407,6 @@
             <version>RELEASE81</version>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-java-preprocessorbridge</artifactId>
-            <version>RELEASE81</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-lib</artifactId>
             <version>RELEASE81</version>
@@ -421,10 +418,54 @@
             <version>RELEASE81</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-java-api-common</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-queries</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-project-libraries</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-java-platform</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-java-platform-ui</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-project-ant-ui</artifactId>
+            <version>RELEASE81</version>
+            <type>jar</type>
+        </dependency>
+        
+        
     </dependencies>
    
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <netbeans.version>RELEASE81</netbeans.version>
     </properties>
 </project>
