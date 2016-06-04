@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import java.util.Collection;
 import org.black.kotlin.model.KotlinEnvironment;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.container.ComponentProvider;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;

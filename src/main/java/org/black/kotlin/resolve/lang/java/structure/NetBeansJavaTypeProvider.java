@@ -2,7 +2,7 @@ package org.black.kotlin.resolve.lang.java.structure;
 
 import com.intellij.psi.CommonClassNames;
 import javax.lang.model.element.Element;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaType;

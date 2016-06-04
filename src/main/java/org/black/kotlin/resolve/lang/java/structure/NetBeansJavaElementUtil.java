@@ -13,7 +13,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;

@@ -13,7 +13,7 @@ import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 import kotlin.Pair;
 import org.black.kotlin.navigation.references.ReferenceUtils;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.NetBeansDescriptorUtils;
 import org.black.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.black.kotlin.resolve.lang.java.resolver.NetBeansJavaSourceElement;

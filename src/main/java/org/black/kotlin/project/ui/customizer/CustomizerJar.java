@@ -102,7 +102,6 @@ public class CustomizerJar extends JPanel implements HelpCtx.Provider {
                         .add(distDirLabel)
                         .add(88, 88, 88)
                         .add(distDirField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
-                    .add(compressCheckBox)
                     .add(layout.createSequentialGroup()
                         .add(excludeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -112,8 +111,10 @@ public class CustomizerJar extends JPanel implements HelpCtx.Provider {
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 149, Short.MAX_VALUE))
                             .add(excludeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
-                        .add(doJarCheckBox)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 266, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(compressCheckBox)
+                            .add(doJarCheckBox))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

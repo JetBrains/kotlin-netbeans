@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.CancellableTask;
 import org.netbeans.api.java.source.ClasspathInfo;

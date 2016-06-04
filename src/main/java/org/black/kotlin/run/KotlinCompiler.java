@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import org.apache.tools.ant.module.api.support.ActionUtils;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.utils.ProjectUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;

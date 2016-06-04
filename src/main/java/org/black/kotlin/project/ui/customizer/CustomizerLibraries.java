@@ -49,7 +49,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import org.black.kotlin.project.KotlinProjectLogicalView;
+import org.black.kotlin.project.structure.KotlinProjectLogicalView;
 import org.netbeans.api.java.platform.JavaPlatform;
 import org.netbeans.api.java.platform.PlatformsCustomizer;
 import org.netbeans.api.project.libraries.LibraryManager;
@@ -877,7 +877,7 @@ public class CustomizerLibraries extends JPanel implements HelpCtx.Provider, Lis
                     .add(librariesBrowse)
                     .add(librariesLocation, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .add(jTabbedPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 323, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jCheckBoxBuildSubprojects)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)

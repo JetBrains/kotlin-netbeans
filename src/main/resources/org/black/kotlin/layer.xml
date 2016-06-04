@@ -16,9 +16,6 @@
                     </folder>
                 </folder>
                 
-<!--                <file name="JavaIndexer.shadow">
-                    <attr name="originalFile" stringvalue="Editors/text/x-java/JavaIndexer.instance"/>
-                </file>-->
             </folder>
         </folder>
 </folder>

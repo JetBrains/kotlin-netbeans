@@ -8,7 +8,7 @@ import kotlin.Pair;
 import org.black.kotlin.navigation.NavigationUtil;
 import org.black.kotlin.navigation.references.KotlinReference;
 import org.black.kotlin.navigation.references.ReferenceUtils;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.KotlinAnalyzer;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.annotations.Nullable;

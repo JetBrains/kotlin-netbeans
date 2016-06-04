@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import kotlin.jvm.functions.Function1;
 import org.black.kotlin.builder.KotlinPsiManager;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.AnalysisResultWithProvider;
 import org.black.kotlin.resolve.KotlinAnalyzer;
 import org.black.kotlin.resolve.KotlinResolutionFacade;

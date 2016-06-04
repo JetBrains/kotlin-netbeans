@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import org.black.kotlin.filesystem.KotlinLightClassManager;
 import org.black.kotlin.model.KotlinEnvironment;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.KotlinAnalyzer;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;

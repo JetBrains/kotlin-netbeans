@@ -1,8 +1,8 @@
 package org.black.kotlin.project.nodes;
 
 import java.awt.Image;
-import org.black.kotlin.project.KotlinProject;
-import org.black.kotlin.project.KotlinSources;
+import org.black.kotlin.project.structure.KotlinProject;
+import org.black.kotlin.project.structure.KotlinSources;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.java.project.support.ui.PackageView;
 import org.openide.loaders.DataObject;

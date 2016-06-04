@@ -3,7 +3,7 @@ package org.black.kotlin.filesystem.lightclasses;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openide.filesystems.FileObject;

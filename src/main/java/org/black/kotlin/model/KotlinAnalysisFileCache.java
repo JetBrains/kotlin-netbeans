@@ -3,7 +3,7 @@ package org.black.kotlin.model;
 import com.google.common.collect.Lists;
 import kotlin.jvm.Synchronized;
 import kotlin.jvm.Volatile;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.AnalysisResultWithProvider;
 import org.black.kotlin.resolve.NetBeansAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.psi.KtFile;

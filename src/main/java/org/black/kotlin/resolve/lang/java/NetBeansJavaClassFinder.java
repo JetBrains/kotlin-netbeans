@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.lang.java.structure.NetBeansJavaClass;
 import org.black.kotlin.resolve.lang.java.structure.NetBeansJavaPackage;
 import org.black.kotlin.utils.ProjectUtils;

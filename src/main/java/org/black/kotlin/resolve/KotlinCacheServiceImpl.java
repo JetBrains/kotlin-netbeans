@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import java.util.Collection;
 import java.util.List;
 import org.black.kotlin.model.KotlinAnalysisFileCache;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;

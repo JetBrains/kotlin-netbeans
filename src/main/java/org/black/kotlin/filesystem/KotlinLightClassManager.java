@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.black.kotlin.builder.KotlinPsiManager;
 import org.black.kotlin.filesystem.lightclasses.LightClassFile;
 import org.black.kotlin.model.KotlinEnvironment;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

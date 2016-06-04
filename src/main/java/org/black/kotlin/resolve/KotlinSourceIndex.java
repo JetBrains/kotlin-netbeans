@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.lang.model.element.PackageElement;
 import org.black.kotlin.model.KotlinEnvironment;
-import org.black.kotlin.project.KotlinProject;
+import org.black.kotlin.project.structure.KotlinProject;
 import org.black.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.black.kotlin.resolve.sources.LibrarySourcesIndex;
 import org.jetbrains.annotations.Nullable;
