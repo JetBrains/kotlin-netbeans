@@ -38,4 +38,48 @@
         </folder>
     </folder>
 
+    <folder name="Projects">
+        <folder name="org-black-kotlin">
+            <folder name="Customizer">
+                <file name="Sources.instance">
+                    <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createSources"/>
+                    <attr name="position" intvalue="100"/>
+                </file>
+                <file name="Libraries.instance">
+                    <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createLibraries"/>
+                    <attr name="position" intvalue="200"/>
+                </file>
+<!--                <<folder name="BuildCategory">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.black.kotlin.project.ui.customizer.Bundle"/>
+                    <attr name="position" intvalue="300"/>
+                    <file name="Build.instance">
+                        <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createBuild"/>
+                        <attr name="position" intvalue="100"/>
+                    </file>
+                    <file name="Jar.instance">
+                        <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createJar"/>
+                        <attr name="position" intvalue="200"/>
+                    </file>
+                    <file name="Javadoc.instance">
+                        <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createJavadoc"/>
+                        <attr name="position" intvalue="300"/>
+                    </file>
+                </folder>-->
+                <file name="Run.instance">
+                    <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createRun"/>
+                    <attr name="position" intvalue="400"/>
+                </file>
+                <folder name="Application">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="org.black.kotlin.project.ui.customizer.Bundle"/>
+                    <attr name="position" intvalue="500"/>
+                    <file name="Self.instance">
+                        <attr name="instanceCreate" methodvalue="org.black.kotlin.project.ui.customizer.KotlinCompositePanelProvider.createApplication"/>
+                        <attr name="position" intvalue="0"/>
+                    </file>
+                </folder>
+
+            </folder>
+        </folder>
+    </folder>
+
 </filesystem>

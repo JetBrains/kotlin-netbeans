@@ -207,17 +207,19 @@ public class UpdateProjectImpl implements UpdateImplementation {
     }
 
     private boolean showUpdateDialog() {
-        JButton updateOption = new JButton (NbBundle.getMessage(UpdateProjectImpl.class, "CTL_UpdateOption"));
-        updateOption.getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(UpdateProjectImpl.class, "AD_UpdateOption"));
-        return DialogDisplayer.getDefault().notify(
-            new NotifyDescriptor (NbBundle.getMessage(UpdateProjectImpl.class,"TXT_ProjectUpdate", BUILD_NUMBER),
-                NbBundle.getMessage(UpdateProjectImpl.class,"TXT_ProjectUpdateTitle"),
-                NotifyDescriptor.DEFAULT_OPTION,
-                NotifyDescriptor.WARNING_MESSAGE,
-                new Object[] {
-                    updateOption,
-                    NotifyDescriptor.CANCEL_OPTION
-                },
-                updateOption)) == updateOption;
+        return false;
+    
+//        JButton updateOption = new JButton (NbBundle.getMessage(UpdateProjectImpl.class, "CTL_UpdateOption"));
+//        updateOption.getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(UpdateProjectImpl.class, "AD_UpdateOption"));
+//        return DialogDisplayer.getDefault().notify(
+//            new NotifyDescriptor (NbBundle.getMessage(UpdateProjectImpl.class,"TXT_ProjectUpdate", BUILD_NUMBER),
+//                NbBundle.getMessage(UpdateProjectImpl.class,"TXT_ProjectUpdateTitle"),
+//                NotifyDescriptor.DEFAULT_OPTION,
+//                NotifyDescriptor.WARNING_MESSAGE,
+//                new Object[] {
+//                    updateOption,
+//                    NotifyDescriptor.CANCEL_OPTION
+//                },
+//                updateOption)) == updateOption;
     }
 }

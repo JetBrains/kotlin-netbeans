@@ -322,7 +322,7 @@ public class CustomizerRun extends JPanel implements HelpCtx.Provider {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 12, 5, 0);
         mainPanel.add(jTextWorkingDirectory, gridBagConstraints);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/netbeans/modules/scala/project/ui/customizer/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/black/kotlin/project/ui/customizer/Bundle"); // NOI18N
         jTextWorkingDirectory.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizeRun_Run_Working_Directory ")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(jButtonWorkingDirectoryBrowse, org.openide.util.NbBundle.getMessage(CustomizerRun.class, "LBL_CustomizeRun_Run_Working_Directory_Browse")); // NOI18N
@@ -613,7 +613,7 @@ public class CustomizerRun extends JPanel implements HelpCtx.Provider {
                     label = config;
                 }
             } else {
-                label = NbBundle.getBundle("org.netbeans.modules.scala.project.Bundle").getString("J2SEConfigurationProvider.default.label");
+                label = NbBundle.getBundle("org.black.kotlin.project.Bundle").getString("J2SEConfigurationProvider.default.label");
             }
             setText(label);
             

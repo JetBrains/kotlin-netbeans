@@ -131,14 +131,17 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         this.sourceLevel.setModel(uiProperties.JAVAC_SOURCE_MODEL);
         this.sourceLevel.setRenderer(uiProperties.JAVAC_SOURCE_RENDERER);        
         uiProperties.JAVAC_SOURCE_MODEL.addListDataListener(new ListDataListener () {
+            @Override
             public void intervalAdded(ListDataEvent e) {
                 enableSourceLevel ();
             }
 
+            @Override
             public void intervalRemoved(ListDataEvent e) {
                 enableSourceLevel ();
             }
 
+            @Override
             public void contentsChanged(ListDataEvent e) {
                 enableSourceLevel ();
             }                                    
@@ -156,6 +159,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         if (!"Aqua".equals(lafid)) { //NOI18N
             this.encoding.putClientProperty ("JComboBox.isTableCellEditor", Boolean.TRUE);    //NOI18N
             this.encoding.addItemListener(new java.awt.event.ItemListener(){ 
+                @Override
                 public void itemStateChanged(java.awt.event.ItemEvent e){ 
                     javax.swing.JComboBox combo = (javax.swing.JComboBox)e.getSource(); 
                     combo.setPopupVisible(false); 
@@ -163,6 +167,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
             });
         }        
         this.encoding.addActionListener(new ActionListener () {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 handleEncodingChange();
             }            
@@ -178,6 +183,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
             this.table = table;
         }
         
+        @Override
         public void componentResized(ComponentEvent evt){
             double pw = table.getParent().getParent().getSize().getWidth();
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -233,8 +239,9 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
             this.uiProperties.putAdditionalProperty(KotlinProjectProperties.SOURCE_ENCODING, encName);
     }
 
+    @Override
     public HelpCtx getHelpCtx() {
-        return new HelpCtx (CustomizerSources.class);
+        return new HelpCtx(CustomizerSources.class);
     }
     
     private void enableSourceLevel () {
@@ -245,9 +252,10 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
     private static class EncodingRenderer extends JLabel implements ListCellRenderer, UIResource {
         
         public EncodingRenderer() {
-            setOpaque(true);
+            EncodingRenderer.this.setOpaque(true);
         }
         
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             assert value instanceof Charset;
             setName("ComboBox.listRenderer"); // NOI18N
@@ -306,14 +314,17 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
             super (name, new String[0]);
         }
     
+        @Override
         public boolean contains(Charset c) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public CharsetDecoder newDecoder() {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public CharsetEncoder newEncoder() {
             throw new UnsupportedOperationException();
         }
@@ -342,8 +353,8 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
     
     private static class LabelCellEditor extends DefaultCellEditor {
         
-        private JTable sourceRoots;
-        private JTable testRoots;
+        private final JTable sourceRoots;
+        private final JTable testRoots;
         
         public LabelCellEditor(JTable sourceRoots, JTable testRoots) {
             super(new JTextField());
@@ -416,9 +427,9 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         setPreferredSize(new java.awt.Dimension(560, 450));
         setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setDisplayedMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_ProjectFolder").charAt(0));
+        jLabel1.setDisplayedMnemonic('F');
         jLabel1.setLabelFor(projectLocation);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/netbeans/modules/scala/project/ui/customizer/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/black/kotlin/project/ui/customizer/Bundle"); // NOI18N
         jLabel1.setText(bundle.getString("CTL_ProjectFolder")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -436,7 +447,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
 
         sourceRootsPanel.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setDisplayedMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_SourceRoots").charAt(0));
+        jLabel2.setDisplayedMnemonic('S');
         jLabel2.setLabelFor(sourceRoots);
         jLabel2.setText(bundle.getString("CTL_SourceRoots")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -488,7 +499,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 12);
         sourceRootsPanel.add(jScrollPane1, gridBagConstraints);
 
-        addSourceRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_AddSourceRoot").charAt(0));
+        addSourceRoot.setMnemonic('A');
         addSourceRoot.setText(bundle.getString("CTL_AddSourceRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -499,7 +510,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         sourceRootsPanel.add(addSourceRoot, gridBagConstraints);
         addSourceRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_addSourceRoot")); // NOI18N
 
-        removeSourceRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_RemoveSourceRoot").charAt(0));
+        removeSourceRoot.setMnemonic('R');
         removeSourceRoot.setText(bundle.getString("CTL_RemoveSourceRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -511,7 +522,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         sourceRootsPanel.add(removeSourceRoot, gridBagConstraints);
         removeSourceRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_removeSourceRoot")); // NOI18N
 
-        upSourceRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_UpSourceRoot").charAt(0));
+        upSourceRoot.setMnemonic('U');
         upSourceRoot.setText(bundle.getString("CTL_UpSourceRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -523,7 +534,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         sourceRootsPanel.add(upSourceRoot, gridBagConstraints);
         upSourceRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_upSourceRoot")); // NOI18N
 
-        downSourceRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_DownSourceRoot").charAt(0));
+        downSourceRoot.setMnemonic('D');
         downSourceRoot.setText(bundle.getString("CTL_DownSourceRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -547,7 +558,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
 
         testRootsPanel.setLayout(new java.awt.GridBagLayout());
 
-        jLabel3.setDisplayedMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_TestRoots").charAt(0));
+        jLabel3.setDisplayedMnemonic('T');
         jLabel3.setLabelFor(testRoots);
         jLabel3.setText(bundle.getString("CTL_TestRoots")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -599,7 +610,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         gridBagConstraints.weighty = 0.5;
         testRootsPanel.add(jScrollPane2, gridBagConstraints);
 
-        addTestRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_AddTestRoot").charAt(0));
+        addTestRoot.setMnemonic('o');
         addTestRoot.setText(bundle.getString("CTL_AddTestRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -611,7 +622,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         testRootsPanel.add(addTestRoot, gridBagConstraints);
         addTestRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_addTestRoot")); // NOI18N
 
-        removeTestRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_RemoveTestRoot").charAt(0));
+        removeTestRoot.setMnemonic('m');
         removeTestRoot.setText(bundle.getString("CTL_RemoveTestRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -623,7 +634,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         testRootsPanel.add(removeTestRoot, gridBagConstraints);
         removeTestRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_removeTestRoot")); // NOI18N
 
-        upTestRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_UpTestRoot").charAt(0));
+        upTestRoot.setMnemonic('p');
         upTestRoot.setText(bundle.getString("CTL_UpTestRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -635,7 +646,7 @@ public class CustomizerSources extends javax.swing.JPanel implements HelpCtx.Pro
         testRootsPanel.add(upTestRoot, gridBagConstraints);
         upTestRoot.getAccessibleContext().setAccessibleDescription(bundle.getString("AD_CustomizerSources_upTestRoot")); // NOI18N
 
-        downTestRoot.setMnemonic(java.util.ResourceBundle.getBundle("{bundleNameSlashes}").getString("MNE_DownTestRoot").charAt(0));
+        downTestRoot.setMnemonic('w');
         downTestRoot.setText(bundle.getString("CTL_DownTestRoot")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

@@ -85,7 +85,7 @@ public class CustomizerJar extends JPanel implements HelpCtx.Provider {
         org.openide.awt.Mnemonics.setLocalizedText(excludeLabel, org.openide.util.NbBundle.getMessage(CustomizerJar.class, "LBL_CustomizeJar_Excludes_JTextField")); // NOI18N
 
         excludeMessage.setLabelFor(excludeField);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/netbeans/modules/scala/project/ui/customizer/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/black/kotlin/project/ui/customizer/Bundle"); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(excludeMessage, bundle.getString("LBL_CustomizerJar_ExcludeMessage")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(compressCheckBox, org.openide.util.NbBundle.getMessage(CustomizerJar.class, "LBL_CustomizeJar_Commpres_JCheckBox")); // NOI18N
@@ -101,20 +101,17 @@ public class CustomizerJar extends JPanel implements HelpCtx.Provider {
                     .add(layout.createSequentialGroup()
                         .add(distDirLabel)
                         .add(88, 88, 88)
-                        .add(distDirField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
+                        .add(distDirField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
                     .add(layout.createSequentialGroup()
                         .add(excludeLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(layout.createSequentialGroup()
                                 .add(excludeMessage)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 149, Short.MAX_VALUE))
-                            .add(excludeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(compressCheckBox)
-                            .add(doJarCheckBox))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 332, Short.MAX_VALUE))
+                            .add(excludeField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)))
+                    .add(compressCheckBox)
+                    .add(doJarCheckBox))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

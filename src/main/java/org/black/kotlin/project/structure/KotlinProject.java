@@ -155,6 +155,8 @@ public class KotlinProject implements Project {
                     new KotlinProjectLogicalView(this),
                     new KotlinCustomizerProvider(this,updateHelper,getPropertyEvaluator(), refHelper, this.genFilesHelper),
                     QuerySupport.createCompiledSourceForBinaryQuery(helper, getPropertyEvaluator(), getSourceRoots(), getTestSourceRoots()),
+                    buildExtender,
+                    new KotlinSourcesImpl(this, helper, propertyEvaluator, getSourceRoots(), getTestSourceRoots()),
                     UILookupMergerSupport.createProjectOpenHookMerger(new KotlinProjectOpenedHook(this)),
                     new KotlinConfigurationProvider(this),
                     encodingQuery,
@@ -257,6 +259,7 @@ public class KotlinProject implements Project {
         public Project getOwningProject() {
             return KotlinProject.this;
         }
-}
+    }
+    
 
 }

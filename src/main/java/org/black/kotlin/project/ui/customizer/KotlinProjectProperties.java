@@ -425,6 +425,7 @@ public class KotlinProjectProperties {
             saveLibrariesLocation();
             // Store properties
             ProjectManager.mutex().writeAccess(new Mutex.ExceptionAction<Void>() {
+                @Override
                 public Void run() throws IOException {
                     storeProperties();
                     //Delete COS mark

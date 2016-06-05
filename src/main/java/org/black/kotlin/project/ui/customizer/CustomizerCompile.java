@@ -49,11 +49,11 @@ public class CustomizerCompile extends JPanel implements HelpCtx.Provider {
     public CustomizerCompile( KotlinProjectProperties uiProperties ) {
         initComponents();
 
-        uiProperties.SCALAC_DEPRECATION_MODEL.setMnemonic( deprecationCheckBox.getMnemonic() );
-        deprecationCheckBox.setModel( uiProperties.SCALAC_DEPRECATION_MODEL );
-
-        uiProperties.SCALAC_UNCHECKED_MODEL.setMnemonic( uncheckedCheckBox.getMnemonic() );
-        uncheckedCheckBox.setModel( uiProperties.SCALAC_UNCHECKED_MODEL );
+//        uiProperties.SCALAC_DEPRECATION_MODEL.setMnemonic( deprecationCheckBox.getMnemonic() );
+//        deprecationCheckBox.setModel( uiProperties.SCALAC_DEPRECATION_MODEL );
+//
+//        uiProperties.SCALAC_UNCHECKED_MODEL.setMnemonic( uncheckedCheckBox.getMnemonic() );
+//        uncheckedCheckBox.setModel( uiProperties.SCALAC_UNCHECKED_MODEL );
 
         uiProperties.JAVAC_DEBUG_MODEL.setMnemonic( debugInfoCheckBox.getMnemonic() );
         debugInfoCheckBox.setModel( uiProperties.JAVAC_DEBUG_MODEL );
@@ -61,7 +61,7 @@ public class CustomizerCompile extends JPanel implements HelpCtx.Provider {
         uiProperties.DO_DEPEND_MODEL.setMnemonic(doDependCheckBox.getMnemonic());
         doDependCheckBox.setModel(uiProperties.DO_DEPEND_MODEL);
 
-        additionalJavacParamsField.setDocument( uiProperties.SCALAC_COMPILER_ARG_MODEL );
+//        additionalJavacParamsField.setDocument( uiProperties..SCALAC_COMPILER_ARG_MODEL );
     }
 
     public HelpCtx getHelpCtx() {
@@ -112,7 +112,7 @@ public class CustomizerCompile extends JPanel implements HelpCtx.Provider {
                         .add(additionalJavacParamsLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(additionalJavacParamsField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
+                            .add(additionalJavacParamsField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                             .add(additionalJavacParamsExample))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );

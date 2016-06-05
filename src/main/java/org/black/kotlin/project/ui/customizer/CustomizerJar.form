@@ -21,7 +21,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="distDirLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
-                      <Component id="distDirField" pref="294" max="32767" attributes="0"/>
+                      <Component id="distDirField" pref="446" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="excludeLabel" min="-2" max="-2" attributes="0"/>
@@ -29,18 +29,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="excludeMessage" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="149" max="32767" attributes="0"/>
+                              <EmptySpace pref="332" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="excludeField" pref="294" max="32767" attributes="0"/>
+                          <Component id="excludeField" pref="461" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="compressCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="doJarCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="compressCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="doJarCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -76,7 +71,7 @@
           <ComponentRef name="distDirField"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_DistDir_JTextField" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_DistDir_JTextField" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -89,7 +84,7 @@
       </Properties>
       <AccessibilityProperties>
         <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="AD_jTextFieldDistDir" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="AD_jTextFieldDistDir" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
         </Property>
       </AccessibilityProperties>
     </Component>
@@ -99,7 +94,7 @@
           <ComponentRef name="excludeField"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_Excludes_JTextField" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_Excludes_JTextField" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AuxValues>
@@ -109,7 +104,7 @@
     <Component class="javax.swing.JTextField" name="excludeField">
       <AccessibilityProperties>
         <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="AD_jTextFieldExcludes" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="AD_jTextFieldExcludes" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
         </Property>
       </AccessibilityProperties>
     </Component>
@@ -119,19 +114,19 @@
           <ComponentRef name="excludeField"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="LBL_CustomizerJar_ExcludeMessage" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="LBL_CustomizerJar_ExcludeMessage" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="compressCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_Commpres_JCheckBox" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="LBL_CustomizeJar_Commpres_JCheckBox" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <AccessibilityProperties>
         <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="AD_jCheckBoxCompress" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="AD_jCheckBoxCompress" replaceFormat="org.openide.util.NbBundle.getBundle({sourceFileName}.class).getString(&quot;{key}&quot;)"/>
         </Property>
       </AccessibilityProperties>
       <AuxValues>
@@ -141,7 +136,7 @@
     <Component class="javax.swing.JCheckBox" name="doJarCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/scala/project/ui/customizer/Bundle.properties" key="CustomizerJar.doJarCheckBox" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/black/kotlin/project/ui/customizer/Bundle.properties" key="CustomizerJar.doJarCheckBox" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

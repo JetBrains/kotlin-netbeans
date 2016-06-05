@@ -49,7 +49,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import org.black.kotlin.project.structure.KotlinProject;
-import org.black.kotlin.project.ui.customizer.KotlinProjectProperties;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.modules.java.api.common.ant.UpdateHelper;
@@ -86,7 +85,7 @@ public class KotlinCustomizerProvider implements CustomizerProvider {
     private static final String COMMAND_OK = "OK";          // NOI18N
     private static final String COMMAND_CANCEL = "CANCEL";  // NOI18N
 
-    public static final String CUSTOMIZER_FOLDER_PATH = "Projects/org-netbeans-modules-java-j2seproject/Customizer"; //NO18N
+    public static final String CUSTOMIZER_FOLDER_PATH = "Projects/org-black-kotlin/Customizer"; //NO18N
     
     private static final Map /*<Project,Dialog>*/project2Dialog = new HashMap(); 
     
@@ -125,10 +124,10 @@ public class KotlinCustomizerProvider implements CustomizerProvider {
             OptionListener listener = new OptionListener( project, uiProperties );
             dialog = ProjectCustomizer.createCustomizerDialog( CUSTOMIZER_FOLDER_PATH, context, preselectedCategory, listener, null );
             dialog.addWindowListener( listener );
-//            dialog.setTitle( MessageFormat.format(                 
-//                    NbBundle.getMessage( KotlinCustomizerProvider.class, "LBL_Customizer_Title" ), // NOI18N 
-//                    new Object[] { ProjectUtils.getInformation(project).getDisplayName() } ) );
-            dialog.setTitle(ProjectUtils.getInformation(project).getDisplayName());
+            dialog.setTitle( MessageFormat.format(                 
+                    NbBundle.getMessage( KotlinCustomizerProvider.class, "LBL_Customizer_Title" ), // NOI18N 
+                    new Object[] { ProjectUtils.getInformation(project).getDisplayName() } ) );
+//            dialog.setTitle(ProjectUtils.getInformation(project).getDisplayName());
             project2Dialog.put(project, dialog);
             dialog.setVisible(true);
         }
@@ -137,8 +136,8 @@ public class KotlinCustomizerProvider implements CustomizerProvider {
     /** Listens to the actions on the Customizer's option buttons */
     private class OptionListener extends WindowAdapter implements ActionListener {
     
-        private Project project;
-        private KotlinProjectProperties uiProperties;
+        private final Project project;
+        private final KotlinProjectProperties uiProperties;
         
         OptionListener( Project project, KotlinProjectProperties uiProperties ) {
             this.project = project;
@@ -182,9 +181,9 @@ public class KotlinCustomizerProvider implements CustomizerProvider {
     
     static final class SubCategoryProvider {
 
-        private String subcategory;
+        private final String subcategory;
 
-        private String category;
+        private final String category;
 
         SubCategoryProvider(String category, String subcategory) {
             this.category = category;
