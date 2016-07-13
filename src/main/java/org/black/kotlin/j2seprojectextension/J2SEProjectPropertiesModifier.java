@@ -75,33 +75,38 @@ public class J2SEProjectPropertiesModifier {
     }
     
     public void turnOffCompileOnSave() {
-        FileObject root = project.getProjectDirectory();
-        FileObject nbproject = root.getFileObject("nbproject");
-        if (nbproject == null) {
-            return;
-        }
-        
-        FileObject privateDir = nbproject.getFileObject("private");
-        if (privateDir == null) {
-            return;
-        }
-        
-        FileObject privateProperties = privateDir.getFileObject("private.properties");
-        if (privateProperties == null) {
-            return;
-        }
-        
-        Properties props = PropertyUtils.loadProperties(privateProperties.toURL());
-        props.setProperty("compile.on.save", "false");
-        try {
-            FileWriter writer = new FileWriter(privateProperties.getPath());
-            writer.write("");
-            writer.flush();
-            props.store(writer, "");
-            writer.close();
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } 
+//        try {
+            FileObject root = project.getProjectDirectory();
+            FileObject nbproject = root.getFileObject("nbproject");
+            if (nbproject == null) {
+                return;
+            }
+            
+            FileObject privateDir = nbproject.getFileObject("private");
+            if (privateDir == null) {
+                return;
+            }
+            
+            FileObject privateProperties = privateDir.getFileObject("private.properties");
+            if (privateProperties == null) {
+                return;
+            }
+            
+            Properties props = PropertyUtils.loadProperties(privateProperties.toURL());
+            props.setProperty("compile.on.save", "false");
+            try {
+                FileWriter writer = new FileWriter(privateProperties.getPath());
+                writer.write("");
+                writer.flush();
+                props.store(writer, "");
+                writer.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            
+//        } catch (IOException ex) {
+//            Exceptions.printStackTrace(ex);
+//        } 
         
     }
     

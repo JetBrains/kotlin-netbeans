@@ -4,7 +4,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.WildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
-import org.jetbrains.kotlin.load.java.structure.JavaTypeProvider;
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType;
 
 /**
@@ -28,10 +27,6 @@ public class NetBeansJavaWildcardType extends NetBeansJavaType<WildcardType> imp
         return getBinding().getExtendsBound() != null;
     }
 
-    @Override
-    public JavaTypeProvider getTypeProvider() {
-        return new NetBeansJavaTypeProvider();
-    }
     
     
     

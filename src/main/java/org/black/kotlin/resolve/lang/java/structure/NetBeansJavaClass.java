@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
-import org.jetbrains.kotlin.load.java.structure.JavaTypeSubstitutor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 
 /**
  *
@@ -37,7 +37,7 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public Name getName() {
-        return Name.guess(getBinding().getSimpleName().toString());
+        return SpecialNames.safeIdentifier(getBinding().getSimpleName().toString());
     }
 
     @Override
@@ -130,23 +130,23 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
         return javaConstructors;
     }
 
-    @Override
-    public JavaClassifierType getDefaultType() {
-        return new NetBeansJavaClassifierType(getBinding().asType());
-    }
-
-    @Override
-    public OriginKind getOriginKind() {
-        if (NetBeansJavaElementUtil.isKotlinLightClass(getBinding())){
-            return OriginKind.KOTLIN_LIGHT_CLASS;
-        } else // to add OriginKind.COMPILED
-            return OriginKind.SOURCE;
-    }
-
-    @Override
-    public JavaType createImmediateType(JavaTypeSubstitutor substitutor) {
-        return new NetBeansJavaImmediateClass(this, substitutor);
-    }
+//    @Override
+//    public JavaClassifierType getDefaultType() {
+//        return new NetBeansJavaClassifierType(getBinding().asType());
+//    }
+//
+//    @Override
+//    public OriginKind getOriginKind() {
+//        if (NetBeansJavaElementUtil.isKotlinLightClass(getBinding())){
+//            return OriginKind.KOTLIN_LIGHT_CLASS;
+//        } else // to add OriginKind.COMPILED
+//            return OriginKind.SOURCE;
+//    }
+//
+//    @Override
+//    public JavaType createImmediateType(JavaTypeSubstitutor substitutor) {
+//        return new NetBeansJavaImmediateClass(this, substitutor);
+//    }
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
@@ -172,6 +172,11 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
     @Override
     public Visibility getVisibility() {
         return NetBeansJavaElementUtil.getVisibility(getBinding());
+    }
+
+    @Override
+    public boolean isKotlinLightClass() {
+        return NetBeansJavaElementUtil.isKotlinLightClass(getBinding().getEnclosingElement());
     }
     
 }

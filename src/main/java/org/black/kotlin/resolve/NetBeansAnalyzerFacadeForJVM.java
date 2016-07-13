@@ -12,6 +12,7 @@ import kotlin.Pair;
 import org.black.kotlin.utils.ProjectUtils;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.container.StorageComponentContainer;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
@@ -63,11 +64,11 @@ public class NetBeansAnalyzerFacadeForJVM {
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
         CliLightClassGenerationSupport.CliBindingTrace trace = 
                 new CliLightClassGenerationSupport.CliBindingTrace();
-                
+              
         Pair<ContainerForTopDownAnalyzerForJvm, StorageComponentContainer> containerAndProvider =
                 Injection.createContainerForTopDownAnalyzerForJvm(moduleContext, trace, providerFactory, 
                         GlobalSearchScope.allScope(project), kotlinProject, LookupTracker.Companion.getDO_NOTHING(), 
-                        new KotlinPackagePartProvider(kotlinProject));
+                        new KotlinPackagePartProvider(kotlinProject), LanguageVersion.LATEST);
         
         ContainerForTopDownAnalyzerForJvm container = containerAndProvider.getFirst();
         List<LazyJavaPackageFragmentProvider> additionalProviders = 
