@@ -263,19 +263,14 @@ public class ProjectUtils {
         List<String> classPath = new ArrayList<String>();
         
         try {
-            List<String> compileClasspathElements = project.getOriginalMavenProject().getCompileClasspathElements();
-            List<String> compileSourceRoots = project.getOriginalMavenProject().getCompileSourceRoots();
-            List<String> runtimeClasspathElements = project.getOriginalMavenProject().getRuntimeClasspathElements();
-            List<String> systemClasspathElements = project.getOriginalMavenProject().getSystemClasspathElements();
             String bootClassPath = System.getProperty("sun.boot.class.path");
-            List<String> javaClasspathElements = new ArrayList<String>();
-            javaClasspathElements.addAll(Arrays.asList(bootClassPath.split(
+            List<String> javaClasspathElements = new ArrayList<String>(Arrays.asList(bootClassPath.split(
                 Pattern.quote(System.getProperty("path.separator")))));
             
-            classPath.addAll(compileClasspathElements);
-            classPath.addAll(compileSourceRoots);
-            classPath.addAll(runtimeClasspathElements);
-            classPath.addAll(systemClasspathElements);
+            classPath.addAll(project.getOriginalMavenProject().getCompileClasspathElements());
+            classPath.addAll(project.getOriginalMavenProject().getCompileSourceRoots());
+            classPath.addAll(project.getOriginalMavenProject().getRuntimeClasspathElements());
+            classPath.addAll(project.getOriginalMavenProject().getSystemClasspathElements());
             classPath.addAll(javaClasspathElements);
             
         } catch (DependencyResolutionRequiredException ex) {
@@ -363,7 +358,7 @@ public class ProjectUtils {
     public static Project getKotlinProjectForFileObject(FileObject file){
         
         for (Project project : OpenProjects.getDefault().getOpenProjects()){
-            if (!(project instanceof J2SEProject)){
+            if (!KotlinProjectHelper.INSTANCE.checkProject(project)){
                 continue;
             }
             

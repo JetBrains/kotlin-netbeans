@@ -46,8 +46,6 @@ import com.intellij.psi.impl.file.impl.JavaFileManager;
 import java.util.Collections;
 import java.util.List;
 import org.black.kotlin.filesystem.KotlinLightClassManager;
-import org.black.kotlin.filesystem.lightclasses.KotlinLightClassGeneration;
-import org.black.kotlin.project.KotlinSources;
 import org.black.kotlin.resolve.BuiltInsReferenceResolver;
 import org.black.kotlin.resolve.KotlinCacheServiceImpl;
 import org.black.kotlin.resolve.KotlinSourceIndex;
@@ -57,7 +55,6 @@ import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
-import org.openide.filesystems.FileObject;
 
 /**
  * This class creates Kotlin environment for Kotlin project.
