@@ -75,7 +75,7 @@ public class J2SEProjectPropertiesModifier {
     }
     
     public void turnOffCompileOnSave() {
-//        try {
+        try {
             FileObject root = project.getProjectDirectory();
             FileObject nbproject = root.getFileObject("nbproject");
             if (nbproject == null) {
@@ -104,9 +104,9 @@ public class J2SEProjectPropertiesModifier {
                 Exceptions.printStackTrace(ex);
             }
             
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        } 
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } 
         
     }
     
