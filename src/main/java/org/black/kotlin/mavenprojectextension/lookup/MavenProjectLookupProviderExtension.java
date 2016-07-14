@@ -1,5 +1,7 @@
 package org.black.kotlin.mavenprojectextension.lookup;
 
+import org.black.kotlin.mavenprojectextension.classpath.MavenExtendedClassPathProvider;
+import org.netbeans.modules.maven.NbMavenProjectImpl;
 import org.netbeans.spi.project.LookupProvider;
 import org.netbeans.spi.project.ui.PrivilegedTemplates;
 import org.openide.util.Lookup;
@@ -13,8 +15,11 @@ public class MavenProjectLookupProviderExtension implements LookupProvider {
 
     @Override
     public Lookup createAdditionalLookup(Lookup lkp) {
+        
         return Lookups.fixed(
-                new MavenProjectPrivilegedTemplates()
+                new MavenProjectPrivilegedTemplates(),
+                new MavenExtendedClassPathProvider(lkp.lookup(NbMavenProjectImpl.class)
+                )
         );
     }
     

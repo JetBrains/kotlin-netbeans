@@ -2,17 +2,22 @@ package org.black.kotlin.utils;
 
 import com.google.common.collect.Lists;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.black.kotlin.builder.KotlinPsiManager;
 import org.black.kotlin.bundledcompiler.BundledCompiler;
 import org.black.kotlin.j2seprojectextension.classpath.J2SEExtendedClassPathProvider;
@@ -25,6 +30,7 @@ import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.netbeans.modules.java.j2seproject.J2SEProject;
+import org.netbeans.modules.maven.NbMavenProjectImpl;
 import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
@@ -226,7 +232,58 @@ public class ProjectUtils {
         return createListOfClassPaths(boot, src, compile);
     }
     
+    private static List<String> createTrueClasspath(List<String> falseClasspath) {
+        List<String> classPath = new ArrayList<String>();
+        List<URL> urls = new ArrayList<URL>();
+        
+        for (String path : falseClasspath) {
+                File file = new File(path);
+                if (!file.canRead()) {
+                    continue;
+                }
+
+                FileObject fileObject = FileUtil.toFileObject(file);
+                if (FileUtil.isArchiveFile(fileObject)) {
+                    fileObject = FileUtil.getArchiveRoot(fileObject);
+                }
+                if (fileObject != null) {
+                    urls.add(fileObject.toURL());
+                }
+        }
+        
+        for (URL url : urls) {
+            classPath.add(url.toString());
+        }
+        
+        return classPath;
+    }
     
+    @NotNull
+    private static List<String> getMavenProjectClassPath(NbMavenProjectImpl project) {
+        List<String> classPath = new ArrayList<String>();
+        
+        try {
+            List<String> compileClasspathElements = project.getOriginalMavenProject().getCompileClasspathElements();
+            List<String> compileSourceRoots = project.getOriginalMavenProject().getCompileSourceRoots();
+            List<String> runtimeClasspathElements = project.getOriginalMavenProject().getRuntimeClasspathElements();
+            List<String> systemClasspathElements = project.getOriginalMavenProject().getSystemClasspathElements();
+            String bootClassPath = System.getProperty("sun.boot.class.path");
+            List<String> javaClasspathElements = new ArrayList<String>();
+            javaClasspathElements.addAll(Arrays.asList(bootClassPath.split(
+                Pattern.quote(System.getProperty("path.separator")))));
+            
+            classPath.addAll(compileClasspathElements);
+            classPath.addAll(compileSourceRoots);
+            classPath.addAll(runtimeClasspathElements);
+            classPath.addAll(systemClasspathElements);
+            classPath.addAll(javaClasspathElements);
+            
+        } catch (DependencyResolutionRequiredException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        return classPath;
+    }
     
     @NotNull
     public static List<String> getClasspath(Project project) {
@@ -234,6 +291,9 @@ public class ProjectUtils {
             return getJ2SEProjectClassPath(project);
         }
         
+        if (project instanceof NbMavenProjectImpl) {
+            return getMavenProjectClassPath((NbMavenProjectImpl) project);
+        }
         
         KotlinClassPathProvider kotlinClassPath = KotlinProjectHelper.INSTANCE.getKotlinClassPathProvider(project);
   
