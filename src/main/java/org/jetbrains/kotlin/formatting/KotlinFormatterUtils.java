@@ -19,11 +19,15 @@
 package org.jetbrains.kotlin.formatting;
 
 import com.intellij.formatting.Block;
+import com.intellij.formatting.FormatTextRanges;
+import com.intellij.formatting.FormatterImpl;
 import com.intellij.formatting.Indent;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions;
 import org.jetbrains.kotlin.formatting.KotlinFormatter.KotlinSpacingBuilderUtilImpl;
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingRulesKt;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
@@ -80,13 +84,32 @@ public class KotlinFormatterUtils {
     
     private static void formatRange(KtFile containingFile, Block rootBlock,
             CodeStyleSettings settings, String source, TextRange range) {
-        buildModel(containingFile, rootBlock, settings, source, false);
+        NetBeansDocumentFormattingModel formattingModel = 
+                buildModel(containingFile, rootBlock, settings, source, false);
+        FormatTextRanges ranges = new FormatTextRanges(range, true);
+        new FormatterImpl().format(formattingModel, settings, settings.getIndentOptions(), ranges, false);
+//        new FormatterImpl().adjustLineIndent(
+//                formattingModel, settings, settings.getIndentOptions(), offset, getSignificantRange(ktFile, offset));
+        //TODO
+    }
+    
+    private static void initializeSettings(IndentOptions options) {
+        options.USE_TAB_CHARACTER = !IndenterUtil.isSpacesForTabs();
+        options.INDENT_SIZE = IndenterUtil.getDefaultIndent();
+        options.TAB_SIZE = IndenterUtil.getDefaultIndent();
     }
     
     private static NetBeansDocumentFormattingModel buildModel(KtFile ktFile,
             Block rootBlock, CodeStyleSettings settings, String source, 
             boolean forLineIndentation) {
+        initializeSettings(settings.getIndentOptions());
+        NetBeansFormattingModel formattingDocumentModel =
+                new NetBeansFormattingModel(
+                        new DocumentImpl(ktFile.getViewProvider().getContents(), true),
+                    ktFile, settings, forLineIndentation);
         
+        return new NetBeansDocumentFormattingModel(
+                ktFile, rootBlock, formattingDocumentModel, source, settings);
     }
     
     // ???
