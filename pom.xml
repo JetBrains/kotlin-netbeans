@@ -111,6 +111,36 @@
                 <generatePom>true</generatePom>
               </configuration>
           </execution>
+          <execution>
+              <id>inst5</id>
+              <phase>validate</phase>
+              <goals>
+                  <goal>install-file</goal>
+              </goals>
+              <configuration>
+                <file>${project.basedir}/lib/intellij-core.jar</file>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>intellij-core</artifactId>
+                <version>1.0</version>
+                <packaging>jar</packaging>
+                <generatePom>true</generatePom>
+              </configuration>
+          </execution>
+          <execution>
+              <id>inst6</id>
+              <phase>validate</phase>
+              <goals>
+                  <goal>install-file</goal>
+              </goals>
+              <configuration>
+                <file>${project.basedir}/lib/util-formatter.jar</file>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>util-formatter</artifactId>
+                <version>1.0</version>
+                <packaging>jar</packaging>
+                <generatePom>true</generatePom>
+              </configuration>
+          </execution>
         </executions> 
       </plugin>  
       <plugin> 
@@ -243,6 +273,18 @@
     <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>idea-formatter</artifactId>
+        <version>1.0</version>
+        <type>jar</type>
+    </dependency>
+    <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>intellij-core</artifactId>
+        <version>1.0</version>
+        <type>jar</type>
+    </dependency>
+    <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>util-formatter</artifactId>
         <version>1.0</version>
         <type>jar</type>
     </dependency>
