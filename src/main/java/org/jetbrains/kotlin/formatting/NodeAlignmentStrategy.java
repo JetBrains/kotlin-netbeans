@@ -28,13 +28,17 @@ import org.jetbrains.kotlin.idea.formatter.CommonAlignmentStrategy;
  */
 public abstract class NodeAlignmentStrategy extends CommonAlignmentStrategy {
     
-    NodeAlignmentStrategy nullStrategy = fromTypes(KotlinAlignmentStrategy.getNullStrategy());
+    private static NodeAlignmentStrategy nullStrategy = fromTypes(KotlinAlignmentStrategy.getNullStrategy());
     
-    public NodeAlignmentStrategy fromTypes(KotlinAlignmentStrategy strategy) {
+    public static NodeAlignmentStrategy fromTypes(KotlinAlignmentStrategy strategy) {
         return new AlignmentStrategyWrapper(strategy);
     }
     
-    private class AlignmentStrategyWrapper extends NodeAlignmentStrategy {
+    public static NodeAlignmentStrategy getNullStrategy(){
+        return nullStrategy;
+    }
+    
+    private static class AlignmentStrategyWrapper extends NodeAlignmentStrategy {
         private final KotlinAlignmentStrategy internalStrategy;
         
         AlignmentStrategyWrapper(KotlinAlignmentStrategy internalStrategy) {

@@ -45,12 +45,12 @@ public abstract class KotlinAlignmentStrategy {
         return new SharedAlignmentStrategy(alignment, ignoreFilterTypes, filterTypes);
     }
     
-    public AlignmentPerTypeStrategy createAlignmentPerTypeStrategy(Collection<IElementType> targetTypes,
+    public static AlignmentPerTypeStrategy createAlignmentPerTypeStrategy(Collection<IElementType> targetTypes,
             boolean allowBackwardShift) {
         return new AlignmentPerTypeStrategy(targetTypes, null, allowBackwardShift, Alignment.Anchor.LEFT);
     }
     
-    public AlignmentPerTypeStrategy createAlignmentPerStrategy(Collection<IElementType> targetTypes,
+    public static AlignmentPerTypeStrategy createAlignmentPerStrategy(Collection<IElementType> targetTypes,
             IElementType parentType, boolean allowBackwardShift, Alignment.Anchor anchor) {
         Alignment.Anchor a = anchor;
         if (a == null) {

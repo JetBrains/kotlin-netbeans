@@ -18,7 +18,19 @@
  */
 package org.jetbrains.kotlin.formatting;
 
+import com.intellij.formatting.Block;
+import com.intellij.formatting.Indent;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import org.jetbrains.kotlin.formatting.KotlinFormatter.KotlinSpacingBuilderUtilImpl;
+import org.jetbrains.kotlin.idea.formatter.KotlinSpacingRulesKt;
+import org.jetbrains.kotlin.model.KotlinEnvironment;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
+import org.jetbrains.kotlin.utils.LineEndUtil;
+import org.netbeans.api.project.Project;
 
 /**
  *
@@ -26,9 +38,79 @@ import com.intellij.openapi.editor.Document;
  */
 public class KotlinFormatterUtils {
     
+    private static CodeStyleSettings settings = new CodeStyleSettings(true);
+    
+    public static CodeStyleSettings getSettings() {
+        return settings;
+    }
+    
+    private static KtPsiFactory createPsiFactory(Project project) {
+        KotlinEnvironment environment = KotlinEnvironment.getEnvironment(project);
+        return new KtPsiFactory(environment.getProject());
+    }
+    
+    public static String formatCode(String source, String fileName, Project project, String lineSeparator) {
+        return formatCode(source, fileName, createPsiFactory(project), lineSeparator);
+    }
+    
+    public static String formatCode(String source, String fileName, KtPsiFactory psiFactory, String lineSeparator) {
+        return new KotlinFormatter(source, fileName, psiFactory, lineSeparator).formatCode();
+    }
+    
+    public static void reformatAll(KtFile containingFile, Block rootBlock, 
+            CodeStyleSettings settings, String source ) {
+        formatRange(containingFile, rootBlock, settings, source, containingFile.getTextRange());
+    }
+    
+    public static void formatRange(String source, NetBeansDocumentRange range, 
+            KtPsiFactory psiFactory, String fileName) {
+        formatRange(source, range.toPsiRange(source), psiFactory, fileName);
+    }
+    
+    public static void formatRange(String source, TextRange range, KtPsiFactory psiFactory, String fileName) {
+        KtFile ktFile = createKtFile(source, psiFactory, fileName);
+        Block rootBlock = new KotlinBlock(ktFile.getNode(),
+                NodeAlignmentStrategy.getNullStrategy(),
+                Indent.getNoneIndent(),
+                null,   
+                settings,
+                KotlinSpacingRulesKt.createSpacingBuilder(settings, KotlinSpacingBuilderUtilImpl.INSTANCE));
+        formatRange(ktFile, rootBlock, settings, source, range);
+    }
+    
+    private static void formatRange(KtFile containingFile, Block rootBlock,
+            CodeStyleSettings settings, String source, TextRange range) {
+        buildModel(containingFile, rootBlock, settings, source, false);
+    }
+    
+    private static NetBeansDocumentFormattingModel buildModel(KtFile ktFile,
+            Block rootBlock, CodeStyleSettings settings, String source, 
+            boolean forLineIndentation) {
+        
+    }
+    
     // ???
     public static Document getMockDocument(Document document) {
         return document;
     }
     
+    public static KtFile createKtFile(String source, KtPsiFactory psiFactory, String fileName) {
+        return psiFactory.createFile(fileName, StringUtil.convertLineSeparators(source));
+    }
+    
+    public static class NetBeansDocumentRange {
+        private final int startOffset, endOffset;
+        
+        public NetBeansDocumentRange(int start, int end) {
+            startOffset = start;
+            endOffset = end;
+        }
+        
+        public TextRange toPsiRange(String source) {
+            int startPsiOffset = LineEndUtil.convertCrToDocumentOffset(source, startOffset);
+            int endPsiOffset = LineEndUtil.convertCrToDocumentOffset(source, endOffset);
+            
+            return new TextRange(startPsiOffset, endPsiOffset);
+        }
+    }
 }
