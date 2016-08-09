@@ -30,13 +30,17 @@ import java.util.Set;
  */
 public abstract class KotlinAlignmentStrategy {
     
-    KotlinAlignmentStrategy nullStrategy = wrap(null, null, null);
+    private static KotlinAlignmentStrategy nullStrategy = wrap(null, null, null);
     
-    public KotlinAlignmentStrategy wrap(Alignment alignment, IElementType... filterTypes) {
+    public static KotlinAlignmentStrategy getNullStrategy() {
+        return nullStrategy;
+    }
+    
+    public static KotlinAlignmentStrategy wrap(Alignment alignment, IElementType... filterTypes) {
         return new SharedAlignmentStrategy(alignment, true, filterTypes);
     }
     
-    public KotlinAlignmentStrategy wrap(Alignment alignment, boolean ignoreFilterTypes,
+    public static KotlinAlignmentStrategy wrap(Alignment alignment, boolean ignoreFilterTypes,
             IElementType... filterTypes) {
         return new SharedAlignmentStrategy(alignment, ignoreFilterTypes, filterTypes);
     }
@@ -61,7 +65,7 @@ public abstract class KotlinAlignmentStrategy {
         return getAlignment(null, childType);
     }
     
-    private class SharedAlignmentStrategy extends KotlinAlignmentStrategy {
+    private static class SharedAlignmentStrategy extends KotlinAlignmentStrategy {
         
         private final Alignment myAlignment;
         private final boolean myIgnoreFilterTypes;
