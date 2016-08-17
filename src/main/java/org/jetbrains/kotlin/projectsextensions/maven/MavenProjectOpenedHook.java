@@ -51,38 +51,38 @@ public class MavenProjectOpenedHook extends ProjectOpenedHook{
                 public void run(){
                         ClassLoader cl = this.getClass().getClassLoader();
                         ProjectUtils.checkKtHome(cl);
-//                        Runnable run = new Runnable(){
-//                            @Override
-//                            public void run(){
-//                                progressHandleRun = true;
-//                                final ProgressHandle progressbar = 
-//                                    ProgressHandleFactory.createHandle("Loading Kotlin environment");
-//                                progressbar.start();
-//                                KotlinEnvironment.getEnvironment(project);
-//                                progressbar.finish();
-//                                progressHandleRun = false;
-//                            }
-//                        };
-//                        if (!progressHandleRun) {
-//                            RequestProcessor.getDefault().post(run);
-//                        }
-//                        KotlinSources sources = KotlinProjectHelper.INSTANCE.getKotlinSources(project);
-//                        if (!sources.hasLightClasses()) {
-//                            for (FileObject file : sources.getAllKtFiles()){
-//                                KotlinLightClassGeneration.INSTANCE.generate(file, project);
-//                            }
-//                            sources.lightClassesGenerated();
-//                        }
-//                        if (!MavenHelper.hasParent(project)){
-//                            new PomXmlModifier(project).checkPom();
-//                        }
+                        Runnable run = new Runnable(){
+                            @Override
+                            public void run(){
+                                progressHandleRun = true;
+                                final ProgressHandle progressbar = 
+                                    ProgressHandleFactory.createHandle("Loading Kotlin environment");
+                                progressbar.start();
+                                KotlinEnvironment.getEnvironment(project);
+                                progressbar.finish();
+                                progressHandleRun = false;
+                            }
+                        };
+                        if (!progressHandleRun) {
+                            RequestProcessor.getDefault().post(run);
+                        }
+                        KotlinSources sources = KotlinProjectHelper.INSTANCE.getKotlinSources(project);
+                        if (!sources.hasLightClasses()) {
+                            for (FileObject file : sources.getAllKtFiles()){
+                                KotlinLightClassGeneration.INSTANCE.generate(file, project);
+                            }
+                            sources.lightClassesGenerated();
+                        }
+                        if (!MavenHelper.hasParent(project)){
+                            new PomXmlModifier(project).checkPom();
+                        }
                         
-//                        project.getProjectWatcher().addPropertyChangeListener(new PropertyChangeListener(){
-//                            @Override
-//                            public void propertyChange(PropertyChangeEvent evt) {
-//                                KotlinProjectHelper.INSTANCE.updateExtendedClassPath(project);
-//                            }
-//                        });
+                        project.getProjectWatcher().addPropertyChangeListener(new PropertyChangeListener(){
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                KotlinProjectHelper.INSTANCE.updateExtendedClassPath(project);
+                            }
+                        });
                     }
             };
         thread.start();

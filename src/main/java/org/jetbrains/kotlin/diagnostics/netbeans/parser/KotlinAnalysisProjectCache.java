@@ -43,7 +43,7 @@ public class KotlinAnalysisProjectCache {
                 AnalysisResultWithProvider result = 
                         NetBeansAnalyzerFacadeForJVM.INSTANCE.analyzeFilesWithJavaIntegration(project, 
                         KotlinEnvironment.getEnvironment(project).getProject(), ProjectUtils.getSourceFilesWithDependencies(project));
-                cache.clear();
+//                cache.clear();
                 cache.put(project, result.getAnalysisResult());
             }
             
