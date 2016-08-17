@@ -88,10 +88,11 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
 
     
     @Nullable 
-    public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String name,
+    public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String n,
             boolean partialMatch, boolean patternMatch){
-        if (name.endsWith(".")){
-            name = name.substring(0, name.length()-1);
+        String name = n;
+        if (n.endsWith(".")){
+            name = new String(n.substring(0, n.length()-1));
         }
         
         Set<VirtualFile> roots = KotlinEnvironment.getEnvironment(kotlinProject).getRoots();

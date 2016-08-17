@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.resolve.AnalysisResultWithProvider;
 import org.netbeans.modules.csl.api.CodeCompletionResult;
 import org.netbeans.modules.csl.api.CompletionProposal;
@@ -36,9 +37,9 @@ public class KotlinCodeCompletionResult extends CodeCompletionResult {
 
     private List<CompletionProposal> proposals = Lists.newArrayList();
 
-    public KotlinCodeCompletionResult(Document doc, int offset, AnalysisResultWithProvider analysisResultWithProvider) {
+    public KotlinCodeCompletionResult(Document doc, int offset, AnalysisResult analysisResult) {
         try {
-            proposals = KotlinCompletionUtils.INSTANCE.createProposals(doc, offset, analysisResultWithProvider);
+            proposals = KotlinCompletionUtils.INSTANCE.createProposals(doc, offset, analysisResult);
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {

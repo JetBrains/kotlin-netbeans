@@ -290,7 +290,7 @@ public class KotlinCompletionUtils {
     }
     
     public List<CompletionProposal> createProposals(Document doc, int caretOffset,
-            AnalysisResultWithProvider analysisResultWithProvider) throws BadLocationException, IOException {
+            AnalysisResult analysisResult) throws BadLocationException, IOException {
         List<CompletionProposal> proposals = Lists.newArrayList();
         FileObject file = ProjectUtils.getFileObjectForDocument(doc);
         StyledDocument styledDoc = (StyledDocument) doc;

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import java.util.List;
 import javax.swing.event.ChangeListener;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.resolve.AnalysisResultWithProvider;
 import org.jetbrains.kotlin.resolve.KotlinAnalyzer;
 import org.jetbrains.kotlin.utils.ProjectUtils;
@@ -47,7 +48,7 @@ import org.openide.filesystems.FileObject;
 public class KotlinParser extends Parser {
 
     private Snapshot snapshot;
-    private AnalysisResultWithProvider parserResult;
+    private AnalysisResult parserResult;
     private KtFile fileToAnalyze;
     private Project project;
     
@@ -70,12 +71,12 @@ public class KotlinParser extends Parser {
         }
         
         parserResult =
-            KotlinAnalyzer.analyzeFile(project, fileToAnalyze);
+            KotlinAnalyzer.analyzeFile(project, fileToAnalyze).getAnalysisResult();
     }
 
     @Override
     public Result getResult(Task task) {
-        if (project != null){
+        if (parserResult != null){
             return new KotlinParserResult(snapshot, parserResult, fileToAnalyze);
         }
         return null;
@@ -92,11 +93,11 @@ public class KotlinParser extends Parser {
     public static class KotlinParserResult extends ParserResult {
 
         private boolean valid = true;
-        private final AnalysisResultWithProvider analysisResult;
+        private final AnalysisResult analysisResult;
         private final FileObject file;
         private final KtFile ktFile;
         
-        KotlinParserResult(Snapshot snapshot, AnalysisResultWithProvider analysisResult, KtFile ktFile) {
+        KotlinParserResult(Snapshot snapshot, AnalysisResult analysisResult, KtFile ktFile) {
             super(snapshot);
             this.analysisResult = analysisResult;
             file = snapshot.getSource().getFileObject();
@@ -108,7 +109,7 @@ public class KotlinParser extends Parser {
             valid = false;
         }
 
-        public AnalysisResultWithProvider getAnalysisResult() throws ParseException {
+        public AnalysisResult getAnalysisResult() throws ParseException {
             if (!valid) {
                 throw new ParseException();
             }
@@ -122,7 +123,7 @@ public class KotlinParser extends Parser {
         @Override
         public List<? extends Error> getDiagnostics() {
             List<Error> errors = Lists.newArrayList();
-            for (Diagnostic diagnostic : analysisResult.getAnalysisResult().
+            for (Diagnostic diagnostic : analysisResult.
                     getBindingContext().getDiagnostics().all()) {
                 if (diagnostic.getPsiFile().getVirtualFile().getPath().equals(file.getPath())) {
                     KotlinError error = new KotlinError(diagnostic, file);
