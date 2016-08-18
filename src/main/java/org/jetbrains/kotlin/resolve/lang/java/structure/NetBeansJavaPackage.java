@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaElement;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -39,15 +40,15 @@ import org.netbeans.api.project.Project;
  */
 public class NetBeansJavaPackage implements JavaElement, JavaPackage{
     
-    private final List<PackageElement> packages = Lists.newArrayList();
+    private final List<ElementHandle<PackageElement>> packages = Lists.newArrayList();
     private final Project kotlinProject;
     
-    public NetBeansJavaPackage(List<PackageElement> packages, Project project){
+    public NetBeansJavaPackage(List<ElementHandle<PackageElement>> packages, Project project){
         this.packages.addAll(packages);
         this.kotlinProject = project; 
     }
     
-    public NetBeansJavaPackage(PackageElement pack, Project project){
+    public NetBeansJavaPackage(ElementHandle<PackageElement> pack, Project project){
         this(Collections.singletonList(pack), project);
     }
 

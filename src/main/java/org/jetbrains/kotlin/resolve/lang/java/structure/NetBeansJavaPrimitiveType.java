@@ -21,14 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaPrimitiveType extends NetBeansJavaType<TypeMirror> implements JavaPrimitiveType {
+public class NetBeansJavaPrimitiveType extends NetBeansJavaType<TypeMirrorHandle<? extends TypeMirror>> implements JavaPrimitiveType {
     
-    public NetBeansJavaPrimitiveType(TypeMirror typeBinding){
+    public NetBeansJavaPrimitiveType(TypeMirrorHandle typeBinding){
         super(typeBinding);
     }
     

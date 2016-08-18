@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -54,42 +56,42 @@ public class NetBeansJavaElementFactory {
             }
         };
         
-        private static final Factory<TypeMirror, JavaType> TYPES = 
-                new Factory<TypeMirror, JavaType>() {
+        private static final Factory<TypeMirrorHandle, JavaType> TYPES = 
+                new Factory<TypeMirrorHandle, JavaType>() {
             @Override
-            public JavaType create(TypeMirror binding) {
+            public JavaType create(TypeMirrorHandle binding) {
                 return NetBeansJavaType.create(binding);
             }
         };
         
-        private static final Factory<TypeMirror, JavaClassifierType> CLASSIFIER_TYPES =
-                new Factory<TypeMirror, JavaClassifierType>() {
+        private static final Factory<TypeMirrorHandle, JavaClassifierType> CLASSIFIER_TYPES =
+                new Factory<TypeMirrorHandle, JavaClassifierType>() {
             @Override
-            public JavaClassifierType create(TypeMirror binding) {
+            public JavaClassifierType create(TypeMirrorHandle binding) {
                 return new NetBeansJavaClassifierType(binding);
             }
         };
         
-        private static final Factory<ExecutableElement, JavaMethod> METHODS =
-                new Factory<ExecutableElement, JavaMethod>() {
+        private static final Factory<ElementHandle<ExecutableElement>, JavaMethod> METHODS =
+                new Factory<ElementHandle<ExecutableElement>, JavaMethod>() {
             @Override
-            public JavaMethod create(ExecutableElement binding) {
+            public JavaMethod create(ElementHandle<ExecutableElement> binding) {
                 return new NetBeansJavaMethod(binding);
             }
         };
         
-        private static final Factory<VariableElement, JavaField> FIELDS =
-                new Factory<VariableElement, JavaField>() {
+        private static final Factory<ElementHandle<VariableElement>, JavaField> FIELDS =
+                new Factory<ElementHandle<VariableElement>, JavaField>() {
             @Override
-            public JavaField create(VariableElement binding) {
+            public JavaField create(ElementHandle<VariableElement> binding) {
                 return new NetBeansJavaField(binding);
             }
         };
         
-        private static final Factory<TypeParameterElement, JavaTypeParameter> TYPE_PARAMETERS =
-                new Factory<TypeParameterElement, JavaTypeParameter>() {
+        private static final Factory<ElementHandle<TypeParameterElement>, JavaTypeParameter> TYPE_PARAMETERS =
+                new Factory<ElementHandle<TypeParameterElement>, JavaTypeParameter>() {
             @Override
-            public JavaTypeParameter create(TypeParameterElement binding) {
+            public JavaTypeParameter create(ElementHandle<TypeParameterElement> binding) {
                 return new NetBeansJavaTypeParameter(binding);
             }
         };
@@ -115,27 +117,27 @@ public class NetBeansJavaElementFactory {
     }
     
     @NotNull
-    public static List<JavaType> types(@NotNull TypeMirror[] types) {
+    public static List<JavaType> types(@NotNull TypeMirrorHandle[] types) {
         return convert(types, Factories.TYPES);
     }
     
     @NotNull
-    public static List<JavaClassifierType> classifierTypes(@NotNull TypeMirror[] classTypes){
+    public static List<JavaClassifierType> classifierTypes(@NotNull TypeMirrorHandle[] classTypes){
         return convert(classTypes, Factories.CLASSIFIER_TYPES);
     }
     
     @NotNull
-    public static List<JavaMethod> methods(@NotNull ExecutableElement[] methods){
+    public static List<JavaMethod> methods(@NotNull ElementHandle<ExecutableElement>[] methods){
         return convert(methods, Factories.METHODS);
     }
     
     @NotNull
-    public static List<JavaField> fields(@NotNull VariableElement[] variables){
+    public static List<JavaField> fields(@NotNull ElementHandle<VariableElement>[] variables){
         return convert(variables, Factories.FIELDS);
     }
     
     @NotNull
-    public static List<JavaTypeParameter> typeParameters(@NotNull TypeParameterElement[] typeParameters){
+    public static List<JavaTypeParameter> typeParameters(@NotNull ElementHandle<TypeParameterElement>[] typeParameters){
         return convert(typeParameters, Factories.TYPE_PARAMETERS);
     }
     

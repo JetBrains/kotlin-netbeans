@@ -30,19 +30,24 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
 import org.jetbrains.kotlin.name.FqName;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public abstract class NetBeansJavaClassifier<T extends Element> extends
+public abstract class NetBeansJavaClassifier<T extends ElementHandle<? extends Element>> extends
         NetBeansJavaElement<T> implements JavaClassifier, JavaAnnotationOwner {
     
     public NetBeansJavaClassifier(T javaType) {
         super(javaType);
     }
     
-    public static JavaClassifier create(Element element){
+    public NetBeansJavaClassifier(Element element) {
+        super(element);
+    }
+    
+    public static JavaClassifier create(ElementHandle handle){
         if (element.asType().getKind() == TypeKind.TYPEVAR){
             return new NetBeansJavaTypeParameter((TypeParameterElement) element);
         }
@@ -58,7 +63,8 @@ public abstract class NetBeansJavaClassifier<T extends Element> extends
     @Override
     public Collection<JavaAnnotation> getAnnotations(){
         List<JavaAnnotation> annotations = Lists.newArrayList();
-        for ( AnnotationMirror annotation : getBinding().getAnnotationMirrors()){
+        for ( AnnotationMirror annotation : NetBeansJavaProjectElementUtils.
+                getAnnotationMirrors(getBinding())){
             annotations.add(new NetBeansJavaAnnotation(annotation));
         }
         return annotations;
@@ -66,7 +72,8 @@ public abstract class NetBeansJavaClassifier<T extends Element> extends
     
     @Override 
     public JavaAnnotation findAnnotation(FqName fqName){
-        return NetBeansJavaElementUtil.findAnnotation(getBinding().getAnnotationMirrors(), fqName);
+        return NetBeansJavaElementUtil.findAnnotation(NetBeansJavaProjectElementUtils.
+                getAnnotationMirrors(getBinding()), fqName);
     }
     
     @Override

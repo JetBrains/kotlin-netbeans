@@ -25,12 +25,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier<TypeParameterElement> implements JavaTypeParameter {
+public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier<ElementHandle<TypeParameterElement>> implements JavaTypeParameter {
     
     public NetBeansJavaTypeParameter(TypeParameterElement binding){
         super(binding);
@@ -38,15 +40,15 @@ public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier<TypeParame
 
     @Override
     public Name getName() {
-        return SpecialNames.safeIdentifier(getBinding().getSimpleName().toString());
+        return SpecialNames.safeIdentifier(getElement().getSimpleName().toString());
     }
 
     @Override
     public Collection<JavaClassifierType> getUpperBounds() {
         List<JavaClassifierType> bounds = Lists.newArrayList();
         
-        for (TypeMirror bound : getBinding().getBounds()){
-            bounds.add(new NetBeansJavaClassifierType(bound));
+        for (TypeMirror bound : ((TypeParameterElement) getElement()).getBounds()){
+            bounds.add(new NetBeansJavaClassifierType(TypeMirrorHandle.create(bound)));
         }
         
         return bounds;

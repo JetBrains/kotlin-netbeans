@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaMethod extends NetBeansJavaMember<ExecutableElement> implements JavaMethod{
-    public NetBeansJavaMethod(ExecutableElement method){
+public class NetBeansJavaMethod extends NetBeansJavaMember<ElementHandle<ExecutableElement>> implements JavaMethod{
+    public NetBeansJavaMethod(ElementHandle<ExecutableElement> method){
         super(method);
     }
 

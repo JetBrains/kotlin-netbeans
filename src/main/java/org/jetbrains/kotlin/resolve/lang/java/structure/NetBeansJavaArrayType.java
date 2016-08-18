@@ -20,14 +20,15 @@ import javax.lang.model.type.ArrayType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaArrayType extends NetBeansJavaType<ArrayType> implements JavaArrayType {
+public class NetBeansJavaArrayType extends NetBeansJavaType<TypeMirrorHandle<ArrayType>> implements JavaArrayType {
     
-    public NetBeansJavaArrayType(@NotNull ArrayType typeBinding){
+    public NetBeansJavaArrayType(@NotNull TypeMirrorHandle<ArrayType> typeBinding){
         super(typeBinding);
     }
     

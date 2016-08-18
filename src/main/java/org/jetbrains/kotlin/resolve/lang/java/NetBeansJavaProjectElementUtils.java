@@ -33,6 +33,10 @@ import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.AnnotationMirrorsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleInstanceOfTypeElementChecker;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosedElementsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosingElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ModifiersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.SimpleNameSearcher;
@@ -92,19 +96,23 @@ public class NetBeansJavaProjectElementUtils {
         }
     }
     
-    public static List<? extends AnnotationMirror> getAnnotationMirrors(ElementHandle<? extends Element> handle) {
-        Project project = getProject(handle);
-        if (project == null) {
-            return Collections.emptyList();
-        }
-        checkProject(project);
-        
-        AnnotationMirrorsSearcher searcher = new AnnotationMirrorsSearcher(handle);
+    private static void executeSearcher(CancellableTask<CompilationController> searcher, Project project) {
         try {
             JAVA_SOURCE.get(project).runUserActionTask(searcher, true);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+    
+    public static List<? extends AnnotationMirror> getAnnotationMirrors(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return Collections.emptyList();
+        }
+        
+        checkProject(project);
+        AnnotationMirrorsSearcher searcher = new AnnotationMirrorsSearcher(handle);
+        executeSearcher(searcher, project);
         
         return searcher.getAnnotationMirrors();
     }
@@ -114,14 +122,10 @@ public class NetBeansJavaProjectElementUtils {
         if (project == null) {
             return Collections.emptySet();
         }
-        checkProject(project);
         
+        checkProject(project);
         ModifiersSearcher searcher = new ModifiersSearcher(handle);
-        try {
-            JAVA_SOURCE.get(project).runUserActionTask(searcher, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        executeSearcher(searcher, project);
         
         return searcher.getModifiers();
     }
@@ -131,26 +135,71 @@ public class NetBeansJavaProjectElementUtils {
         if (project == null) {
             return null;
         }
-        checkProject(project);
         
+        checkProject(project);
         SimpleNameSearcher searcher = new SimpleNameSearcher(handle);
-        try {
-            JAVA_SOURCE.get(project).runUserActionTask(searcher, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        executeSearcher(searcher, project);
         
         return searcher.getSimpleName();
+    }
+    
+    public static List<? extends Element> getEnclosedElements(ElementHandle<TypeElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        EnclosedElementsSearcher searcher = new EnclosedElementsSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getEnclosedElements();
+    }
+    
+    public static Element getEnclosingElement(ElementHandle<TypeElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        EnclosingElementSearcher searcher = new EnclosingElementSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getEnclosingElement();
+    }
+    
+    public static TypeElement getElement(ElementHandle<TypeElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        ElementSearcher searcher = new ElementSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getElement();
+    }
+    
+    public static boolean instanceofTypeElement(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return false;
+        }
+        
+        checkProject(project);
+        ElementHandleInstanceOfTypeElementChecker checker = 
+                new ElementHandleInstanceOfTypeElementChecker(handle);
+        executeSearcher(checker, project);
+        
+        return checker.getInstanceof();
     }
     
     public static TypeElement findTypeElement(Project kotlinProject, String fqName){
         checkProject(kotlinProject);
         TypeElementSearcher searcher = new TypeElementSearcher(fqName);
-        try {
-            JAVA_SOURCE.get(kotlinProject).runUserActionTask(searcher, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        executeSearcher(searcher, kotlinProject);
         
         return searcher.getElement();
     }
@@ -158,11 +207,7 @@ public class NetBeansJavaProjectElementUtils {
     public static PackageElement findPackageElement(Project kotlinProject, String fqName){
         checkProject(kotlinProject);
         PackageElementSearcher searcher = new PackageElementSearcher(fqName);
-        try {
-            JAVA_SOURCE.get(kotlinProject).runUserActionTask(searcher, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        executeSearcher(searcher, kotlinProject);
         
         return searcher.getElement();
     }
@@ -209,33 +254,6 @@ public class NetBeansJavaProjectElementUtils {
         return null;
     }
     
-    public static Project getProject(Element element){
-        Project[] projects = OpenProjects.getDefault().getOpenProjects();
-        
-        if (projects.length == 1){
-            return projects[0];
-        }
-        
-        for (Project project : projects){
-            if (!KotlinProjectHelper.INSTANCE.checkProject(project)){
-                continue;
-            }
-            
-            ClasspathInfo cpInfo = CLASSPATH_INFO.get(project);
-            if (cpInfo == null) {
-                return null;
-            }
-            
-            FileObject file = SourceUtils.getFile(ElementHandle.create(element), cpInfo);
-
-            if (file != null){
-                return project;
-            }
-            
-        }
-        return null;
-    }
-    
     public static boolean isDeprecated(final ElementHandle handle){
         Project kotlinProject = NetBeansJavaProjectElementUtils.getProject(handle);
         
@@ -257,32 +275,6 @@ public class NetBeansJavaProjectElementUtils {
                     if (element != null) {
                         NetBeansJavaProjectElementUtils.isDeprecated = info.getElements().isDeprecated(element);
                     }
-                }
-            }, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        
-        return isDeprecated;
-    }
-    
-    public static boolean isDeprecated(final Element element){
-        Project kotlinProject = NetBeansJavaProjectElementUtils.getProject(element);
-        
-        if (kotlinProject == null){
-            return false;
-        }
-        
-        checkProject(kotlinProject);
-        try {
-            JAVA_SOURCE.get(kotlinProject).runUserActionTask(new CancellableTask<CompilationController>(){
-                @Override
-                public void cancel() {
-                }
-                
-                @Override
-                public void run(CompilationController info) throws Exception {
-                    NetBeansJavaProjectElementUtils.isDeprecated = info.getElements().isDeprecated(element);
                 }
             }, true);
         } catch (IOException ex) {

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 /**
@@ -194,6 +195,29 @@ public class NetBeansJavaElementUtil {
         }
         
         return allSuperTypes.toArray(new TypeMirror[allSuperTypes.size()]);
+    }
+    
+    public static TypeMirrorHandle[] getSuperTypesWithObject(@NotNull ElementHandle<TypeElement> handle){
+        List<TypeMirrorHandle> allSuperTypes = Lists.newArrayList();
+        TypeElement typeBinding = NetBeansJavaProjectElementUtils.getElement(handle);
+        
+        boolean javaLangObjectInSuperTypes = false;
+        for (TypeMirror superType : getSuperTypes(typeBinding)){
+            
+            if (superType.toString().equals(CommonClassNames.JAVA_LANG_OBJECT)){
+                javaLangObjectInSuperTypes = true;
+            }
+            
+            allSuperTypes.add(TypeMirrorHandle.create(superType));
+            
+        }
+        
+        if (!javaLangObjectInSuperTypes && !typeBinding.toString().
+                equals(CommonClassNames.JAVA_LANG_OBJECT)){
+            allSuperTypes.add(TypeMirrorHandle.create(getJavaLangObjectBinding()));
+        }
+        
+        return allSuperTypes.toArray(new TypeMirrorHandle[allSuperTypes.size()]);
     }
     
     @NotNull

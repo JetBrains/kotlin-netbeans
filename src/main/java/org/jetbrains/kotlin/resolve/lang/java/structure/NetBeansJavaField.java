@@ -22,14 +22,15 @@ import javax.lang.model.element.VariableElement;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaField extends NetBeansJavaMember<VariableElement> implements JavaField {
+public class NetBeansJavaField extends NetBeansJavaMember<ElementHandle<VariableElement>> implements JavaField {
     
-    public NetBeansJavaField(VariableElement javaField){
+    public NetBeansJavaField(ElementHandle<VariableElement> javaField){
         super(javaField);
     }
 

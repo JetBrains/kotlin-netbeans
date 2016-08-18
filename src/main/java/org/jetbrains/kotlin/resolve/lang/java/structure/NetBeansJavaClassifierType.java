@@ -30,14 +30,15 @@ import javax.lang.model.type.TypeVariable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaClassifierType extends NetBeansJavaType<TypeMirror> implements JavaClassifierType {
+public class NetBeansJavaClassifierType extends NetBeansJavaType<TypeMirrorHandle<? extends TypeMirror>> implements JavaClassifierType {
     
-    public NetBeansJavaClassifierType(TypeMirror typeBinding){
+    public NetBeansJavaClassifierType(TypeMirrorHandle typeBinding){
         super(typeBinding);
     }
 

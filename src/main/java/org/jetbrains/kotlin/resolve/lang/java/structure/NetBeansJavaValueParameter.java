@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElement> implements JavaValueParameter{
+public class NetBeansJavaValueParameter extends NetBeansJavaElement<ElementHandle<VariableElement>> implements JavaValueParameter{
 
     private final String name;
     private final boolean isVararg;
@@ -50,7 +52,7 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElem
 
     @Override
     public JavaType getType() {
-        return NetBeansJavaType.create(getBinding().asType());
+        return NetBeansJavaType.create(TypeMirrorHandle.create(getElement().asType()));
     }
 
     @Override
@@ -60,13 +62,13 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElem
 
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        List<? extends AnnotationMirror> annotations = getBinding().getAnnotationMirrors();
+        List<? extends AnnotationMirror> annotations = getElement().getAnnotationMirrors();
         return annotations(annotations.toArray(new AnnotationMirror[annotations.size()]));
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqName) {
-        return NetBeansJavaElementUtil.findAnnotation(getBinding().getAnnotationMirrors(), fqName);
+        return NetBeansJavaElementUtil.findAnnotation(getElement().getAnnotationMirrors(), fqName);
     }
 
     @Override

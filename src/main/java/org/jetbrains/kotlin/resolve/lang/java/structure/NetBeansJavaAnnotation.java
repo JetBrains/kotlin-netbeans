@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -47,7 +48,7 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement{
     
     protected NetBeansJavaAnnotation(AnnotationMirror javaAnnotation){
         this.binding = javaAnnotation;
-        this.kotlinProject = NetBeansJavaProjectElementUtils.getProject(binding.getAnnotationType().asElement());
+        this.kotlinProject = NetBeansJavaProjectElementUtils.getProject(ElementHandle.create(binding.getAnnotationType().asElement()));
     }
     
     public JavaAnnotationArgument findArgument(@NotNull Name name) {
@@ -87,7 +88,7 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement{
     public JavaClass resolve() {
         DeclaredType annotationType = getBinding().getAnnotationType();
         return annotationType != null ? 
-                new NetBeansJavaClass((TypeElement) annotationType.asElement()) : null;
+                new NetBeansJavaClass(ElementHandle.create((TypeElement) annotationType.asElement())) : null;
     }
     
     @NotNull

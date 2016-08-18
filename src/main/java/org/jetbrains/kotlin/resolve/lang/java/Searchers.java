@@ -18,6 +18,7 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -169,4 +170,114 @@ public class Searchers {
             return simpleName;
         }
     }
+    
+    public static class EnclosedElementsSearcher implements CancellableTask<CompilationController> {
+
+        private List<? extends Element> elements = Collections.emptyList();
+        private final ElementHandle<TypeElement> handle;
+
+        public EnclosedElementsSearcher(ElementHandle<TypeElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = handle.resolve(info);
+            if (element != null) {
+                elements = element.getEnclosedElements();
+                
+            }
+        }
+
+        public List<? extends Element> getEnclosedElements() {
+            return elements;
+        }
+    }
+    
+    public static class EnclosingElementSearcher implements CancellableTask<CompilationController> {
+
+        private Element elem = null;
+        private final ElementHandle<TypeElement> handle;
+
+        public EnclosingElementSearcher(ElementHandle<TypeElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = handle.resolve(info);
+            if (element != null) {
+                elem = element.getEnclosingElement();
+                
+            }
+        }
+
+        public Element getEnclosingElement() {
+            return elem;
+        }
+    }
+    
+    public static class ElementSearcher implements CancellableTask<CompilationController> {
+
+        private TypeElement elem = null;
+        private final ElementHandle<TypeElement> handle;
+
+        public ElementSearcher(ElementHandle<TypeElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            elem = handle.resolve(info);
+        }
+
+        public TypeElement getElement() {
+            return elem;
+        }
+    }
+    
+    public static class ElementHandleInstanceOfTypeElementChecker implements CancellableTask<CompilationController> {
+
+        private boolean isInstanceof = false;
+        private final ElementHandle<? extends Element> handle;
+
+        public ElementHandleInstanceOfTypeElementChecker(ElementHandle<? extends Element> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            Element element = handle.resolve(info);
+            if (element != null) {
+                if (element instanceof TypeElement) {
+                    isInstanceof = true;
+                }
+            }
+        }
+
+        public boolean getInstanceof() {
+            return isInstanceof;
+        }
+    }
+    
 }

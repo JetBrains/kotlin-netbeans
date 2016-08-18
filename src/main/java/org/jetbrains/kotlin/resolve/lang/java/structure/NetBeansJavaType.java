@@ -30,12 +30,13 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.name.FqName;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaType<T extends TypeMirror> implements JavaType, JavaAnnotationOwner {
+public class NetBeansJavaType<T extends TypeMirrorHandle<? extends TypeMirror>> implements JavaType, JavaAnnotationOwner {
 
     private final T binding;
     
@@ -53,7 +54,7 @@ public class NetBeansJavaType<T extends TypeMirror> implements JavaType, JavaAnn
         return obj instanceof NetBeansJavaType && getBinding().equals(((NetBeansJavaType<?>) obj).getBinding());
     }
     
-    public static NetBeansJavaType<?> create(@NotNull TypeMirror typeBinding){
+    public static NetBeansJavaType<?> create(@NotNull TypeMirrorHandle typeBinding){
         if (typeBinding.getKind().isPrimitive() || typeBinding.toString().equals("void")){
             return new NetBeansJavaPrimitiveType(typeBinding);
         } else if (typeBinding.getKind() == TypeKind.ARRAY){

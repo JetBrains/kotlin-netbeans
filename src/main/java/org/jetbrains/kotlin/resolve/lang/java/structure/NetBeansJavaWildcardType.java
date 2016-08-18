@@ -21,14 +21,15 @@ import javax.lang.model.type.WildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaWildcardType extends NetBeansJavaType<WildcardType> implements JavaWildcardType {
+public class NetBeansJavaWildcardType extends NetBeansJavaType<TypeMirrorHandle<WildcardType>> implements JavaWildcardType {
     
-    public NetBeansJavaWildcardType(@NotNull WildcardType typeBinding){
+    public NetBeansJavaWildcardType(@NotNull TypeMirrorHandle<WildcardType> typeBinding){
         super(typeBinding);
     }
 

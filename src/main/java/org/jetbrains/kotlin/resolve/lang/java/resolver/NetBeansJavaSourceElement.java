@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.SourceFile;
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
@@ -49,7 +51,14 @@ public class NetBeansJavaSourceElement implements JavaSourceElement {
     
     @NotNull
     public Element getElementBinding() {
-        return ((NetBeansJavaElement<?>) javaElement).getBinding();
+        ElementHandle handle = ((NetBeansJavaElement<?>) javaElement).getBinding();
+        Element binding;
+        if (handle == null) {
+            binding = ((NetBeansJavaElement<?>) javaElement).getElement();
+        } else {
+            binding = NetBeansJavaProjectElementUtils.getElement(handle);
+        }
+        return binding;
     }
     
 }
