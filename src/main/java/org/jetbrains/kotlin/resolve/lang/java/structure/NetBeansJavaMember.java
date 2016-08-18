@@ -30,12 +30,13 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public abstract class NetBeansJavaMember<T extends Element> 
+public abstract class NetBeansJavaMember<T extends ElementHandle<? extends Element>> 
         extends NetBeansJavaElement<T> implements JavaMember {
     
     protected NetBeansJavaMember(@NotNull T javaElement){
@@ -45,29 +46,32 @@ public abstract class NetBeansJavaMember<T extends Element>
     @Override
     @NotNull
     public Collection<JavaAnnotation> getAnnotations(){
-        List<? extends AnnotationMirror> annotations = getBinding().getAnnotationMirrors();
+        List<? extends AnnotationMirror> annotations = 
+                NetBeansJavaProjectElementUtils.getAnnotationMirrors(getBinding());
         return annotations(annotations.toArray(new AnnotationMirror[annotations.size()]));
     }
     
     @Override
     @Nullable
     public JavaAnnotation findAnnotation(@NotNull FqName fqName){
-        return NetBeansJavaElementUtil.findAnnotation(getBinding().getAnnotationMirrors(), fqName);
+        List<? extends AnnotationMirror> annotations = 
+                NetBeansJavaProjectElementUtils.getAnnotationMirrors(getBinding());
+        return NetBeansJavaElementUtil.findAnnotation(annotations, fqName);
     }
     
     @Override
     public boolean isAbstract(){
-        return NetBeansJavaElementUtil.isAbstract(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isAbstract(NetBeansJavaProjectElementUtils.getModifiers(getBinding()));
     }
     
     @Override
     public boolean isStatic(){
-        return NetBeansJavaElementUtil.isStatic(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isStatic(NetBeansJavaProjectElementUtils.getModifiers(getBinding()));
     }
     
     @Override
     public boolean isFinal(){
-        return NetBeansJavaElementUtil.isFinal(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isFinal(NetBeansJavaProjectElementUtils.getModifiers(getBinding()));
     }
     
     @Override
@@ -79,7 +83,8 @@ public abstract class NetBeansJavaMember<T extends Element>
     @Override
     @NotNull
     public Name getName(){
-        return Name.identifier(getBinding().getSimpleName().toString());
+        return Name.identifier(NetBeansJavaProjectElementUtils.
+                getSimpleName(getBinding()).toString());
     }
     
     @Override 

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 /**
@@ -102,6 +103,21 @@ public class NetBeansJavaElementUtil {
             }
         }
         return false;
+    }
+    
+    @NotNull
+    static Visibility getVisibility(@NotNull ElementHandle member){
+        Set<Modifier> modifiers = NetBeansJavaProjectElementUtils.getModifiers(member);
+        if (isPublic(modifiers)){
+            return Visibilities.PUBLIC;
+        } else if (isPrivate(modifiers)){
+            return Visibilities.PRIVATE;
+        } else if (isProtected(modifiers)){
+            return isStatic(modifiers) ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY :
+                    JavaVisibilities.PROTECTED_AND_PACKAGE;
+        }
+        
+        return JavaVisibilities.PACKAGE_VISIBILITY;
     }
     
     @NotNull

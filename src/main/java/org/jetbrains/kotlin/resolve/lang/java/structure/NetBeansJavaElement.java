@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.resolve.lang.java.structure;
 import javax.lang.model.element.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
+import org.netbeans.api.java.source.ElementHandle;
 /**
  *
  * @author Александр
  */
-public abstract class NetBeansJavaElement<T extends Element> implements JavaElement {
+public abstract class NetBeansJavaElement<T extends ElementHandle<? extends Element>> implements JavaElement {
     
     private final T binding;
     

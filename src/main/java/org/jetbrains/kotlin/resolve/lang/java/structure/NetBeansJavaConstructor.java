@@ -27,10 +27,11 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.netbeans.api.java.source.ElementHandle;
 
-public class NetBeansJavaConstructor extends NetBeansJavaMember<ExecutableElement> implements JavaConstructor {
+public class NetBeansJavaConstructor extends NetBeansJavaMember<ElementHandle<ExecutableElement>> implements JavaConstructor {
 
-    public NetBeansJavaConstructor(@NotNull ExecutableElement methodBinding){
+    public NetBeansJavaConstructor(@NotNull ElementHandle<ExecutableElement> methodBinding){
         super(methodBinding);
     }
     
