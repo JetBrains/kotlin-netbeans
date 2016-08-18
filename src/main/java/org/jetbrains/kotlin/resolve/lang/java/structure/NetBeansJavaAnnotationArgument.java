@@ -23,6 +23,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
@@ -35,7 +36,8 @@ public class NetBeansJavaAnnotationArgument<T extends ElementHandle<? extends El
 
     @Override
     public Name getName() {
-        return Name.identifier(getBinding().getSimpleName().toString());
+        return Name.identifier(NetBeansJavaProjectElementUtils.
+                getSimpleName(getBinding()).toString());
     }
     
     public static JavaAnnotationArgument create(Object value, Name name, Project project){

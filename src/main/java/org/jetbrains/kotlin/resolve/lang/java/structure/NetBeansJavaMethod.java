@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
 
 /**
@@ -46,23 +47,26 @@ public class NetBeansJavaMethod extends NetBeansJavaMember<ElementHandle<Executa
 
     @Override
     public boolean getHasAnnotationParameterDefaultValue() {
-        return getBinding().getDefaultValue() != null;
+        return NetBeansJavaProjectElementUtils.getDefaultValue(getBinding()) != null;
     }
 
     @Override
     @NotNull
     public JavaType getReturnType() {
-        return NetBeansJavaType.create(getBinding().getReturnType());
+        return NetBeansJavaType.create(NetBeansJavaProjectElementUtils.getReturnType(getBinding()));
     }
 
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return new NetBeansJavaClass(ElementHandle.create(
+                (TypeElement) NetBeansJavaProjectElementUtils.
+                        getEnclosingElement(getBinding())));
     }
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> valueParameters = getBinding().getTypeParameters();
+        List<? extends TypeParameterElement> valueParameters = 
+                NetBeansJavaProjectElementUtils.getTypeParametersForExecutable(getBinding());
         return typeParameters(valueParameters.toArray(new TypeParameterElement[valueParameters.size()]));
     }
 }

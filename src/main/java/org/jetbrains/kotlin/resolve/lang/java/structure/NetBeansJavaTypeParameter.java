@@ -48,7 +48,7 @@ public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier<ElementHan
         List<JavaClassifierType> bounds = Lists.newArrayList();
         
         for (TypeMirror bound : ((TypeParameterElement) getElement()).getBounds()){
-            bounds.add(new NetBeansJavaClassifierType(TypeMirrorHandle.create(bound)));
+            bounds.add(new NetBeansJavaClassifierType(bound));
         }
         
         return bounds;

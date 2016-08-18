@@ -25,22 +25,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeMirror;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.AnnotationMirrorsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.DefaultValueSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleInstanceOfTypeElementChecker;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosedElementsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosingElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ModifiersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageQualifiedNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ReturnTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.SimpleNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeParametersForExecutableSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeParametersSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.CancellableTask;
 import org.netbeans.api.java.source.ClassIndex;
@@ -49,6 +59,7 @@ import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.SourceUtils;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.java.source.ui.ElementOpen;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -143,7 +154,7 @@ public class NetBeansJavaProjectElementUtils {
         return searcher.getSimpleName();
     }
     
-    public static List<? extends Element> getEnclosedElements(ElementHandle<TypeElement> handle) {
+    public static List<? extends Element> getEnclosedElements(ElementHandle<? extends Element> handle) {
         Project project = getProject(handle);
         if (project == null) {
             return null;
@@ -156,7 +167,20 @@ public class NetBeansJavaProjectElementUtils {
         return searcher.getEnclosedElements();
     }
     
-    public static Element getEnclosingElement(ElementHandle<TypeElement> handle) {
+    public static String getPackageQualifiedName(ElementHandle<PackageElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        PackageQualifiedNameSearcher searcher = new PackageQualifiedNameSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getQualifiedName();
+    }
+    
+    public static Element getEnclosingElement(ElementHandle<? extends Element> handle) {
         Project project = getProject(handle);
         if (project == null) {
             return null;
@@ -169,7 +193,7 @@ public class NetBeansJavaProjectElementUtils {
         return searcher.getEnclosingElement();
     }
     
-    public static TypeElement getElement(ElementHandle<TypeElement> handle) {
+    public static Element getElement(ElementHandle<? extends Element> handle) {
         Project project = getProject(handle);
         if (project == null) {
             return null;
@@ -180,6 +204,58 @@ public class NetBeansJavaProjectElementUtils {
         executeSearcher(searcher, project);
         
         return searcher.getElement();
+    }
+    
+    public static List<? extends TypeParameterElement> getTypeParameters(ElementHandle<TypeElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        TypeParametersSearcher searcher = new TypeParametersSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getTypeParameters();
+    }
+    
+    public static List<? extends TypeParameterElement> getTypeParametersForExecutable(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        TypeParametersForExecutableSearcher searcher = new TypeParametersForExecutableSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getTypeParameters();
+    }
+    
+    public static TypeMirror getReturnType(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        ReturnTypeSearcher searcher = new ReturnTypeSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getReturnType();
+    }
+    
+    public static AnnotationValue getDefaultValue(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        DefaultValueSearcher searcher = new DefaultValueSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getDefaultValue();
     }
     
     public static boolean instanceofTypeElement(ElementHandle<? extends Element> handle) {

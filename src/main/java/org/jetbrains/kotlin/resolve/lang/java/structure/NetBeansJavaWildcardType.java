@@ -27,9 +27,9 @@ import org.netbeans.api.java.source.TypeMirrorHandle;
  *
  * @author Александр
  */
-public class NetBeansJavaWildcardType extends NetBeansJavaType<TypeMirrorHandle<WildcardType>> implements JavaWildcardType {
+public class NetBeansJavaWildcardType extends NetBeansJavaType<WildcardType> implements JavaWildcardType {
     
-    public NetBeansJavaWildcardType(@NotNull TypeMirrorHandle<WildcardType> typeBinding){
+    public NetBeansJavaWildcardType(@NotNull WildcardType typeBinding){
         super(typeBinding);
     }
 

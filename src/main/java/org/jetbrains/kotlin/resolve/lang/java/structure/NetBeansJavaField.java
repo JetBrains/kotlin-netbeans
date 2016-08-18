@@ -16,12 +16,14 @@
  *******************************************************************************/
 package org.jetbrains.kotlin.resolve.lang.java.structure;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
 
 /**
@@ -36,7 +38,9 @@ public class NetBeansJavaField extends NetBeansJavaMember<ElementHandle<Variable
 
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return new NetBeansJavaClass(ElementHandle.create
+            ((TypeElement) NetBeansJavaProjectElementUtils.
+                    getEnclosingElement(getBinding())));
     }
 
     @Override
@@ -46,6 +50,7 @@ public class NetBeansJavaField extends NetBeansJavaMember<ElementHandle<Variable
 
     @Override
     public JavaType getType() {
-        return NetBeansJavaType.create(getBinding().asType());
+        Element elem = NetBeansJavaProjectElementUtils.getElement(getBinding());
+        return NetBeansJavaType.create(elem.asType());
     }
 }

@@ -56,18 +56,18 @@ public class NetBeansJavaElementFactory {
             }
         };
         
-        private static final Factory<TypeMirrorHandle, JavaType> TYPES = 
-                new Factory<TypeMirrorHandle, JavaType>() {
+        private static final Factory<TypeMirror, JavaType> TYPES = 
+                new Factory<TypeMirror, JavaType>() {
             @Override
-            public JavaType create(TypeMirrorHandle binding) {
+            public JavaType create(TypeMirror binding) {
                 return NetBeansJavaType.create(binding);
             }
         };
         
-        private static final Factory<TypeMirrorHandle, JavaClassifierType> CLASSIFIER_TYPES =
-                new Factory<TypeMirrorHandle, JavaClassifierType>() {
+        private static final Factory<TypeMirror, JavaClassifierType> CLASSIFIER_TYPES =
+                new Factory<TypeMirror, JavaClassifierType>() {
             @Override
-            public JavaClassifierType create(TypeMirrorHandle binding) {
+            public JavaClassifierType create(TypeMirror binding) {
                 return new NetBeansJavaClassifierType(binding);
             }
         };
@@ -88,10 +88,10 @@ public class NetBeansJavaElementFactory {
             }
         };
         
-        private static final Factory<ElementHandle<TypeParameterElement>, JavaTypeParameter> TYPE_PARAMETERS =
-                new Factory<ElementHandle<TypeParameterElement>, JavaTypeParameter>() {
+        private static final Factory<TypeParameterElement, JavaTypeParameter> TYPE_PARAMETERS =
+                new Factory<TypeParameterElement, JavaTypeParameter>() {
             @Override
-            public JavaTypeParameter create(ElementHandle<TypeParameterElement> binding) {
+            public JavaTypeParameter create(TypeParameterElement binding) {
                 return new NetBeansJavaTypeParameter(binding);
             }
         };
@@ -117,12 +117,12 @@ public class NetBeansJavaElementFactory {
     }
     
     @NotNull
-    public static List<JavaType> types(@NotNull TypeMirrorHandle[] types) {
+    public static List<JavaType> types(@NotNull TypeMirror[] types) {
         return convert(types, Factories.TYPES);
     }
     
     @NotNull
-    public static List<JavaClassifierType> classifierTypes(@NotNull TypeMirrorHandle[] classTypes){
+    public static List<JavaClassifierType> classifierTypes(@NotNull TypeMirror[] classTypes){
         return convert(classTypes, Factories.CLASSIFIER_TYPES);
     }
     
@@ -137,7 +137,7 @@ public class NetBeansJavaElementFactory {
     }
     
     @NotNull
-    public static List<JavaTypeParameter> typeParameters(@NotNull ElementHandle<TypeParameterElement>[] typeParameters){
+    public static List<JavaTypeParameter> typeParameters(@NotNull TypeParameterElement[] typeParameters){
         return convert(typeParameters, Factories.TYPE_PARAMETERS);
     }
     

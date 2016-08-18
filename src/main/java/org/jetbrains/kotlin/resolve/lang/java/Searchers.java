@@ -18,21 +18,27 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeMirror;
 import org.netbeans.api.java.source.CancellableTask;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -174,9 +180,9 @@ public class Searchers {
     public static class EnclosedElementsSearcher implements CancellableTask<CompilationController> {
 
         private List<? extends Element> elements = Collections.emptyList();
-        private final ElementHandle<TypeElement> handle;
+        private final ElementHandle<? extends Element> handle;
 
-        public EnclosedElementsSearcher(ElementHandle<TypeElement> handle) {
+        public EnclosedElementsSearcher(ElementHandle<? extends Element> handle) {
             this.handle = handle;
         }
 
@@ -187,7 +193,7 @@ public class Searchers {
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
-            TypeElement element = handle.resolve(info);
+            Element element = handle.resolve(info);
             if (element != null) {
                 elements = element.getEnclosedElements();
                 
@@ -199,12 +205,12 @@ public class Searchers {
         }
     }
     
-    public static class EnclosingElementSearcher implements CancellableTask<CompilationController> {
+    public static class PackageQualifiedNameSearcher implements CancellableTask<CompilationController> {
 
-        private Element elem = null;
-        private final ElementHandle<TypeElement> handle;
+        private String qName = null;
+        private final ElementHandle<PackageElement> handle;
 
-        public EnclosingElementSearcher(ElementHandle<TypeElement> handle) {
+        public PackageQualifiedNameSearcher(ElementHandle<PackageElement> handle) {
             this.handle = handle;
         }
 
@@ -215,7 +221,35 @@ public class Searchers {
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
-            TypeElement element = handle.resolve(info);
+            PackageElement element = handle.resolve(info);
+            if (element != null) {
+                qName = element.getQualifiedName().toString();
+                
+            }
+        }
+
+        public String getQualifiedName() {
+            return qName;
+        }
+    }
+    
+    public static class EnclosingElementSearcher implements CancellableTask<CompilationController> {
+
+        private Element elem = null;
+        private final ElementHandle<? extends Element> handle;
+
+        public EnclosingElementSearcher(ElementHandle<? extends Element> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            Element element = handle.resolve(info);
             if (element != null) {
                 elem = element.getEnclosingElement();
                 
@@ -229,10 +263,10 @@ public class Searchers {
     
     public static class ElementSearcher implements CancellableTask<CompilationController> {
 
-        private TypeElement elem = null;
-        private final ElementHandle<TypeElement> handle;
+        private Element elem = null;
+        private final ElementHandle<? extends Element> handle;
 
-        public ElementSearcher(ElementHandle<TypeElement> handle) {
+        public ElementSearcher(ElementHandle<? extends Element> handle) {
             this.handle = handle;
         }
 
@@ -246,8 +280,143 @@ public class Searchers {
             elem = handle.resolve(info);
         }
 
-        public TypeElement getElement() {
+        public Element getElement() {
             return elem;
+        }
+    }
+    
+    public static class TypeParametersSearcher implements CancellableTask<CompilationController> {
+
+        private List<? extends TypeParameterElement> typeParameters = Collections.emptyList();
+        private final ElementHandle<TypeElement> handle;
+
+        public TypeParametersSearcher(ElementHandle<TypeElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = handle.resolve(info);
+            if (element != null) {
+                typeParameters = element.getTypeParameters();
+            }
+        }
+
+        public List<? extends TypeParameterElement> getTypeParameters() {
+            return typeParameters;
+        }
+    }
+    
+    public static class TypeParametersForExecutableSearcher implements CancellableTask<CompilationController> {
+
+        private List<? extends TypeParameterElement> typeParameters = Collections.emptyList();
+        private final ElementHandle<ExecutableElement> handle;
+
+        public TypeParametersForExecutableSearcher(ElementHandle<ExecutableElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement element = handle.resolve(info);
+            if (element != null) {
+                typeParameters = element.getTypeParameters();
+            }
+        }
+
+        public List<? extends TypeParameterElement> getTypeParameters() {
+            return typeParameters;
+        }
+    }
+    
+    public static class ReturnTypeSearcher implements CancellableTask<CompilationController> {
+
+        private TypeMirror returnType = null;
+        private final ElementHandle<ExecutableElement> handle;
+
+        public ReturnTypeSearcher(ElementHandle<ExecutableElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement element = handle.resolve(info);
+            if (element != null) {
+                returnType = element.getReturnType();
+            }
+        }
+
+        public TypeMirror getReturnType() {
+            return returnType;
+        }
+    }
+    
+    public static class DefaultValueSearcher implements CancellableTask<CompilationController> {
+
+        private AnnotationValue value = null;
+        private final ElementHandle<ExecutableElement> handle;
+
+        public DefaultValueSearcher(ElementHandle<ExecutableElement> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement element = handle.resolve(info);
+            if (element != null) {
+                value = element.getDefaultValue();
+            }
+        }
+
+        public AnnotationValue getDefaultValue() {
+            return value;
+        }
+    }
+    
+    public static class ComponentTypeSearcher implements CancellableTask<CompilationController> {
+
+        private TypeMirrorHandle typeMirror = null;
+        private final TypeMirrorHandle<ArrayType> handle;
+
+        public ComponentTypeSearcher(TypeMirrorHandle<ArrayType> handle) {
+            this.handle = handle;
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ArrayType element = handle.resolve(info);
+            if (element != null) {
+                typeMirror = TypeMirrorHandle.create(element.getComponentType());
+            }
+        }
+
+        public TypeMirrorHandle getComponentType() {
+            return typeMirror;
         }
     }
     

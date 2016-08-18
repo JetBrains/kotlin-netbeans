@@ -27,9 +27,9 @@ import org.netbeans.api.java.source.TypeMirrorHandle;
  *
  * @author Александр
  */
-public class NetBeansJavaPrimitiveType extends NetBeansJavaType<TypeMirrorHandle<? extends TypeMirror>> implements JavaPrimitiveType {
+public class NetBeansJavaPrimitiveType extends NetBeansJavaType<TypeMirror> implements JavaPrimitiveType {
     
-    public NetBeansJavaPrimitiveType(TypeMirrorHandle typeBinding){
+    public NetBeansJavaPrimitiveType(TypeMirror typeBinding){
         super(typeBinding);
     }
     

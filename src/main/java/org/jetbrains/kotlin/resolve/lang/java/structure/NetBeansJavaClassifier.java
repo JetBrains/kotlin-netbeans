@@ -47,24 +47,39 @@ public abstract class NetBeansJavaClassifier<T extends ElementHandle<? extends E
         super(element);
     }
     
-    public static JavaClassifier create(ElementHandle handle){
+    public static JavaClassifier create(Element element){
         if (element.asType().getKind() == TypeKind.TYPEVAR){
             return new NetBeansJavaTypeParameter((TypeParameterElement) element);
         }
         
         if (element.getKind().isClass() || element.getKind().isInterface() 
                 || element.getKind() == ElementKind.ENUM){
-            return new NetBeansJavaClass((TypeElement) element);
+            return new NetBeansJavaClass(ElementHandle.create((TypeElement) element));
         }
         else
             throw new IllegalArgumentException("Element" + element.getSimpleName().toString() + "is not JavaClassifier");
     }
     
+    public static JavaClassifier create(ElementHandle element){
+        if (element.getKind().isClass() || element.getKind().isInterface() 
+                || element.getKind() == ElementKind.ENUM){
+            return new NetBeansJavaClass(element);
+        }
+        else
+            throw new IllegalArgumentException("Element" + element.toString() + "is not JavaClassifier");
+    }
+    
     @Override
     public Collection<JavaAnnotation> getAnnotations(){
         List<JavaAnnotation> annotations = Lists.newArrayList();
-        for ( AnnotationMirror annotation : NetBeansJavaProjectElementUtils.
-                getAnnotationMirrors(getBinding())){
+        List<? extends AnnotationMirror> mirrors;
+        if (getBinding() == null) {
+            mirrors = getElement().getAnnotationMirrors();
+        } else {
+            mirrors = NetBeansJavaProjectElementUtils.
+                getAnnotationMirrors(getBinding());
+        }
+        for ( AnnotationMirror annotation : mirrors){
             annotations.add(new NetBeansJavaAnnotation(annotation));
         }
         return annotations;
@@ -72,8 +87,14 @@ public abstract class NetBeansJavaClassifier<T extends ElementHandle<? extends E
     
     @Override 
     public JavaAnnotation findAnnotation(FqName fqName){
-        return NetBeansJavaElementUtil.findAnnotation(NetBeansJavaProjectElementUtils.
-                getAnnotationMirrors(getBinding()), fqName);
+        List<? extends AnnotationMirror> mirrors;
+        if (getBinding() == null) {
+            mirrors = getElement().getAnnotationMirrors();
+        } else {
+            mirrors = NetBeansJavaProjectElementUtils.
+                getAnnotationMirrors(getBinding());
+        }
+        return NetBeansJavaElementUtil.findAnnotation(mirrors, fqName);
     }
     
     @Override

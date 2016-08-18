@@ -197,9 +197,9 @@ public class NetBeansJavaElementUtil {
         return allSuperTypes.toArray(new TypeMirror[allSuperTypes.size()]);
     }
     
-    public static TypeMirrorHandle[] getSuperTypesWithObject(@NotNull ElementHandle<TypeElement> handle){
-        List<TypeMirrorHandle> allSuperTypes = Lists.newArrayList();
-        TypeElement typeBinding = NetBeansJavaProjectElementUtils.getElement(handle);
+    public static TypeMirror[] getSuperTypesWithObject(@NotNull ElementHandle<TypeElement> handle){
+        List<TypeMirror> allSuperTypes = Lists.newArrayList();
+        TypeElement typeBinding = (TypeElement) NetBeansJavaProjectElementUtils.getElement(handle);
         
         boolean javaLangObjectInSuperTypes = false;
         for (TypeMirror superType : getSuperTypes(typeBinding)){
@@ -208,16 +208,16 @@ public class NetBeansJavaElementUtil {
                 javaLangObjectInSuperTypes = true;
             }
             
-            allSuperTypes.add(TypeMirrorHandle.create(superType));
+            allSuperTypes.add(superType);
             
         }
         
         if (!javaLangObjectInSuperTypes && !typeBinding.toString().
                 equals(CommonClassNames.JAVA_LANG_OBJECT)){
-            allSuperTypes.add(TypeMirrorHandle.create(getJavaLangObjectBinding()));
+            allSuperTypes.add(getJavaLangObjectBinding());
         }
         
-        return allSuperTypes.toArray(new TypeMirrorHandle[allSuperTypes.size()]);
+        return allSuperTypes.toArray(new TypeMirror[allSuperTypes.size()]);
     }
     
     @NotNull
@@ -234,6 +234,24 @@ public class NetBeansJavaElementUtil {
         TypeMirror javaType = NetBeansJavaProjectElementUtils.findTypeElement(
                 project, CommonClassNames.JAVA_LANG_OBJECT).asType();
         return javaType;
+    }
+    
+    @NotNull
+    static List<JavaValueParameter> getValueParameters(@NotNull ElementHandle<ExecutableElement> handle){
+        List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
+        ExecutableElement method = (ExecutableElement) NetBeansJavaProjectElementUtils.getElement(handle);
+        List<? extends VariableElement> valueParameters = method.getParameters();
+        String[] parameterNames = getParametersNames(method);
+        int parameterTypesCount = valueParameters.size();
+        
+        for (int i = 0; i < parameterTypesCount; i++){
+            boolean isLastParameter = i == parameterTypesCount-1;
+            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
+                    parameterNames[i], isLastParameter ? method.isVarArgs() : false));
+            
+        }
+        
+        return parameters;
     }
     
     @NotNull

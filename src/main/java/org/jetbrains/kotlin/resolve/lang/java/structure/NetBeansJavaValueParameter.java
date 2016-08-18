@@ -52,7 +52,7 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<ElementHandl
 
     @Override
     public JavaType getType() {
-        return NetBeansJavaType.create(TypeMirrorHandle.create(getElement().asType()));
+        return NetBeansJavaType.create(getElement().asType());
     }
 
     @Override

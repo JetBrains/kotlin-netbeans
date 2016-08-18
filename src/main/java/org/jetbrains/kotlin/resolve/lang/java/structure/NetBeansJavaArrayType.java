@@ -26,16 +26,16 @@ import org.netbeans.api.java.source.TypeMirrorHandle;
  *
  * @author Александр
  */
-public class NetBeansJavaArrayType extends NetBeansJavaType<TypeMirrorHandle<ArrayType>> implements JavaArrayType {
+public class NetBeansJavaArrayType extends NetBeansJavaType<ArrayType> implements JavaArrayType {
     
-    public NetBeansJavaArrayType(@NotNull TypeMirrorHandle<ArrayType> typeBinding){
+    public NetBeansJavaArrayType(@NotNull ArrayType typeBinding){
         super(typeBinding);
     }
     
     @Override
     @NotNull
     public JavaType getComponentType(){
-        return NetBeansJavaType.create(getBinding().getComponentType());
+        return NetBeansJavaType.create(((ArrayType) getBinding()).getComponentType());
     }
     
 }

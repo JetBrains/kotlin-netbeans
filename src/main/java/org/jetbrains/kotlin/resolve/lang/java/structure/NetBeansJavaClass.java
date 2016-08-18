@@ -156,7 +156,8 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<ElementHandle<Type
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> typeParameters = getBinding().getTypeParameters();
+        List<? extends TypeParameterElement> typeParameters = 
+                NetBeansJavaProjectElementUtils.getTypeParameters(getBinding());
         return typeParameters(typeParameters.toArray(new TypeParameterElement[typeParameters.size()]));
     }
 

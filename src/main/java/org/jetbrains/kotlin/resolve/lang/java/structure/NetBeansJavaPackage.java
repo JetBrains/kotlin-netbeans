@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaElement;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
@@ -68,7 +69,8 @@ public class NetBeansJavaPackage implements JavaElement, JavaPackage{
                 boolean applicableForRootPackage = thisNestedLevel == 1 && thisNestedLevel == subNestedLevel;
                 if (!packageFragment.getQualifiedName().toString().isEmpty() &&
                         (applicableForRootPackage || (thisNestedLevel + 1 == subNestedLevel))){
-                    javaPackages.add(new NetBeansJavaPackage(packageFragment, kotlinProject));
+                    javaPackages.add(new NetBeansJavaPackage(
+                            ElementHandle.create(packageFragment), kotlinProject));
                 }
             }
         }
@@ -79,35 +81,31 @@ public class NetBeansJavaPackage implements JavaElement, JavaPackage{
     @Override
     @NotNull
     public FqName getFqName() {
-        return new FqName(packages.get(0).getQualifiedName().toString());
+        return new FqName(NetBeansJavaProjectElementUtils.getPackageQualifiedName(packages.get(0)));
     }
 
     @Override
     public Collection<JavaClass> getClasses(Function1<? super Name, Boolean> nameFilter) {
         List<JavaClass> javaClasses = Lists.newArrayList();
         
-        for (PackageElement pckg : packages){
+        for (ElementHandle<PackageElement> pckg : packages){
             javaClasses.addAll(getClassesInPackage(pckg, nameFilter));
         }
         
         return javaClasses;
     }
     
-    private List<JavaClass> getClassesInPackage(PackageElement javaPackage, 
+    private List<JavaClass> getClassesInPackage(ElementHandle<PackageElement> javaPackage, 
             Function1<? super Name, ? extends Boolean> nameFilter){
         List<JavaClass> javaClasses = Lists.newArrayList();
-        List<? extends Element> classes = javaPackage.getEnclosedElements();
+        List<? extends Element> classes = NetBeansJavaProjectElementUtils.
+                getEnclosedElements(javaPackage);
         
         for (Element cl : classes){
-//            TypeMirror type = cl.asType();
             if (isOuterClass((TypeElement) cl)){
-//                String elementName = type.toString();
                 String elementName = cl.getSimpleName().toString();
                 if (Name.isValidIdentifier(elementName) && nameFilter.invoke(Name.identifier(elementName))){
-//                    Element typeBinding = NetBeansJavaClassFinder.createTypeBinding(type);
-//                    if (typeBinding != null){
-                        javaClasses.add(new NetBeansJavaClass((TypeElement) cl));
-//                    }
+                        javaClasses.add(new NetBeansJavaClass(ElementHandle.create((TypeElement) cl)));
                 }
             }
         }

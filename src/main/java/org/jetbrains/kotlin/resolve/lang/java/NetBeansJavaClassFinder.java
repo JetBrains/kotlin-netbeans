@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
@@ -60,7 +61,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     public JavaClass findClass(ClassId classId) {
         TypeElement element = findType(classId.asSingleFqName(), kotlinProject);
         if (element != null) {
-            return new NetBeansJavaClass(element);
+            return new NetBeansJavaClass(ElementHandle.create(element));
         }
         
         return null;
@@ -70,7 +71,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     public JavaPackage findPackage(FqName fqName) {
         PackageElement packageEl = NetBeansJavaProjectElementUtils.findPackageElement(kotlinProject, fqName.asString());
         if (packageEl != null){
-            return new NetBeansJavaPackage(packageEl, kotlinProject);
+            return new NetBeansJavaPackage(ElementHandle.create(packageEl), kotlinProject);
         } 
         
         return null;
