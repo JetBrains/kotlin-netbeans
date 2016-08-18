@@ -23,9 +23,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
-public class NetBeansJavaAnnotationArgument<T extends Element> extends NetBeansJavaElement<T> 
+public class NetBeansJavaAnnotationArgument<T extends ElementHandle<? extends Element>> extends NetBeansJavaElement<T> 
         implements JavaAnnotationArgument {
     
     public NetBeansJavaAnnotationArgument(T javaElement){
@@ -34,7 +36,8 @@ public class NetBeansJavaAnnotationArgument<T extends Element> extends NetBeansJ
 
     @Override
     public Name getName() {
-        return Name.identifier(getBinding().getSimpleName().toString());
+        return Name.identifier(NetBeansJavaProjectElementUtils.
+                getSimpleName(getBinding()).toString());
     }
     
     public static JavaAnnotationArgument create(Object value, Name name, Project project){
@@ -43,7 +46,7 @@ public class NetBeansJavaAnnotationArgument<T extends Element> extends NetBeansJ
             return new NetBeansJavaAnnotationAsAnnotationArgument((AnnotationMirror) value, name);
         }
         else if (value instanceof VariableElement){
-            return new NetBeansJavaReferenceAnnotationArgument((VariableElement) value);
+            return new NetBeansJavaReferenceAnnotationArgument(ElementHandle.create((VariableElement) value));
         }
         else if (value instanceof String){
             return new NetBeansJavaLiteralAnnotationArgument(value, name);

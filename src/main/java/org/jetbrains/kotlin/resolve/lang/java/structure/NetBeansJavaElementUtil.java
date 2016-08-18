@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 /**
@@ -102,6 +104,21 @@ public class NetBeansJavaElementUtil {
             }
         }
         return false;
+    }
+    
+    @NotNull
+    static Visibility getVisibility(@NotNull ElementHandle member){
+        Set<Modifier> modifiers = NetBeansJavaProjectElementUtils.getModifiers(member);
+        if (isPublic(modifiers)){
+            return Visibilities.PUBLIC;
+        } else if (isPrivate(modifiers)){
+            return Visibilities.PRIVATE;
+        } else if (isProtected(modifiers)){
+            return isStatic(modifiers) ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY :
+                    JavaVisibilities.PROTECTED_AND_PACKAGE;
+        }
+        
+        return JavaVisibilities.PACKAGE_VISIBILITY;
     }
     
     @NotNull
@@ -180,6 +197,29 @@ public class NetBeansJavaElementUtil {
         return allSuperTypes.toArray(new TypeMirror[allSuperTypes.size()]);
     }
     
+    public static TypeMirror[] getSuperTypesWithObject(@NotNull ElementHandle<TypeElement> handle){
+        List<TypeMirror> allSuperTypes = Lists.newArrayList();
+        TypeElement typeBinding = (TypeElement) NetBeansJavaProjectElementUtils.getElement(handle);
+        
+        boolean javaLangObjectInSuperTypes = false;
+        for (TypeMirror superType : getSuperTypes(typeBinding)){
+            
+            if (superType.toString().equals(CommonClassNames.JAVA_LANG_OBJECT)){
+                javaLangObjectInSuperTypes = true;
+            }
+            
+            allSuperTypes.add(superType);
+            
+        }
+        
+        if (!javaLangObjectInSuperTypes && !typeBinding.toString().
+                equals(CommonClassNames.JAVA_LANG_OBJECT)){
+            allSuperTypes.add(getJavaLangObjectBinding());
+        }
+        
+        return allSuperTypes.toArray(new TypeMirror[allSuperTypes.size()]);
+    }
+    
     @NotNull
     private static TypeMirror getJavaLangObjectBinding(){
         Project project = null;
@@ -194,6 +234,24 @@ public class NetBeansJavaElementUtil {
         TypeMirror javaType = NetBeansJavaProjectElementUtils.findTypeElement(
                 project, CommonClassNames.JAVA_LANG_OBJECT).asType();
         return javaType;
+    }
+    
+    @NotNull
+    static List<JavaValueParameter> getValueParameters(@NotNull ElementHandle<ExecutableElement> handle){
+        List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
+        ExecutableElement method = (ExecutableElement) NetBeansJavaProjectElementUtils.getElement(handle);
+        List<? extends VariableElement> valueParameters = method.getParameters();
+        String[] parameterNames = getParametersNames(method);
+        int parameterTypesCount = valueParameters.size();
+        
+        for (int i = 0; i < parameterTypesCount; i++){
+            boolean isLastParameter = i == parameterTypesCount-1;
+            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
+                    parameterNames[i], isLastParameter ? method.isVarArgs() : false));
+            
+        }
+        
+        return parameters;
     }
     
     @NotNull

@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.diagnostics.netbeans.parser.KotlinParser.KotlinParserResult;
 import org.jetbrains.kotlin.resolve.AnalysisResultWithProvider;
 import org.jetbrains.kotlin.utils.ProjectUtils;
@@ -60,10 +61,10 @@ public class KotlinCodeCompletionHandler implements CodeCompletionHandler2 {
             
             StyledDocument doc = ProjectUtils.getDocumentFromFileObject(file);
             int caretOffset = context.getCaretOffset();
-            AnalysisResultWithProvider analysisResultWithProvider = 
+            AnalysisResult analysisResult = 
                     parserResult.getAnalysisResult();
             
-            return new KotlinCodeCompletionResult(doc, caretOffset, analysisResultWithProvider);
+            return new KotlinCodeCompletionResult(doc, caretOffset, analysisResult);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (ParseException ex) {

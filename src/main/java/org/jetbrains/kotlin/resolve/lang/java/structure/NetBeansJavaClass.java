@@ -39,29 +39,34 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> implements JavaClass {
+public class NetBeansJavaClass extends NetBeansJavaClassifier<ElementHandle<TypeElement>> implements JavaClass {
     
-    public NetBeansJavaClass(TypeElement javaElement){
+    public NetBeansJavaClass(ElementHandle<TypeElement> javaElement){
         super(javaElement);
     }
 
     @Override
     public Name getName() {
-        return SpecialNames.safeIdentifier(getBinding().getSimpleName().toString());
+        return SpecialNames.safeIdentifier(NetBeansJavaProjectElementUtils.
+                getSimpleName(getBinding()).toString());
     }
 
     @Override
     public Collection<JavaClass> getInnerClasses() {
-        List<? extends Element> enclosedElements = getBinding().getEnclosedElements();
+        List<? extends Element> enclosedElements = 
+                NetBeansJavaProjectElementUtils.getEnclosedElements(getBinding());
+        
         List<JavaClass> innerClasses = Lists.newArrayList();
         for (Element element : enclosedElements){
             if (element.asType().getKind() == TypeKind.DECLARED && element instanceof TypeElement){
-                innerClasses.add(new NetBeansJavaClass((TypeElement) element));
+                innerClasses.add(new NetBeansJavaClass(ElementHandle.create((TypeElement) element)));
             }
         }
         return innerClasses;
@@ -69,7 +74,7 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public FqName getFqName() {
-        return new FqName(getBinding().getQualifiedName().toString());
+        return new FqName(getBinding().getQualifiedName());
     }
 
     @Override
@@ -89,11 +94,11 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public JavaClass getOuterClass() {
-        Element outerClass = getBinding().getEnclosingElement();
+        Element outerClass = NetBeansJavaProjectElementUtils.getEnclosingElement(getBinding());
         if (outerClass == null || outerClass.asType().getKind() != TypeKind.DECLARED){
             return null;
         }
-        return new NetBeansJavaClass((TypeElement) outerClass);
+        return new NetBeansJavaClass(ElementHandle.create((TypeElement) outerClass));
     }
 
     @Override
@@ -104,12 +109,13 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public Collection<JavaMethod> getMethods() {
-        List<? extends Element> declaredElements = getBinding().getEnclosedElements();
+        List<? extends Element> declaredElements = 
+                NetBeansJavaProjectElementUtils.getEnclosedElements(getBinding());
         List<JavaMethod> javaMethods = Lists.newArrayList();
         
         for (Element element : declaredElements){
             if (element.getKind() == ElementKind.METHOD){
-                javaMethods.add(new NetBeansJavaMethod((ExecutableElement) element));
+                javaMethods.add(new NetBeansJavaMethod(ElementHandle.create((ExecutableElement) element)));
             }
         }
         
@@ -118,14 +124,15 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public Collection<JavaField> getFields() {
-        List<? extends Element> declaredElements = getBinding().getEnclosedElements();
+        List<? extends Element> declaredElements = 
+                NetBeansJavaProjectElementUtils.getEnclosedElements(getBinding());
         List<JavaField> javaFields = Lists.newArrayList();
         
         for (Element element : declaredElements){
             if (element.getKind().isField()){
                 String name = element.getSimpleName().toString();
                 if (Name.isValidIdentifier(name)){
-                    javaFields.add(new NetBeansJavaField((VariableElement) element));
+                    javaFields.add(new NetBeansJavaField(ElementHandle.create((VariableElement) element)));
                 }
             }
         }
@@ -135,12 +142,13 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public Collection<JavaConstructor> getConstructors() {
-        List<? extends Element> declaredElements = getBinding().getEnclosedElements();
+        List<? extends Element> declaredElements = 
+                NetBeansJavaProjectElementUtils.getEnclosedElements(getBinding());
         List<JavaConstructor> javaConstructors = Lists.newArrayList();
         
         for (Element element : declaredElements){
             if (element.getKind().equals(ElementKind.CONSTRUCTOR)){
-                javaConstructors.add(new NetBeansJavaConstructor((ExecutableElement) element));
+                javaConstructors.add(new NetBeansJavaConstructor(ElementHandle.create((ExecutableElement) element)));
             }
         }
         return javaConstructors;
@@ -148,23 +156,27 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> typeParameters = getBinding().getTypeParameters();
+        List<? extends TypeParameterElement> typeParameters = 
+                NetBeansJavaProjectElementUtils.getTypeParameters(getBinding());
         return typeParameters(typeParameters.toArray(new TypeParameterElement[typeParameters.size()]));
     }
 
     @Override
     public boolean isAbstract() {
-        return NetBeansJavaElementUtil.isAbstract(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isAbstract(NetBeansJavaProjectElementUtils.
+                getModifiers(getBinding()));
     }
 
     @Override
     public boolean isStatic() {
-        return NetBeansJavaElementUtil.isStatic(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isStatic(NetBeansJavaProjectElementUtils.
+                getModifiers(getBinding()));
     }
 
     @Override
     public boolean isFinal() {
-        return NetBeansJavaElementUtil.isFinal(getBinding().getModifiers());
+        return NetBeansJavaElementUtil.isFinal(NetBeansJavaProjectElementUtils.
+                getModifiers(getBinding()));
     }
 
     @Override
@@ -174,7 +186,8 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier<TypeElement> imple
     
     @Override
     public boolean isKotlinLightClass() {
-        return NetBeansJavaElementUtil.isKotlinLightClass(getBinding().getEnclosingElement());
+        return NetBeansJavaElementUtil.isKotlinLightClass(NetBeansJavaProjectElementUtils.
+                getEnclosingElement(getBinding()));
     }
     
 }

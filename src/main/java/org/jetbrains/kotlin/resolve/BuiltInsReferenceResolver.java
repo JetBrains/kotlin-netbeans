@@ -212,7 +212,7 @@ public class BuiltInsReferenceResolver {
         }
         if (SystemInfo.isWindows || SystemInfo.isOS2) {
           while (!path.isEmpty() && path.charAt(0) == '/') {
-            path = path.substring(1, path.length());
+            path = new String(path.substring(1, path.length()));
           }
         }
 

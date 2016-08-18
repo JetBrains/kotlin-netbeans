@@ -20,15 +20,16 @@ import javax.lang.model.element.VariableElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaReferenceAnnotationArgument extends NetBeansJavaAnnotationArgument<VariableElement> 
+public class NetBeansJavaReferenceAnnotationArgument extends NetBeansJavaAnnotationArgument<ElementHandle<VariableElement>> 
         implements JavaEnumValueAnnotationArgument{
     
-    protected NetBeansJavaReferenceAnnotationArgument(VariableElement javaElement){
+    protected NetBeansJavaReferenceAnnotationArgument(ElementHandle<VariableElement> javaElement){
         super(javaElement);
     }
     

@@ -27,16 +27,20 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 
-public class NetBeansJavaConstructor extends NetBeansJavaMember<ExecutableElement> implements JavaConstructor {
+public class NetBeansJavaConstructor extends NetBeansJavaMember<ElementHandle<ExecutableElement>> implements JavaConstructor {
 
-    public NetBeansJavaConstructor(@NotNull ExecutableElement methodBinding){
+    public NetBeansJavaConstructor(@NotNull ElementHandle<ExecutableElement> methodBinding){
         super(methodBinding);
     }
     
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return new NetBeansJavaClass(
+                ElementHandle.create((TypeElement) 
+                        NetBeansJavaProjectElementUtils.getEnclosingElement(getBinding())));
     }
 
     @Override
@@ -46,7 +50,8 @@ public class NetBeansJavaConstructor extends NetBeansJavaMember<ExecutableElemen
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> valueParameters = getBinding().getTypeParameters();
+        List<? extends TypeParameterElement> valueParameters = NetBeansJavaProjectElementUtils.
+                getTypeParametersForExecutable(getBinding());
         return typeParameters(valueParameters.toArray(new TypeParameterElement[valueParameters.size()]));
     }
     

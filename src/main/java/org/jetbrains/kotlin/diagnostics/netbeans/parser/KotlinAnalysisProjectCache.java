@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.diagnostics.netbeans.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalysisResultWithProvider;
@@ -34,15 +35,16 @@ public class KotlinAnalysisProjectCache {
     public static final KotlinAnalysisProjectCache INSTANCE = 
             new KotlinAnalysisProjectCache();
     
-    private final Map<Project, AnalysisResultWithProvider> cache = new HashMap<Project, AnalysisResultWithProvider>();
+    private final Map<Project, AnalysisResult> cache = new HashMap<Project, AnalysisResult>();
     
-    public AnalysisResultWithProvider getAnalysisResult(Project project) {
-        synchronized(project) {
+    public AnalysisResult getAnalysisResult(Project project) {
+        synchronized(INSTANCE) {
             if (cache.get(project) == null) {
                 AnalysisResultWithProvider result = 
                         NetBeansAnalyzerFacadeForJVM.INSTANCE.analyzeFilesWithJavaIntegration(project, 
                         KotlinEnvironment.getEnvironment(project).getProject(), ProjectUtils.getSourceFilesWithDependencies(project));
-                cache.put(project, result);
+//                cache.clear();
+                cache.put(project, result.getAnalysisResult());
             }
             
             return cache.get(project);

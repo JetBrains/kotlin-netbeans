@@ -42,17 +42,17 @@ import org.netbeans.modules.parsing.spi.Parser;
 @LanguageRegistration(mimeType = "text/x-kt")
 public class KotlinLanguage extends DefaultLanguageConfig {
 
-    private final Parser kotlinParser = new KotlinParser();
-    private final SemanticAnalyzer kotlinSemanticAnalyzer = 
-            new KotlinSemanticAnalyzer();
-    private final StructureScanner kotlinStructureScanner = 
-            new KotlinStructureScanner();
-    private final HintsProvider kotlinHintsProvider = 
-            new KotlinHintsProvider();
-    private final OccurrencesFinder kotlinOccurrencesFinder = 
-            new KotlinOccurrencesFinder();
-    private final CodeCompletionHandler kotlinCompletionHandler =
-            new KotlinCodeCompletionHandler();
+//    private final Parser kotlinParser = new KotlinParser();
+//    private final SemanticAnalyzer kotlinSemanticAnalyzer = 
+//            new KotlinSemanticAnalyzer();
+//    private final StructureScanner kotlinStructureScanner = 
+//            new KotlinStructureScanner();
+//    private final HintsProvider kotlinHintsProvider = 
+//            new KotlinHintsProvider();
+//    private final OccurrencesFinder kotlinOccurrencesFinder = 
+//            new KotlinOccurrencesFinder();
+//    private final CodeCompletionHandler kotlinCompletionHandler =
+//            new KotlinCodeCompletionHandler();
     
     @Override
     public Language getLexerLanguage() {
@@ -66,7 +66,7 @@ public class KotlinLanguage extends DefaultLanguageConfig {
 
     @Override
     public Parser getParser(){
-        return kotlinParser;
+        return new KotlinParser();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class KotlinLanguage extends DefaultLanguageConfig {
     
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
-        return kotlinSemanticAnalyzer;
+        return new KotlinSemanticAnalyzer();
     }
     
     @Override
@@ -86,7 +86,7 @@ public class KotlinLanguage extends DefaultLanguageConfig {
     
     @Override
     public StructureScanner getStructureScanner(){
-        return kotlinStructureScanner;
+        return new KotlinStructureScanner();
     }
     
     @Override
@@ -96,7 +96,7 @@ public class KotlinLanguage extends DefaultLanguageConfig {
     
     @Override 
     public HintsProvider getHintsProvider() {
-        return kotlinHintsProvider;
+        return new KotlinHintsProvider();
     }
     
     @Override
@@ -106,12 +106,12 @@ public class KotlinLanguage extends DefaultLanguageConfig {
     
     @Override
     public OccurrencesFinder getOccurrencesFinder() {
-        return kotlinOccurrencesFinder;
+        return new KotlinOccurrencesFinder();
     }
     
     @Override
     public CodeCompletionHandler getCompletionHandler() {
-        return kotlinCompletionHandler;
+        return new KotlinCodeCompletionHandler();
     }
     
     @Override

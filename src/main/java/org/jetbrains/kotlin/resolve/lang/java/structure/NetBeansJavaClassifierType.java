@@ -30,6 +30,9 @@ import javax.lang.model.type.TypeVariable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -45,7 +48,7 @@ public class NetBeansJavaClassifierType extends NetBeansJavaType<TypeMirror> imp
     public JavaClassifier getClassifier() {
         switch (getBinding().getKind()) {
             case DECLARED:
-                return NetBeansJavaClassifier.create(((DeclaredType)getBinding()).asElement());
+                return NetBeansJavaClassifier.create(((DeclaredType) getBinding()).asElement());
             case TYPEVAR:
                 return NetBeansJavaClassifier.create(((TypeVariable) getBinding()).asElement());
             default:

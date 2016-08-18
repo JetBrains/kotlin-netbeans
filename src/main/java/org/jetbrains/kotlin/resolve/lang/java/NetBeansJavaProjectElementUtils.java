@@ -18,16 +18,39 @@ package org.jetbrains.kotlin.resolve.lang.java;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.TypeMirror;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.AnnotationMirrorsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.DefaultValueSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleInstanceOfTypeElementChecker;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosedElementsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.EnclosingElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ModifiersSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageQualifiedNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ReturnTypeSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.SimpleNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeParametersForExecutableSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeParametersSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.CancellableTask;
 import org.netbeans.api.java.source.ClassIndex;
@@ -36,6 +59,7 @@ import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.SourceUtils;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.java.source.ui.ElementOpen;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -74,47 +98,198 @@ public class NetBeansJavaProjectElementUtils {
         JAVA_SOURCE.put(kotlinProject, JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
     }
     
-    public static TypeElement findTypeElement(Project kotlinProject, String fqName){
-        if (!CLASSPATH_INFO.containsKey(kotlinProject)){
-            CLASSPATH_INFO.put(kotlinProject, getClasspathInfo(kotlinProject));
+    private static void checkProject(Project project) {
+        if (!CLASSPATH_INFO.containsKey(project)){
+            CLASSPATH_INFO.put(project, getClasspathInfo(project));
         }
-        if (!JAVA_SOURCE.containsKey(kotlinProject)){
-            JAVA_SOURCE.put(kotlinProject,JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
+        if (!JAVA_SOURCE.containsKey(project)){
+            JAVA_SOURCE.put(project,JavaSource.create(CLASSPATH_INFO.get(project)));
         }
-        TypeElementSearcher searcher = new TypeElementSearcher(fqName);
+    }
+    
+    private static void executeSearcher(CancellableTask<CompilationController> searcher, Project project) {
         try {
-            JAVA_SOURCE.get(kotlinProject).runUserActionTask(searcher, true);
+            JAVA_SOURCE.get(project).runUserActionTask(searcher, true);
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+    
+    public static List<? extends AnnotationMirror> getAnnotationMirrors(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return Collections.emptyList();
+        }
+        
+        checkProject(project);
+        AnnotationMirrorsSearcher searcher = new AnnotationMirrorsSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getAnnotationMirrors();
+    }
+    
+    public static Set<Modifier> getModifiers(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return Collections.emptySet();
+        }
+        
+        checkProject(project);
+        ModifiersSearcher searcher = new ModifiersSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getModifiers();
+    }
+    
+    public static Name getSimpleName(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        SimpleNameSearcher searcher = new SimpleNameSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getSimpleName();
+    }
+    
+    public static List<? extends Element> getEnclosedElements(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        EnclosedElementsSearcher searcher = new EnclosedElementsSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getEnclosedElements();
+    }
+    
+    public static String getPackageQualifiedName(ElementHandle<PackageElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        PackageQualifiedNameSearcher searcher = new PackageQualifiedNameSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getQualifiedName();
+    }
+    
+    public static Element getEnclosingElement(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        EnclosingElementSearcher searcher = new EnclosingElementSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getEnclosingElement();
+    }
+    
+    public static Element getElement(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        ElementSearcher searcher = new ElementSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getElement();
+    }
+    
+    public static List<? extends TypeParameterElement> getTypeParameters(ElementHandle<TypeElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        TypeParametersSearcher searcher = new TypeParametersSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getTypeParameters();
+    }
+    
+    public static List<? extends TypeParameterElement> getTypeParametersForExecutable(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        TypeParametersForExecutableSearcher searcher = new TypeParametersForExecutableSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getTypeParameters();
+    }
+    
+    public static TypeMirror getReturnType(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        ReturnTypeSearcher searcher = new ReturnTypeSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getReturnType();
+    }
+    
+    public static AnnotationValue getDefaultValue(ElementHandle<ExecutableElement> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        checkProject(project);
+        DefaultValueSearcher searcher = new DefaultValueSearcher(handle);
+        executeSearcher(searcher, project);
+        
+        return searcher.getDefaultValue();
+    }
+    
+    public static boolean instanceofTypeElement(ElementHandle<? extends Element> handle) {
+        Project project = getProject(handle);
+        if (project == null) {
+            return false;
+        }
+        
+        checkProject(project);
+        ElementHandleInstanceOfTypeElementChecker checker = 
+                new ElementHandleInstanceOfTypeElementChecker(handle);
+        executeSearcher(checker, project);
+        
+        return checker.getInstanceof();
+    }
+    
+    public static TypeElement findTypeElement(Project kotlinProject, String fqName){
+        checkProject(kotlinProject);
+        TypeElementSearcher searcher = new TypeElementSearcher(fqName);
+        executeSearcher(searcher, kotlinProject);
         
         return searcher.getElement();
     }
     
     public static PackageElement findPackageElement(Project kotlinProject, String fqName){
-        if (!CLASSPATH_INFO.containsKey(kotlinProject)){
-            CLASSPATH_INFO.put(kotlinProject, getClasspathInfo(kotlinProject));
-        }
-        if (!JAVA_SOURCE.containsKey(kotlinProject)){
-            JAVA_SOURCE.put(kotlinProject,JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
-        }
+        checkProject(kotlinProject);
         PackageElementSearcher searcher = new PackageElementSearcher(fqName);
-        try {
-            JAVA_SOURCE.get(kotlinProject).runUserActionTask(searcher, true);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        executeSearcher(searcher, kotlinProject);
         
         return searcher.getElement();
     }
     
     public static List<String> findFQName(Project kotlinProject, String name) {
-        if (!CLASSPATH_INFO.containsKey(kotlinProject)){
-            CLASSPATH_INFO.put(kotlinProject, getClasspathInfo(kotlinProject));
-        }
-        if (!JAVA_SOURCE.containsKey(kotlinProject)){
-            JAVA_SOURCE.put(kotlinProject,JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
-        }
+        checkProject(kotlinProject);
         List<String> fqNames = new ArrayList<String>();
         
         final Set<ElementHandle<TypeElement>> result = 
@@ -128,7 +303,7 @@ public class NetBeansJavaProjectElementUtils {
         return fqNames;
     }
     
-    public static Project getProject(Element element){
+    public static Project getProject(ElementHandle handle) {
         Project[] projects = OpenProjects.getDefault().getOpenProjects();
         
         if (projects.length == 1){
@@ -145,7 +320,7 @@ public class NetBeansJavaProjectElementUtils {
                 return null;
             }
             
-            FileObject file = SourceUtils.getFile(ElementHandle.create(element), cpInfo);
+            FileObject file = SourceUtils.getFile(handle, cpInfo);
 
             if (file != null){
                 return project;
@@ -155,19 +330,14 @@ public class NetBeansJavaProjectElementUtils {
         return null;
     }
     
-    public static boolean isDeprecated(final Element element){
-        Project kotlinProject = NetBeansJavaProjectElementUtils.getProject(element);
+    public static boolean isDeprecated(final ElementHandle handle){
+        Project kotlinProject = NetBeansJavaProjectElementUtils.getProject(handle);
         
         if (kotlinProject == null){
             return false;
         }
         
-        if (!CLASSPATH_INFO.containsKey(kotlinProject)){
-            CLASSPATH_INFO.put(kotlinProject, getClasspathInfo(kotlinProject));
-        }
-        if (!JAVA_SOURCE.containsKey(kotlinProject)){
-            JAVA_SOURCE.put(kotlinProject,JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
-        }
+        checkProject(kotlinProject);
         try {
             JAVA_SOURCE.get(kotlinProject).runUserActionTask(new CancellableTask<CompilationController>(){
                 @Override
@@ -176,7 +346,11 @@ public class NetBeansJavaProjectElementUtils {
                 
                 @Override
                 public void run(CompilationController info) throws Exception {
-                    NetBeansJavaProjectElementUtils.isDeprecated = info.getElements().isDeprecated(element);
+                    info.toPhase(JavaSource.Phase.RESOLVED);
+                    Element element = handle.resolve(info);
+                    if (element != null) {
+                        NetBeansJavaProjectElementUtils.isDeprecated = info.getElements().isDeprecated(element);
+                    }
                 }
             }, true);
         } catch (IOException ex) {
@@ -187,12 +361,7 @@ public class NetBeansJavaProjectElementUtils {
     }
     
     public static String toBinaryName(Project kotlinProject, final String name){
-        if (!CLASSPATH_INFO.containsKey(kotlinProject)){
-            CLASSPATH_INFO.put(kotlinProject, getClasspathInfo(kotlinProject));
-        }
-        if (!JAVA_SOURCE.containsKey(kotlinProject)){
-            JAVA_SOURCE.put(kotlinProject,JavaSource.create(CLASSPATH_INFO.get(kotlinProject)));
-        }
+        checkProject(kotlinProject);
         try {
             JAVA_SOURCE.get(kotlinProject).runUserActionTask(new CancellableTask<CompilationController>(){
                 @Override
@@ -225,52 +394,5 @@ public class NetBeansJavaProjectElementUtils {
         ElementOpen.open(CLASSPATH_INFO.get(kotlinProject), handle);
     }
     
-    private static class TypeElementSearcher implements CancellableTask<CompilationController>{
-
-        private TypeElement element;
-        private final String fqName;
-        
-        public TypeElementSearcher(String fqName){
-            this.fqName = fqName;
-        }
-        
-        @Override
-        public void cancel() {
-        }
-
-        @Override
-        public void run(CompilationController info) throws Exception {
-            element = info.getElements().getTypeElement(fqName);
-        }
-        
-        public TypeElement getElement(){
-            return element;
-        }
-        
-    }
-    
-    private static class PackageElementSearcher implements CancellableTask<CompilationController>{
-
-        private PackageElement element;
-        private final String fqName;
-        
-        public PackageElementSearcher(String fqName){
-            this.fqName = fqName;
-        }
-        
-        @Override
-        public void cancel() {
-        }
-
-        @Override
-        public void run(CompilationController info) throws Exception {
-            element = info.getElements().getPackageElement(fqName);
-        }
-        
-        public PackageElement getElement(){
-            return element;
-        }
-        
-    }
     
 }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
@@ -60,7 +61,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     public JavaClass findClass(ClassId classId) {
         TypeElement element = findType(classId.asSingleFqName(), kotlinProject);
         if (element != null) {
-            return new NetBeansJavaClass(element);
+            return new NetBeansJavaClass(ElementHandle.create(element));
         }
         
         return null;
@@ -70,7 +71,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     public JavaPackage findPackage(FqName fqName) {
         PackageElement packageEl = NetBeansJavaProjectElementUtils.findPackageElement(kotlinProject, fqName.asString());
         if (packageEl != null){
-            return new NetBeansJavaPackage(packageEl, kotlinProject);
+            return new NetBeansJavaPackage(ElementHandle.create(packageEl), kotlinProject);
         } 
         
         return null;
@@ -88,10 +89,11 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
 
     
     @Nullable 
-    public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String name,
+    public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String n,
             boolean partialMatch, boolean patternMatch){
-        if (name.endsWith(".")){
-            name = name.substring(0, name.length()-1);
+        String name = n;
+        if (n.endsWith(".")){
+            name = new String(n.substring(0, n.length()-1));
         }
         
         Set<VirtualFile> roots = KotlinEnvironment.getEnvironment(kotlinProject).getRoots();

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
 import org.jetbrains.kotlin.resolve.sources.LibrarySourcesIndex;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.netbeans.api.java.source.ElementHandle;
 
 public class KotlinSourceIndex {
     
@@ -43,7 +44,7 @@ public class KotlinSourceIndex {
     
     @Nullable
     public static char[] getSource(PackageElement packageElement, String simpleName){
-        org.netbeans.api.project.Project project = NetBeansJavaProjectElementUtils.getProject(packageElement);
+        org.netbeans.api.project.Project project = NetBeansJavaProjectElementUtils.getProject(ElementHandle.create(packageElement));
         KotlinSourceIndex index = KotlinSourceIndex.getInstance(project);
         String resolvedPath = index.resolvePath(packageElement, simpleName);
         return NetBeansJavaProjectElementUtils.toBinaryName(project, resolvedPath).toCharArray();

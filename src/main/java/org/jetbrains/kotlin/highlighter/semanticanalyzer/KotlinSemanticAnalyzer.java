@@ -53,7 +53,7 @@ public class KotlinSemanticAnalyzer extends SemanticAnalyzer<KotlinParserResult>
         try {
             KotlinSemanticHighlightingVisitor highlightingVisitor =
                     new KotlinSemanticHighlightingVisitor(result.getKtFile(), 
-                            result.getAnalysisResult().getAnalysisResult());
+                            result.getAnalysisResult());
             highlighting.putAll(highlightingVisitor.computeHighlightingRanges());
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);

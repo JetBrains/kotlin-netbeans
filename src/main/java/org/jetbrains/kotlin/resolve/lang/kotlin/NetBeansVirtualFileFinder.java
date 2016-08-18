@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.openide.filesystems.FileObject;
 
@@ -130,9 +131,9 @@ public class NetBeansVirtualFileFinder extends VirtualFileKotlinClassFinder impl
             return null;
         }
         
-        
-        ClassId classId = NetBeansJavaElementUtil.computeClassId(
-                (TypeElement)((NetBeansJavaClassifier)javaClass).getBinding());
+        ElementHandle handle = ((NetBeansJavaClassifier)javaClass).getBinding();
+        TypeElement elem = (TypeElement) NetBeansJavaProjectElementUtils.getElement(handle);
+        ClassId classId = NetBeansJavaElementUtil.computeClassId(elem);
         if (classId == null){
             return null;
         }

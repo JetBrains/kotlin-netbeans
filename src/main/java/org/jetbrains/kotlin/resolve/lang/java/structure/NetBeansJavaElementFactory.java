@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -70,18 +72,18 @@ public class NetBeansJavaElementFactory {
             }
         };
         
-        private static final Factory<ExecutableElement, JavaMethod> METHODS =
-                new Factory<ExecutableElement, JavaMethod>() {
+        private static final Factory<ElementHandle<ExecutableElement>, JavaMethod> METHODS =
+                new Factory<ElementHandle<ExecutableElement>, JavaMethod>() {
             @Override
-            public JavaMethod create(ExecutableElement binding) {
+            public JavaMethod create(ElementHandle<ExecutableElement> binding) {
                 return new NetBeansJavaMethod(binding);
             }
         };
         
-        private static final Factory<VariableElement, JavaField> FIELDS =
-                new Factory<VariableElement, JavaField>() {
+        private static final Factory<ElementHandle<VariableElement>, JavaField> FIELDS =
+                new Factory<ElementHandle<VariableElement>, JavaField>() {
             @Override
-            public JavaField create(VariableElement binding) {
+            public JavaField create(ElementHandle<VariableElement> binding) {
                 return new NetBeansJavaField(binding);
             }
         };
@@ -125,12 +127,12 @@ public class NetBeansJavaElementFactory {
     }
     
     @NotNull
-    public static List<JavaMethod> methods(@NotNull ExecutableElement[] methods){
+    public static List<JavaMethod> methods(@NotNull ElementHandle<ExecutableElement>[] methods){
         return convert(methods, Factories.METHODS);
     }
     
     @NotNull
-    public static List<JavaField> fields(@NotNull VariableElement[] variables){
+    public static List<JavaField> fields(@NotNull ElementHandle<VariableElement>[] variables){
         return convert(variables, Factories.FIELDS);
     }
     

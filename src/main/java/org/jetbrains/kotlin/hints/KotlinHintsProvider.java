@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.diagnostics.netbeans.parser.KotlinParser;
 import org.jetbrains.kotlin.diagnostics.netbeans.parser.KotlinParser.KotlinError;
 import org.jetbrains.kotlin.diagnostics.netbeans.parser.KotlinParser.KotlinParserResult;
@@ -85,14 +86,14 @@ public class KotlinHintsProvider implements HintsProvider{
         KotlinParserResult parserResult = (KotlinParserResult) rc.parserResult;
         FileObject file = parserResult.getSnapshot().getSource().getFileObject();
         
-        AnalysisResultWithProvider analysisResult = null;
+        AnalysisResult analysisResult = null;
         try {
             analysisResult = parserResult.getAnalysisResult();
         } catch (ParseException ex) {
             Exceptions.printStackTrace(ex);
         }
         if (analysisResult != null) {
-            for (Diagnostic diagnostic : analysisResult.getAnalysisResult().
+            for (Diagnostic diagnostic : analysisResult.
                         getBindingContext().getDiagnostics().all()) {
                 if (diagnostic.getPsiFile().getVirtualFile().getPath().equals(file.getPath())) {
                     KotlinParser.KotlinError error = new KotlinParser.KotlinError(diagnostic, file);

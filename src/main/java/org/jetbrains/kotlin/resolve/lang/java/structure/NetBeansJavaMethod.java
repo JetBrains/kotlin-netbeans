@@ -28,13 +28,15 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
  * @author Александр
  */
-public class NetBeansJavaMethod extends NetBeansJavaMember<ExecutableElement> implements JavaMethod{
-    public NetBeansJavaMethod(ExecutableElement method){
+public class NetBeansJavaMethod extends NetBeansJavaMember<ElementHandle<ExecutableElement>> implements JavaMethod{
+    public NetBeansJavaMethod(ElementHandle<ExecutableElement> method){
         super(method);
     }
 
@@ -45,23 +47,26 @@ public class NetBeansJavaMethod extends NetBeansJavaMember<ExecutableElement> im
 
     @Override
     public boolean getHasAnnotationParameterDefaultValue() {
-        return getBinding().getDefaultValue() != null;
+        return NetBeansJavaProjectElementUtils.getDefaultValue(getBinding()) != null;
     }
 
     @Override
     @NotNull
     public JavaType getReturnType() {
-        return NetBeansJavaType.create(getBinding().getReturnType());
+        return NetBeansJavaType.create(NetBeansJavaProjectElementUtils.getReturnType(getBinding()));
     }
 
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return new NetBeansJavaClass(ElementHandle.create(
+                (TypeElement) NetBeansJavaProjectElementUtils.
+                        getEnclosingElement(getBinding())));
     }
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> valueParameters = getBinding().getTypeParameters();
+        List<? extends TypeParameterElement> valueParameters = 
+                NetBeansJavaProjectElementUtils.getTypeParametersForExecutable(getBinding());
         return typeParameters(valueParameters.toArray(new TypeParameterElement[valueParameters.size()]));
     }
 }

@@ -21,6 +21,7 @@ import javax.lang.model.type.WildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *

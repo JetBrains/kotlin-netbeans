@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.editor.NbEditorUtilities;
 import org.openide.cookies.LineCookie;
@@ -124,8 +125,15 @@ public class NavigationUtil {
             KtElement fromElement, Project project, FileObject currentFile){
         
         if (element instanceof NetBeansJavaSourceElement){
-            Element binding = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
+            ElementHandle handle = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
                     getJavaElement()).getBinding();
+            Element binding;
+            if (handle == null) {
+                binding = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
+                    getJavaElement()).getElement();
+            } else {
+                binding = NetBeansJavaProjectElementUtils.getElement(handle);
+            }
             gotoJavaDeclaration(binding, project);
         } else if (element instanceof KotlinSourceElement){
             return gotoKotlinDeclaration(((KotlinSourceElement) element).getPsi(), fromElement, project, currentFile);

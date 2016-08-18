@@ -20,6 +20,7 @@ import javax.lang.model.type.ArrayType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -34,7 +35,7 @@ public class NetBeansJavaArrayType extends NetBeansJavaType<ArrayType> implement
     @Override
     @NotNull
     public JavaType getComponentType(){
-        return NetBeansJavaType.create(getBinding().getComponentType());
+        return NetBeansJavaType.create(((ArrayType) getBinding()).getComponentType());
     }
     
 }
