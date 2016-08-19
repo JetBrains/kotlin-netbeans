@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 /**
@@ -119,13 +120,14 @@ public class NetBeansJavaElementUtil {
     }
     
     @Nullable
-    public static ClassId computeClassId(@NotNull TypeElement classBinding){
-        Element container = classBinding.getEnclosingElement();
+    public static ClassId computeClassId(@NotNull ElementHandle classBinding, Project project){
+        ElementHandle container = NetBeansJavaProjectElementUtils.findEnclosingElementHandle(project, classBinding);//  classBinding.getEnclosingElement();
         
         if (container.getKind() != ElementKind.PACKAGE){
-            ClassId parentClassId = computeClassId((TypeElement) container);
+            ClassId parentClassId = computeClassId(container, project);
             return parentClassId == null ? null : parentClassId.createNestedClassId(
-                    Name.identifier(classBinding.getSimpleName().toString()));
+                    Name.identifier(NetBeansJavaProjectElementUtils.
+                            getSimpleName(classBinding, project).toString()));
         }
         
         String fqName = classBinding.getQualifiedName().toString();

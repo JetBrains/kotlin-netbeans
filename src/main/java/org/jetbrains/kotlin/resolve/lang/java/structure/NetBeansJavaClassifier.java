@@ -38,8 +38,15 @@ import org.jetbrains.kotlin.name.FqName;
 public abstract class NetBeansJavaClassifier<T extends Element> extends
         NetBeansJavaElement<T> implements JavaClassifier, JavaAnnotationOwner {
     
+    private final Collection<JavaAnnotation> annotations;
+    private final List<? extends AnnotationMirror> annotationMirrors;
+    private final boolean isDeprecated;
+    
     public NetBeansJavaClassifier(T javaType) {
         super(javaType);
+        annotations = getAnnotations(javaType);
+        annotationMirrors = javaType.getAnnotationMirrors();
+        isDeprecated = NetBeansJavaProjectElementUtils.isDeprecated(javaType);
     }
     
     public static JavaClassifier create(Element element){
@@ -55,22 +62,26 @@ public abstract class NetBeansJavaClassifier<T extends Element> extends
             throw new IllegalArgumentException("Element" + element.getSimpleName().toString() + "is not JavaClassifier");
     }
     
+    private Collection<JavaAnnotation> getAnnotations(T el){
+        List<JavaAnnotation> annotationMirrors = Lists.newArrayList();
+        for ( AnnotationMirror annotation : el.getAnnotationMirrors()){
+            annotationMirrors.add(new NetBeansJavaAnnotation(annotation));
+        }
+        return annotationMirrors;
+    }
+    
     @Override
     public Collection<JavaAnnotation> getAnnotations(){
-        List<JavaAnnotation> annotations = Lists.newArrayList();
-        for ( AnnotationMirror annotation : getBinding().getAnnotationMirrors()){
-            annotations.add(new NetBeansJavaAnnotation(annotation));
-        }
         return annotations;
     }
     
     @Override 
     public JavaAnnotation findAnnotation(FqName fqName){
-        return NetBeansJavaElementUtil.findAnnotation(getBinding().getAnnotationMirrors(), fqName);
+        return NetBeansJavaElementUtil.findAnnotation(annotationMirrors, fqName);
     }
     
     @Override
     public boolean isDeprecatedInJavaDoc(){
-        return NetBeansJavaProjectElementUtils.isDeprecated(getBinding());
+        return isDeprecated;
     }
 }

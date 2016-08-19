@@ -34,34 +34,50 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
  * @author Александр
  */
 public class NetBeansJavaMethod extends NetBeansJavaMember<ExecutableElement> implements JavaMethod{
+    
+    private final List<JavaValueParameter> valueParameters;
+    private final boolean hasAnnotationParameterDefaultValue;
+    private final JavaType returnType;
+    private final JavaClass containingClass;
+    private final List<JavaTypeParameter> typeParameters;
+    
     public NetBeansJavaMethod(ExecutableElement method){
         super(method);
+        valueParameters = NetBeansJavaElementUtil.getValueParameters(method);
+        hasAnnotationParameterDefaultValue = method.getDefaultValue() != null;
+        returnType = NetBeansJavaType.create(method.getReturnType());
+        containingClass = new NetBeansJavaClass((TypeElement) method.getEnclosingElement());
+        typeParameters = getTypeParameters(method);
     }
 
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        return NetBeansJavaElementUtil.getValueParameters(getBinding());
+        return valueParameters;
     }
 
     @Override
     public boolean getHasAnnotationParameterDefaultValue() {
-        return getBinding().getDefaultValue() != null;
+        return hasAnnotationParameterDefaultValue;
     }
 
     @Override
     @NotNull
     public JavaType getReturnType() {
-        return NetBeansJavaType.create(getBinding().getReturnType());
+        return returnType;
     }
 
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return containingClass;
     }
-
+    
+    private List<JavaTypeParameter> getTypeParameters(ExecutableElement el) {
+        List<? extends TypeParameterElement> params = el.getTypeParameters();
+        return typeParameters(params.toArray(new TypeParameterElement[params.size()]));
+    }
+    
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> valueParameters = getBinding().getTypeParameters();
-        return typeParameters(valueParameters.toArray(new TypeParameterElement[valueParameters.size()]));
+        return typeParameters;
     }
 }

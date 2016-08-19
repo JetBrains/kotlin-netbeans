@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.name.FqName;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 
 /**
  *
@@ -37,10 +38,12 @@ import org.jetbrains.kotlin.name.FqName;
  */
 public class NetBeansJavaType<T extends TypeMirror> implements JavaType, JavaAnnotationOwner {
 
-    private final T binding;
+    private final TypeMirrorHandle binding;
+    private final List<? extends AnnotationMirror> annotationMirrors;
     
     public NetBeansJavaType(@NotNull T binding){
-        this.binding = binding;
+        this.binding = TypeMirrorHandle.create(binding);
+        annotationMirrors = binding.getAnnotationMirrors();
     }
     
     @Override
@@ -72,13 +75,12 @@ public class NetBeansJavaType<T extends TypeMirror> implements JavaType, JavaAnn
 
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        List<? extends AnnotationMirror> annotations = getBinding().getAnnotationMirrors();
-        return annotations(annotations.toArray(new AnnotationMirror[annotations.size()]));
+        return annotations(annotationMirrors.toArray(new AnnotationMirror[annotationMirrors.size()]));
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqName) {
-        return NetBeansJavaElementUtil.findAnnotation(binding.getAnnotationMirrors(), fqName);
+        return NetBeansJavaElementUtil.findAnnotation(annotationMirrors, fqName);
     }
 
     @Override
@@ -87,7 +89,7 @@ public class NetBeansJavaType<T extends TypeMirror> implements JavaType, JavaAnn
     }
     
     @NotNull
-    public T getBinding(){
+    public TypeMirrorHandle getBinding(){
         return binding;
     }
     

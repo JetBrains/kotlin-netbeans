@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -78,8 +79,17 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement{
     @Override
     public ClassId getClassId() {
         DeclaredType annotationType = getBinding().getAnnotationType();
-        return annotationType != null ? 
-                NetBeansJavaElementUtil.computeClassId((TypeElement) annotationType.asElement()) : null;
+        if (annotationType == null) {
+            return null;
+        }
+        
+        ElementHandle handle = ElementHandle.create((TypeElement) annotationType.asElement());
+        Project project = NetBeansJavaProjectElementUtils.getProject(handle);
+        if (project == null) {
+            return null;
+        }
+        
+        return NetBeansJavaElementUtil.computeClassId(handle, project);
     }
 
     @Override

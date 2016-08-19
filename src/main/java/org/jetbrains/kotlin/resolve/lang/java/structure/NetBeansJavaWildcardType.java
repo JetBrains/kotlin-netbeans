@@ -28,19 +28,28 @@ import org.jetbrains.kotlin.load.java.structure.JavaWildcardType;
  */
 public class NetBeansJavaWildcardType extends NetBeansJavaType<WildcardType> implements JavaWildcardType {
     
+    private final JavaType bound;
+    private final boolean isExtends;
+    
     public NetBeansJavaWildcardType(@NotNull WildcardType typeBinding){
         super(typeBinding);
+        bound = getBound(typeBinding);
+        isExtends = typeBinding.getExtendsBound() != null;
     }
 
+    private JavaType getBound(WildcardType type) {
+        TypeMirror bound = type.getSuperBound();
+        return bound != null ? NetBeansJavaType.create(bound) : null;//temp
+    }
+    
     @Override
     public JavaType getBound() {
-        TypeMirror bound = getBinding().getSuperBound();
-        return bound != null ? NetBeansJavaType.create(bound) : null;//temp
+        return bound;
     }
 
     @Override
     public boolean isExtends() {
-        return getBinding().getExtendsBound() != null;
+        return isExtends;
     }
     
     

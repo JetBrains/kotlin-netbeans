@@ -36,11 +36,15 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElem
 
     private final String name;
     private final boolean isVararg;
+    private final JavaType type;
+    private final List<? extends AnnotationMirror> annotationMirrors;
     
     public NetBeansJavaValueParameter(VariableElement type, String name, boolean isVararg){
         super(type);
         this.name = name;
         this.isVararg = isVararg;
+        this.type = NetBeansJavaType.create(type.asType());
+        annotationMirrors = type.getAnnotationMirrors();
     }
     
     @Override
@@ -50,7 +54,7 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElem
 
     @Override
     public JavaType getType() {
-        return NetBeansJavaType.create(getBinding().asType());
+        return type;
     }
 
     @Override
@@ -60,13 +64,12 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement<VariableElem
 
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        List<? extends AnnotationMirror> annotations = getBinding().getAnnotationMirrors();
-        return annotations(annotations.toArray(new AnnotationMirror[annotations.size()]));
+        return annotations(annotationMirrors.toArray(new AnnotationMirror[annotationMirrors.size()]));
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqName) {
-        return NetBeansJavaElementUtil.findAnnotation(getBinding().getAnnotationMirrors(), fqName);
+        return NetBeansJavaElementUtil.findAnnotation(annotationMirrors, fqName);
     }
 
     @Override

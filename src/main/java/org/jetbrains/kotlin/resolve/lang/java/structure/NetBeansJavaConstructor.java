@@ -30,24 +30,35 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 
 public class NetBeansJavaConstructor extends NetBeansJavaMember<ExecutableElement> implements JavaConstructor {
 
+    private final JavaClass containingClass;
+    private final List<JavaValueParameter> valueParameters;
+    private final List<JavaTypeParameter> typeParameters;
+    
     public NetBeansJavaConstructor(@NotNull ExecutableElement methodBinding){
         super(methodBinding);
+        containingClass = new NetBeansJavaClass((TypeElement) methodBinding.getEnclosingElement());
+        valueParameters = NetBeansJavaElementUtil.getValueParameters(methodBinding);
+        typeParameters = getTypeParameters(methodBinding);
     }
     
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return containingClass;
     }
 
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        return NetBeansJavaElementUtil.getValueParameters(getBinding());
+        return valueParameters;
     }
 
+    private List<JavaTypeParameter> getTypeParameters(ExecutableElement method) {
+        List<? extends TypeParameterElement> valueParams = method.getTypeParameters();
+        return typeParameters(valueParams.toArray(new TypeParameterElement[valueParams.size()]));
+    }
+    
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        List<? extends TypeParameterElement> valueParameters = getBinding().getTypeParameters();
-        return typeParameters(valueParameters.toArray(new TypeParameterElement[valueParameters.size()]));
+        return typeParameters;
     }
     
 }

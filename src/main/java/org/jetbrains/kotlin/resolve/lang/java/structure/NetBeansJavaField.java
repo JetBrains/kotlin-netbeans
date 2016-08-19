@@ -29,13 +29,18 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
  */
 public class NetBeansJavaField extends NetBeansJavaMember<VariableElement> implements JavaField {
     
+    private final JavaClass containingClass;
+    private final JavaType type;
+    
     public NetBeansJavaField(VariableElement javaField){
         super(javaField);
+        containingClass = new NetBeansJavaClass((TypeElement) javaField.getEnclosingElement());
+        type = NetBeansJavaType.create(javaField.asType());
     }
 
     @Override
     public JavaClass getContainingClass() {
-        return new NetBeansJavaClass((TypeElement) getBinding().getEnclosingElement());
+        return containingClass;
     }
 
     @Override
@@ -45,6 +50,6 @@ public class NetBeansJavaField extends NetBeansJavaMember<VariableElement> imple
 
     @Override
     public JavaType getType() {
-        return NetBeansJavaType.create(getBinding().asType());
+        return type;
     }
 }

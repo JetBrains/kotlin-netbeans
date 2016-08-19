@@ -17,32 +17,51 @@
 package org.jetbrains.kotlin.resolve.lang.java.structure;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeParameterElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
+import org.netbeans.api.java.source.ElementHandle;
 /**
  *
  * @author Александр
  */
 public abstract class NetBeansJavaElement<T extends Element> implements JavaElement {
     
-    private final T binding;
+    private final ElementHandle binding;
+    private Element elem = null;
     
-    protected NetBeansJavaElement(@NotNull T binding){
-        this.binding = binding;
+    protected NetBeansJavaElement(@NotNull Element binding){
+        if (binding.getKind() != ElementKind.PARAMETER) {
+            this.binding = ElementHandle.create(binding);
+        } else {
+            this.binding = null;
+            elem = binding;
+        }
+    }
+    
+    public Element getElement() {
+        return elem;
     }
     
     @NotNull
-    public T getBinding(){
+    public ElementHandle getBinding(){
         return binding;
     }
     
     @Override
     public int hashCode(){
+        if (binding == null) {
+            return elem.hashCode();
+        }
         return getBinding().hashCode();
     }
     
     @Override
     public boolean equals(Object obj){
+        if (binding == null) {
+            return obj instanceof NetBeansJavaElement && elem.equals(((NetBeansJavaElement<?>)obj).getElement());
+        }
         return obj instanceof NetBeansJavaElement && getBinding().equals(((NetBeansJavaElement<?>)obj).getBinding());
     }
     

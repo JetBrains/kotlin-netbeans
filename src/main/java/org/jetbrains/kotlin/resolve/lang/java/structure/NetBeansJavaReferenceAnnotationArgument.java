@@ -28,14 +28,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 public class NetBeansJavaReferenceAnnotationArgument extends NetBeansJavaAnnotationArgument<VariableElement> 
         implements JavaEnumValueAnnotationArgument{
     
+    private final JavaField field;
+    
     protected NetBeansJavaReferenceAnnotationArgument(VariableElement javaElement){
         super(javaElement);
+        field = new NetBeansJavaField(javaElement);
     }
     
     @Override
     @Nullable
     public JavaField resolve(){
-        return new NetBeansJavaField(getBinding());
+        return field;
     }
     
 }

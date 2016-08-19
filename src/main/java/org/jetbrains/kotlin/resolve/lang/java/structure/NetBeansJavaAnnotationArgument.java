@@ -28,13 +28,16 @@ import org.netbeans.api.project.Project;
 public class NetBeansJavaAnnotationArgument<T extends Element> extends NetBeansJavaElement<T> 
         implements JavaAnnotationArgument {
     
+    private final Name name;
+    
     public NetBeansJavaAnnotationArgument(T javaElement){
         super(javaElement);
+        name = Name.identifier(javaElement.getSimpleName().toString());
     }
 
     @Override
     public Name getName() {
-        return Name.identifier(getBinding().getSimpleName().toString());
+        return name;
     }
     
     public static JavaAnnotationArgument create(Object value, Name name, Project project){

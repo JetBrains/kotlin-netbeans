@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.editor.NbEditorUtilities;
 import org.openide.cookies.LineCookie;
@@ -124,7 +125,7 @@ public class NavigationUtil {
             KtElement fromElement, Project project, FileObject currentFile){
         
         if (element instanceof NetBeansJavaSourceElement){
-            Element binding = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
+            ElementHandle binding = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
                     getJavaElement()).getBinding();
             gotoJavaDeclaration(binding, project);
         } else if (element instanceof KotlinSourceElement){
@@ -320,10 +321,10 @@ public class NavigationUtil {
         return new Pair<Document, Integer>(document, startOffset);
     }
     
-    private static void gotoJavaDeclaration(Element binding, Project project) {
-        Element javaElement = binding;
+    private static void gotoJavaDeclaration(ElementHandle binding, Project project) {
+        ElementHandle javaElement = binding;
         if (binding.getKind() == ElementKind.CONSTRUCTOR){
-            javaElement = ((ExecutableElement) binding).getEnclosingElement();
+            javaElement = NetBeansJavaProjectElementUtils.findEnclosingElementHandle(project, javaElement);
         }
         
         if (javaElement != null){

@@ -47,9 +47,4 @@ public class NetBeansJavaSourceElement implements JavaSourceElement {
         return SourceFile.NO_SOURCE_FILE;
     }
     
-    @NotNull
-    public Element getElementBinding() {
-        return ((NetBeansJavaElement<?>) javaElement).getBinding();
-    }
-    
 }

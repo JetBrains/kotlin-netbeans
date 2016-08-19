@@ -27,14 +27,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
  */
 public class NetBeansJavaArrayType extends NetBeansJavaType<ArrayType> implements JavaArrayType {
     
+    private final JavaType componentType;
+    
     public NetBeansJavaArrayType(@NotNull ArrayType typeBinding){
         super(typeBinding);
+        componentType = NetBeansJavaType.create(typeBinding.getComponentType());
     }
     
     @Override
     @NotNull
     public JavaType getComponentType(){
-        return NetBeansJavaType.create(getBinding().getComponentType());
+        return componentType;
     }
     
 }

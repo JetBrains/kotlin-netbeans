@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
  */
 public class NetBeansJavaPrimitiveType extends NetBeansJavaType<TypeMirror> implements JavaPrimitiveType {
     
+    private final String text;
+    
     public NetBeansJavaPrimitiveType(TypeMirror typeBinding){
         super(typeBinding);
+        text = typeBinding.toString();
     }
     
     @Override
     @Nullable
     public PrimitiveType getType(){
-        String text = getBinding().toString();
         return text.equals("void") ? null : JvmPrimitiveType.get(text).getPrimitiveType();
     }
     

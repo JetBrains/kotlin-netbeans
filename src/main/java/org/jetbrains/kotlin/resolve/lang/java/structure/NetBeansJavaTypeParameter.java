@@ -32,24 +32,33 @@ import org.jetbrains.kotlin.name.SpecialNames;
  */
 public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier<TypeParameterElement> implements JavaTypeParameter {
     
+    private final Name name;
+    private final Collection<JavaClassifierType> upperBounds;
+    
     public NetBeansJavaTypeParameter(TypeParameterElement binding){
         super(binding);
+        name = SpecialNames.safeIdentifier(binding.getSimpleName().toString());
+        upperBounds = getUpperBounds(binding);
     }
 
     @Override
     public Name getName() {
-        return SpecialNames.safeIdentifier(getBinding().getSimpleName().toString());
+        return name;
     }
 
-    @Override
-    public Collection<JavaClassifierType> getUpperBounds() {
+    private Collection<JavaClassifierType> getUpperBounds(TypeParameterElement elem) {
         List<JavaClassifierType> bounds = Lists.newArrayList();
         
-        for (TypeMirror bound : getBinding().getBounds()){
+        for (TypeMirror bound : elem.getBounds()){
             bounds.add(new NetBeansJavaClassifierType(bound));
         }
         
         return bounds;
+    }
+    
+    @Override
+    public Collection<JavaClassifierType> getUpperBounds() {
+        return upperBounds;
     }
     
 }

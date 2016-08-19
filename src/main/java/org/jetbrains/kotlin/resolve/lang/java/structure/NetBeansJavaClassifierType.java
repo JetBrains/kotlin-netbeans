@@ -37,20 +37,37 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
  */
 public class NetBeansJavaClassifierType extends NetBeansJavaType<TypeMirror> implements JavaClassifierType {
     
+    private JavaClassifier classifier;
+    private final boolean isRaw;
+    private final List<JavaType> typeArguments;
+    private TypeMirror type;
+    
     public NetBeansJavaClassifierType(TypeMirror typeBinding){
         super(typeBinding);
+//        classifier = getClassifier(typeBinding);
+        isRaw = isRaw(typeBinding);
+        typeArguments = getTypeArguments(typeBinding);
+        type = typeBinding;
     }
 
-    @Override
-    public JavaClassifier getClassifier() {
+    private JavaClassifier getClassifier(TypeMirror typeBinding) {
         switch (getBinding().getKind()) {
             case DECLARED:
-                return NetBeansJavaClassifier.create(((DeclaredType)getBinding()).asElement());
+                return NetBeansJavaClassifier.create(((DeclaredType)typeBinding).asElement());
             case TYPEVAR:
-                return NetBeansJavaClassifier.create(((TypeVariable) getBinding()).asElement());
+                return NetBeansJavaClassifier.create(((TypeVariable) typeBinding).asElement());
             default:
                 return null;
         }
+    }
+    
+    @Override
+    public JavaClassifier getClassifier() {
+        if (classifier == null) {
+            classifier = getClassifier(type);
+            type = null;
+        }
+        return classifier;
     }
 
     @Override
@@ -58,25 +75,33 @@ public class NetBeansJavaClassifierType extends NetBeansJavaType<TypeMirror> imp
         return getBinding().toString();
     }
 
-    @Override
-    public boolean isRaw() {
-        if (getBinding().getKind() == TypeKind.DECLARED) {
-                return ((DeclaredType) getBinding()).getTypeArguments().isEmpty();
+    private boolean isRaw(TypeMirror type) {
+        if (type.getKind() == TypeKind.DECLARED) {
+                return ((DeclaredType) type).getTypeArguments().isEmpty();
         } else return true;
     }
-
+    
     @Override
-    public List<JavaType> getTypeArguments() {
+    public boolean isRaw() {
+        return isRaw;
+    }
+
+    private List<JavaType> getTypeArguments(TypeMirror type) {
         List<TypeMirror> typeArgs = Lists.newArrayList();
         
         if (getBinding().getKind() == TypeKind.DECLARED){
             
-            for (TypeMirror elem : ((DeclaredType) getBinding()).getTypeArguments()){
+            for (TypeMirror elem : ((DeclaredType) type).getTypeArguments()){
                 typeArgs.add(elem);
             }
             return types(typeArgs.toArray(new TypeMirror[typeArgs.size()]));
         }
         return Collections.EMPTY_LIST;
+    }
+    
+    @Override
+    public List<JavaType> getTypeArguments() {
+        return typeArguments;
     }
     
     @Override
