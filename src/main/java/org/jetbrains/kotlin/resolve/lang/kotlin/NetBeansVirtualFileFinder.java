@@ -130,7 +130,6 @@ public class NetBeansVirtualFileFinder extends VirtualFileKotlinClassFinder impl
             return null;
         }
         
-        Project project = NetBeansJavaProjectElementUtils.getProject(((NetBeansJavaClassifier)javaClass).getBinding());
         ClassId classId = NetBeansJavaElementUtil.computeClassId(
                 ((NetBeansJavaClassifier)javaClass).getBinding(), project);
         if (classId == null){

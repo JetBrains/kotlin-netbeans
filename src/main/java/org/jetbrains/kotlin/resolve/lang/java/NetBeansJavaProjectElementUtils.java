@@ -164,7 +164,7 @@ public class NetBeansJavaProjectElementUtils {
 
             ClasspathInfo cpInfo = CLASSPATH_INFO.get(project);
             if (cpInfo == null) {
-                return null;
+                continue;
             }
 
             FileObject file = SourceUtils.getFile(ElementHandle.create(element), cpInfo);
