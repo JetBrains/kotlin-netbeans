@@ -5,78 +5,34 @@ import java.util.List;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
-import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
-import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
+import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
-import org.netbeans.api.project.Project;
 
-public class NetBeansJavaClass implements JavaClass {
+public class NetBeansJavaMethod implements JavaMethod {
 
-    private final FqName fqName;
-    private final Project project;
     
-    public NetBeansJavaClass(FqName fqName, Project project) {
-        this.fqName = fqName;
-        this.project = project;
-    }
     
     @Override
-    public FqName getFqName() {
-        return fqName;
-    }
-
-    @Override
-    public Collection<JavaClassifierType> getSupertypes() {
+    public List<JavaValueParameter> getValueParameters() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Collection<JavaClass> getInnerClasses() {
-        return NBElementUtils.getInnerClasses(fqName, project);
-    }
-
-    @Override
-    public JavaClass getOuterClass() {
-        return NBElementUtils.getOuterClass(fqName, project);
-    }
-
-    @Override
-    public boolean isInterface() {
+    public JavaType getReturnType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isAnnotationType() {
+    public boolean getHasAnnotationParameterDefaultValue() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isEnum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isKotlinLightClass() {
-        return false;
-    }
-
-    @Override
-    public Collection<JavaMethod> getMethods() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Collection<JavaField> getFields() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Collection<JavaConstructor> getConstructors() {
+    public JavaClass getContainingClass() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -92,11 +48,6 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Name getName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -117,6 +68,11 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public Visibility getVisibility() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Name getName() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

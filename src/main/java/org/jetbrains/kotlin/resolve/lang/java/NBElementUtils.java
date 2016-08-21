@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.InnerClassesSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.IsDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
@@ -107,10 +108,18 @@ public class NBElementUtils {
     
     public static Collection<JavaClass> getInnerClasses(FqName fqName, Project project) {
         checkJavaSource(project);
-        InnerClassesSearcher searcher = new InnerClassesSearcher(fqName.asString());
+        InnerClassesSearcher searcher = new InnerClassesSearcher(fqName.asString(), project);
         execute(searcher, project);
         
         return searcher.getInnerClasses();
+    }
+    
+    public static JavaClass getOuterClass(FqName fqName, Project project) {
+        checkJavaSource(project);
+        OuterClassSearcher searcher = new OuterClassSearcher(fqName.asString(), project);
+        execute(searcher, project);
+        
+        return searcher.getOuterClass();
     }
     
     public static TypeElement findTypeElement(Project kotlinProject, String fqName){

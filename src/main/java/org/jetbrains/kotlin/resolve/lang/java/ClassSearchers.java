@@ -50,4 +50,34 @@ public class ClassSearchers {
         }
     }
     
+    public static class OuterClassSearcher implements Task<CompilationController> {
+
+        private final String fqName;
+        private JavaClass outerClass = null;
+        private final Project project;
+        
+        public OuterClassSearcher(String fqName, Project project) {
+            this.fqName = fqName;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            TypeElement elem = info.getElements().getTypeElement(fqName);
+            Element outerCl = elem.getEnclosingElement();
+            if (outerCl == null || outerCl.asType().getKind() != TypeKind.DECLARED){
+                return;
+            }
+            
+            outerClass = new NetBeansJavaClass(
+                            new FqName(((TypeElement) outerCl).
+                                    getQualifiedName().toString()),
+                            project);
+        }
+        
+        public JavaClass getOuterClass() {
+            return outerClass;
+        }
+    }
+    
 }
