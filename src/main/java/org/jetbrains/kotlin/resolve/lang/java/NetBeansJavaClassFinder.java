@@ -69,7 +69,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
 
     @Override
     public JavaPackage findPackage(FqName fqName) {
-        PackageElement packageEl = NetBeansJavaProjectElementUtils.findPackageElement(kotlinProject, fqName.asString());
+        PackageElement packageEl = NBElementUtils.findPackageElement(kotlinProject, fqName.asString());
         if (packageEl != null){
             return new NetBeansJavaPackage(packageEl, kotlinProject);
         } 
@@ -79,7 +79,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
 
     @Nullable
     public static TypeElement findType(@NotNull FqName fqName, @NotNull org.netbeans.api.project.Project project){
-        TypeElement type = NetBeansJavaProjectElementUtils.findTypeElement(project, fqName.asString());
+        TypeElement type = NBElementUtils.findTypeElement(project, fqName.asString());
         if (type != null){
             return !isInKotlinBinFolder(type) ? type : null;
         }
@@ -91,10 +91,10 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     @Nullable 
     public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String name,
             boolean partialMatch, boolean patternMatch){
-        Set<String> packages = NetBeansJavaProjectElementUtils.getPackages(kotlinProject, name);
+        Set<String> packages = NBElementUtils.getPackages(kotlinProject, name);
         List<PackageElement> subpackageElements = Lists.newArrayList();
         for (String pack : packages) {
-            PackageElement subpackageElement = NetBeansJavaProjectElementUtils.
+            PackageElement subpackageElement = NBElementUtils.
                     findPackageElement(kotlinProject,pack);
             if (subpackageElement == null){
                 continue;

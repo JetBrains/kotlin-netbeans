@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.builder.KotlinPsiManager;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
 import org.jetbrains.kotlin.navigation.references.ReferenceUtils;
 import org.jetbrains.kotlin.resolve.NetBeansDescriptorUtils;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.kotlin.resolve.lang.java.resolver.NetBeansJavaSourceElement;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElement;
 import org.jetbrains.kotlin.utils.LineEndUtil;
@@ -302,7 +302,7 @@ public class NavigationUtil {
         }
         
         if (javaElement != null){
-            NetBeansJavaProjectElementUtils.openElementInEditor(javaElement, project);
+            NBElementUtils.openElementInEditor(javaElement, project);
         }
         
     }

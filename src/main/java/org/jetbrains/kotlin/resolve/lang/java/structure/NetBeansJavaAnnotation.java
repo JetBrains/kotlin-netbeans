@@ -25,7 +25,7 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
@@ -47,7 +47,7 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement{
     
     protected NetBeansJavaAnnotation(AnnotationMirror javaAnnotation){
         this.binding = javaAnnotation;
-        this.kotlinProject = NetBeansJavaProjectElementUtils.getProject(binding.getAnnotationType().asElement());
+        this.kotlinProject = NBElementUtils.getProject(binding.getAnnotationType().asElement());
     }
     
     public JavaAnnotationArgument findArgument(@NotNull Name name) {

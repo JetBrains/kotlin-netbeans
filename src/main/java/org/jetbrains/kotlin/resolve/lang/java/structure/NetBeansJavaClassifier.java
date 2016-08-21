@@ -25,7 +25,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeKind;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
@@ -71,6 +71,6 @@ public abstract class NetBeansJavaClassifier<T extends Element> extends
     
     @Override
     public boolean isDeprecatedInJavaDoc(){
-        return NetBeansJavaProjectElementUtils.isDeprecated(getBinding());
+        return NBElementUtils.isDeprecated(getBinding());
     }
 }

@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.Visibility;
@@ -84,7 +84,7 @@ public abstract class NetBeansJavaMember<T extends Element>
     
     @Override 
     public boolean isDeprecatedInJavaDoc(){
-        return NetBeansJavaProjectElementUtils.isDeprecated(getBinding());
+        return NBElementUtils.isDeprecated(getBinding());
     }
     
 }

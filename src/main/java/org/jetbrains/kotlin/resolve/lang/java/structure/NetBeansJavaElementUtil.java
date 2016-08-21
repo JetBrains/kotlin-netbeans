@@ -31,7 +31,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.Visibilities;
@@ -191,7 +191,7 @@ public class NetBeansJavaElementUtil {
             }
         }
         
-        TypeMirror javaType = NetBeansJavaProjectElementUtils.findTypeElement(
+        TypeMirror javaType = NBElementUtils.findTypeElement(
                 project, CommonClassNames.JAVA_LANG_OBJECT).asType();
         return javaType;
     }

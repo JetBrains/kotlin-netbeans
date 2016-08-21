@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.lang.model.element.PackageElement;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaProjectElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.kotlin.resolve.sources.LibrarySourcesIndex;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
@@ -43,10 +43,10 @@ public class KotlinSourceIndex {
     
     @Nullable
     public static char[] getSource(PackageElement packageElement, String simpleName){
-        org.netbeans.api.project.Project project = NetBeansJavaProjectElementUtils.getProject(packageElement);
+        org.netbeans.api.project.Project project = NBElementUtils.getProject(packageElement);
         KotlinSourceIndex index = KotlinSourceIndex.getInstance(project);
         String resolvedPath = index.resolvePath(packageElement, simpleName);
-        return NetBeansJavaProjectElementUtils.toBinaryName(project, resolvedPath).toCharArray();
+        return NBElementUtils.toBinaryName(project, resolvedPath).toCharArray();
     }
     
     
