@@ -30,6 +30,7 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
@@ -49,11 +50,14 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearc
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.UpperBoundsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.ComponentTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsExtendsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsRawSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.ClassIndex;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -180,6 +184,22 @@ public class NBElementUtils {
         return searcher.isDeprecated();
     }
     
+    public static List<JavaClassifierType> getUpperBounds(TypeMirrorHandle handle, Project project) {
+        checkJavaSource(project);
+        UpperBoundsSearcher searcher = new UpperBoundsSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getBounds();
+    }
+    
+    public static ElementHandle getElementHandleForTypeVariable(TypeMirrorHandle handle, Project project) {
+        checkJavaSource(project);
+        ElementHandleForTypeVariable searcher = new ElementHandleForTypeVariable(handle);
+        execute(searcher, project);
+        
+        return searcher.getElementHandle();
+    }
+    
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
         checkJavaSource(project);
         ElementHandleForMemberSearcher searcher = new ElementHandleForMemberSearcher(fqName.asString(), containingClass);
@@ -250,6 +270,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getComponentType();
+    }
+    
+    public static boolean isRaw(Project project, TypeMirrorHandle handle) {
+        checkJavaSource(project);
+        IsRawSearcher searcher = new IsRawSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.isRaw();
     }
     
     public static ElementKind getElementKind(FqName fqName, Project project) {

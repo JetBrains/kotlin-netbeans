@@ -12,28 +12,18 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.netbeans.api.project.Project;
 
-public class NetBeansJavaClass implements JavaClass {
+public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaClass {
 
-    private final FqName fqName;
-    private final Project project;
     private final ElementKind kind;
     
     public NetBeansJavaClass(FqName fqName, Project project) {
-        this.fqName = fqName;
-        this.project = project;
+        super(fqName, project);
         kind = NBElementUtils.getElementKind(fqName, project);
     }
     
-    @Override
-    public FqName getFqName() {
-        return fqName;
-    }
-
     @Override
     public Collection<JavaClassifierType> getSupertypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -41,12 +31,12 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public Collection<JavaClass> getInnerClasses() {
-        return NBElementUtils.getInnerClasses(fqName, project);
+        return NBElementUtils.getInnerClasses(getFqName(), getProject());
     }
 
     @Override
     public JavaClass getOuterClass() {
-        return NBElementUtils.getOuterClass(fqName, project);
+        return NBElementUtils.getOuterClass(getFqName(), getProject());
     }
 
     @Override
@@ -96,32 +86,27 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        return NBElementUtils.isDeprecated(fqName, project);
-    }
-
-    @Override
-    public Name getName() {
-        return SpecialNames.safeIdentifier(fqName.shortName().asString());
+        return NBElementUtils.isDeprecated(getFqName(), getProject());
     }
 
     @Override
     public boolean isAbstract() {
-        return NBElementUtils.isAbstract(fqName, project);
+        return NBElementUtils.isAbstract(getFqName(), getProject());
     }
 
     @Override
     public boolean isStatic() {
-        return NBElementUtils.isStatic(fqName, project);
+        return NBElementUtils.isStatic(getFqName(), getProject());
     }
 
     @Override
     public boolean isFinal() {
-        return NBElementUtils.isFinal(fqName, project);
+        return NBElementUtils.isFinal(getFqName(), getProject());
     }
 
     @Override
     public Visibility getVisibility() {
-        return NBElementUtils.getVisibility(fqName, project);
+        return NBElementUtils.getVisibility(getFqName(), getProject());
     }
 
     @Override
