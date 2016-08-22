@@ -41,7 +41,7 @@ public class NetBeansJavaConstructor extends NetBeansJavaMember<ExecutableElemen
 
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        return NetBeansJavaElementUtil.getValueParameters(getBinding());
+        return NetBeansJavaElementUtil.getValueParameters(getBinding(), null);
     }
 
     @Override

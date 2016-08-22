@@ -241,17 +241,19 @@ public class MemberSearchers {
     public static class ValueParametersSearcher implements Task<CompilationController> {
 
         private final ElementHandle handle;
+        private final Project project;
         private List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
         
-        public ValueParametersSearcher(ElementHandle handle) {
+        public ValueParametersSearcher(ElementHandle handle, Project project) {
             this.handle = handle;
+            this.project = project;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
             ExecutableElement elem = (ExecutableElement) handle.resolve(info);
-            parameters = NetBeansJavaElementUtil.getValueParameters(elem);
+            parameters = NetBeansJavaElementUtil.getValueParameters(elem, project);
         }
         
         

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 /**
@@ -167,7 +168,7 @@ public class NetBeansJavaElementUtil {
     }
     
     @NotNull
-    public static List<JavaValueParameter> getValueParameters(@NotNull ExecutableElement method){
+    public static List<JavaValueParameter> getValueParameters(@NotNull ExecutableElement method, Project project){
         List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
         List<? extends VariableElement> valueParameters = method.getParameters();
         String[] parameterNames = getParametersNames(method);
@@ -175,8 +176,12 @@ public class NetBeansJavaElementUtil {
         
         for (int i = 0; i < parameterTypesCount; i++){
             boolean isLastParameter = i == parameterTypesCount-1;
-            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
-                    parameterNames[i], isLastParameter ? method.isVarArgs() : false));
+            TypeMirrorHandle handle = TypeMirrorHandle.create(valueParameters.get(i).asType());
+            org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter valueParameter = 
+                    new org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter(
+                        new FqName(parameterNames[i]), project, isLastParameter ? method.isVarArgs() : false, handle);
+//            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
+//                    parameterNames[i], isLastParameter ? method.isVarArgs() : false, handle));
             
         }
         

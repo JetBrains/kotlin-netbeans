@@ -40,7 +40,7 @@ public class NetBeansJavaMethod extends NetBeansJavaMember<ExecutableElement> im
 
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        return NetBeansJavaElementUtil.getValueParameters(getBinding());
+        return NetBeansJavaElementUtil.getValueParameters(getBinding(), null);
     }
 
     @Override

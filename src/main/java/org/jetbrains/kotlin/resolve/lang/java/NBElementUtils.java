@@ -231,7 +231,7 @@ public class NBElementUtils {
     
     public static List<JavaValueParameter> getValueParameters(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        ValueParametersSearcher searcher = new ValueParametersSearcher(handle);
+        ValueParametersSearcher searcher = new ValueParametersSearcher(handle, project);
         execute(searcher, project);
         
         return searcher.getValueParameters();
