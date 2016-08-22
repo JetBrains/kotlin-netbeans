@@ -30,6 +30,7 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
@@ -46,9 +47,12 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberAbstractSe
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsExtendsSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.ClassIndex;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -57,6 +61,7 @@ import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.SourceUtils;
 import org.netbeans.api.java.source.Task;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.java.source.ui.ElementOpen;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -212,6 +217,30 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.isStatic();
+    }
+    
+    public static Visibility getMemberVisibility(Project project, ElementHandle handle) {
+        checkJavaSource(project);
+        MemberVisibilitySearcher searcher = new MemberVisibilitySearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.getVisibility();
+    }
+    
+    public static JavaType getBoundForWildcard(Project project, TypeMirrorHandle handle) {
+        checkJavaSource(project);
+        BoundSearcher searcher = new BoundSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getBound();
+    }
+    
+    public static boolean isExtends(Project project, TypeMirrorHandle handle) {
+        checkJavaSource(project);
+        IsExtendsSearcher searcher = new IsExtendsSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.isExtends();
     }
     
     public static ElementKind getElementKind(FqName fqName, Project project) {

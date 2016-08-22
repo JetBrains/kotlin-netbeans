@@ -81,7 +81,7 @@ public abstract class NetBeansJavaMember extends NetBeansJavaElement implements 
 
     @Override
     public Visibility getVisibility() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getMemberVisibility(getProject(), handle);
     }
 
     @Override

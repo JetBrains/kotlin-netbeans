@@ -21,6 +21,9 @@ package org.jetbrains.kotlin.resolve.lang.java;
 import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import org.jetbrains.kotlin.descriptors.Visibilities;
+import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
@@ -144,6 +147,39 @@ public class MemberSearchers {
         
         public boolean isFinal() {
             return isFinal;
+        }
+    }
+    
+    public static class MemberVisibilitySearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private Visibility visibility = null;
+        
+        public MemberVisibilitySearcher(ElementHandle handle) {
+            this.handle = handle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(JavaSource.Phase.RESOLVED);
+            Element member = handle.resolve(info);
+            if (NetBeansJavaElementUtil.isPublic(member.getModifiers())){
+                visibility = Visibilities.PUBLIC;
+                return;
+            } else if (NetBeansJavaElementUtil.isPrivate(member.getModifiers())){
+                visibility = Visibilities.PRIVATE;
+                return;
+            } else if (NetBeansJavaElementUtil.isProtected(member.getModifiers())){
+                visibility = NetBeansJavaElementUtil.isStatic(member.getModifiers()) ? JavaVisibilities.PROTECTED_STATIC_VISIBILITY :
+                        JavaVisibilities.PROTECTED_AND_PACKAGE;
+                return;
+            }
+
+            visibility = JavaVisibilities.PACKAGE_VISIBILITY;
+        }
+        
+        public Visibility getVisibility() {
+            return visibility;
         }
     }
     
