@@ -19,7 +19,7 @@ public class NetBeansJavaMethod extends NetBeansJavaMember implements JavaMethod
 
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getValueParameters(getHandle(), getProject());
     }
 
     @Override

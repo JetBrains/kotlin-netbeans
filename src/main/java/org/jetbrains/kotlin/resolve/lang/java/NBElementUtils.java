@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearc
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ValueParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
@@ -217,6 +219,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.hasDefaultValue();
+    }
+    
+    public static List<JavaValueParameter> getValueParameters(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        ValueParametersSearcher searcher = new ValueParametersSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.getValueParameters();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {

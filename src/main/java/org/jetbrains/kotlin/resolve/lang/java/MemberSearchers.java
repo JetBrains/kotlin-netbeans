@@ -18,6 +18,7 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
@@ -234,6 +236,27 @@ public class MemberSearchers {
             return hasDefaultValue;
         }
         
+    }
+    
+    public static class ValueParametersSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
+        
+        public ValueParametersSearcher(ElementHandle handle) {
+            this.handle = handle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            ExecutableElement elem = (ExecutableElement) handle.resolve(info);
+            parameters = NetBeansJavaElementUtil.getValueParameters(elem);
+        }
+        
+        
+        public List<JavaValueParameter> getValueParameters() {
+            return parameters;
+        }
     }
     
 }

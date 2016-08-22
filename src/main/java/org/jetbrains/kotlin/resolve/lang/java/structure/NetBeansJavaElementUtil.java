@@ -167,7 +167,7 @@ public class NetBeansJavaElementUtil {
     }
     
     @NotNull
-    static List<JavaValueParameter> getValueParameters(@NotNull ExecutableElement method){
+    public static List<JavaValueParameter> getValueParameters(@NotNull ExecutableElement method){
         List<JavaValueParameter> parameters = new ArrayList<JavaValueParameter>();
         List<? extends VariableElement> valueParameters = method.getParameters();
         String[] parameterNames = getParametersNames(method);
