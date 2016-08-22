@@ -41,6 +41,11 @@ import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ElementHandleForMemberSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberAbstractSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecatedSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
@@ -167,6 +172,46 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.isDeprecated();
+    }
+    
+    public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
+        checkJavaSource(project);
+        ElementHandleForMemberSearcher searcher = new ElementHandleForMemberSearcher(fqName.asString(), containingClass);
+        execute(searcher, project);
+        
+        return searcher.getHandle();
+    }
+    
+    public static boolean isMemberDeprecated(Project project, ElementHandle handle) {
+        checkJavaSource(project);
+        IsMemberDeprecatedSearcher searcher = new IsMemberDeprecatedSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.isDeprecated();
+    }
+    
+    public static boolean isMemberAbstract(Project project, ElementHandle handle) {
+        checkJavaSource(project);
+        IsMemberAbstractSearcher searcher = new IsMemberAbstractSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.isAbstract();
+    }
+    
+    public static boolean isMemberFinal(Project project, ElementHandle handle) {
+        checkJavaSource(project);
+        IsMemberFinalSearcher searcher = new IsMemberFinalSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.isFinal();
+    }
+    
+    public static boolean isMemberStatic(Project project, ElementHandle handle) {
+        checkJavaSource(project);
+        IsMemberStaticSearcher searcher = new IsMemberStaticSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.isStatic();
     }
     
     public static ElementKind getElementKind(FqName fqName, Project project) {
