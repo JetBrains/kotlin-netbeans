@@ -10,6 +10,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClassifierType;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
@@ -155,6 +156,31 @@ public class Searchers {
             return handle;
         }
         
+    }
+    
+    public static class TypeMirrorHandleFromFQNameSearcher implements Task<CompilationController> {
+
+        private final FqName fqName;
+        private final Project project;
+        private TypeMirrorHandle handle;
+        
+        public TypeMirrorHandleFromFQNameSearcher(FqName fqName, Project project) {
+            this.fqName = fqName;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = info.getElements().getTypeElement(fqName.asString());
+            TypeMirror mirror = element.asType();
+            handle = TypeMirrorHandle.create(mirror);
+        }
+        
+        
+        public TypeMirrorHandle getHandle() {
+            return handle;
+        }
     }
     
 }

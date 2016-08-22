@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeMirrorHandleFromFQNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.UpperBoundsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.ComponentTypeSearcher;
@@ -243,6 +244,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getTypeMirrorHandle();
+    }
+    
+    public static TypeMirrorHandle getTypeMirrorHandleFromFQName(FqName fqName, Project project) {
+        checkJavaSource(project);
+        TypeMirrorHandleFromFQNameSearcher searcher = new TypeMirrorHandleFromFQNameSearcher(fqName, project);
+        execute(searcher, project);
+        
+        return searcher.getHandle();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
