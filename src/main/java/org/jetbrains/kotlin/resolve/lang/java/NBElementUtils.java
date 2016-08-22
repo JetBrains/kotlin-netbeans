@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearc
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.TypeMirrorHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ValueParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
@@ -227,6 +228,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getValueParameters();
+    }
+    
+    public static TypeMirrorHandle getTypeMirrorHandle(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        TypeMirrorHandleSearcher searcher = new TypeMirrorHandleSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.getTypeMirrorHandle();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {

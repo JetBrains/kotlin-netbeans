@@ -249,6 +249,7 @@ public class MemberSearchers {
         
         @Override
         public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
             ExecutableElement elem = (ExecutableElement) handle.resolve(info);
             parameters = NetBeansJavaElementUtil.getValueParameters(elem);
         }
@@ -257,6 +258,28 @@ public class MemberSearchers {
         public List<JavaValueParameter> getValueParameters() {
             return parameters;
         }
+    }
+    
+    public static class TypeMirrorHandleSearcher implements Task<CompilationController> {
+
+        private final ElementHandle elementHandle;
+        private TypeMirrorHandle handle;
+        
+        public TypeMirrorHandleSearcher(ElementHandle elementHandle) {
+            this.elementHandle = elementHandle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            Element element = elementHandle.resolve(info);
+            handle = TypeMirrorHandle.create(element.asType());
+        }
+        
+        public TypeMirrorHandle getTypeMirrorHandle() {
+            return handle;
+        }
+        
     }
     
 }
