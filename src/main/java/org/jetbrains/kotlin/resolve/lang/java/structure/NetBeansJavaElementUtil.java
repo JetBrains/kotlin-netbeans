@@ -180,6 +180,7 @@ public class NetBeansJavaElementUtil {
             org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter valueParameter = 
                     new org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter(
                         new FqName(parameterNames[i]), project, isLastParameter ? method.isVarArgs() : false, handle);
+            parameters.add(valueParameter);
 //            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
 //                    parameterNames[i], isLastParameter ? method.isVarArgs() : false, handle));
             

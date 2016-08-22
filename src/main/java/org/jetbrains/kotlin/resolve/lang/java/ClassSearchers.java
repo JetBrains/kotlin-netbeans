@@ -6,6 +6,7 @@ import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import org.jetbrains.kotlin.descriptors.Visibilities;
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansElementFactory;
@@ -382,6 +384,32 @@ public class ClassSearchers {
         public Collection<JavaClassifierType> getSuperTypes() {
             return superTypes;
         }
+    }
+    
+    public static class TypeParametersSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final Project project;
+        private List<JavaTypeParameter> typeParams;
+        
+        public TypeParametersSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            List<? extends TypeParameterElement> typeParameters = elem.getTypeParameters();
+            typeParams = NetBeansElementFactory.typeParameters(typeParameters.
+                    toArray(new TypeParameterElement[typeParameters.size()]), project);
+        }
+        
+        public List<JavaTypeParameter> getTypeParameters() {
+            return typeParams;
+        }
+        
     }
     
 }

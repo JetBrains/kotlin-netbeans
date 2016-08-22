@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.MethodsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.SuperTypesSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.TypeParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationParameterDefaultValueSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ElementHandleForMemberSearcher;
@@ -228,6 +230,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getSuperTypes();
+    }
+    
+    public static List<JavaTypeParameter> getTypeParametersForTypeElement(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        TypeParametersSearcher searcher = new TypeParametersSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getTypeParameters();
     }
     
     public static JavaType getReturnType(ElementHandle handle, Project project) {

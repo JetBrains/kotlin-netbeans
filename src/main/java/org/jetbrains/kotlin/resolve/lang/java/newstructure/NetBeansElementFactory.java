@@ -21,8 +21,12 @@ package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
+import org.jetbrains.kotlin.name.FqName;
 import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
@@ -45,4 +49,16 @@ public class NetBeansElementFactory {
         return result;
     }
 
+    public static List<JavaTypeParameter> typeParameters(@NotNull TypeParameterElement[] typeParameters, Project project){
+        if (typeParameters.length == 0) {
+            return Collections.emptyList();
+        }
+        List<JavaTypeParameter> result = Lists.newArrayList();
+        for (TypeParameterElement element : typeParameters) {
+            TypeMirrorHandle handle = TypeMirrorHandle.create(element.asType());
+            result.add(new NetBeansJavaTypeParameter(new FqName(element.getSimpleName().toString()), project, handle));
+        }
+        return result;
+    }
+    
 }

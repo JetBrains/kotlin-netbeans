@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
 import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
@@ -102,7 +101,7 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getTypeParametersForTypeElement(handle, getProject());
     }
     
 }
