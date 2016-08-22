@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
@@ -280,6 +282,34 @@ public class MemberSearchers {
         
         public TypeMirrorHandle getTypeMirrorHandle() {
             return handle;
+        }
+        
+    }
+    
+    public static class MemberClassSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private JavaClass javaClass;
+        private final Project project;
+        
+        public MemberClassSearcher(ElementHandle handle, Project project) {
+            this.project = project;
+            this.handle = handle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            Element elem = handle.resolve(info);
+            while (!elem.getKind().isClass() && !elem.getKind().isInterface()) {
+                elem = elem.getEnclosingElement();
+            }
+            
+            javaClass = new NetBeansJavaClass(new FqName(((TypeElement) elem).getQualifiedName().toString()), project);
+        }
+        
+        public JavaClass getJavaClass() {
+            return javaClass;
         }
         
     }

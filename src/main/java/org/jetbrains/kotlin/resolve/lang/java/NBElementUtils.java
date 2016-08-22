@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberAbstractSe
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.TypeMirrorHandleSearcher;
@@ -252,6 +253,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getHandle();
+    }
+    
+    public static JavaClass getJavaClassOfMember(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        MemberClassSearcher searcher = new MemberClassSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getJavaClass();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
