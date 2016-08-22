@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
+import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.api.java.source.Task;
 import org.netbeans.api.project.Project;
 
@@ -26,18 +28,19 @@ public class ClassSearchers {
 
     public static class InnerClassesSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private final Collection<JavaClass> innerClasses = Lists.newArrayList();;
         private final Project project;
         
-        public InnerClassesSearcher(String fqName, Project project) {
-            this.fqName = fqName;
+        public InnerClassesSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
             this.project = project;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement elem = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
             List<? extends Element> enclosedElements = elem.getEnclosedElements();
             for (Element element : enclosedElements){
                 if (element.asType().getKind() == TypeKind.DECLARED 
@@ -57,18 +60,19 @@ public class ClassSearchers {
     
     public static class OuterClassSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private JavaClass outerClass = null;
         private final Project project;
         
-        public OuterClassSearcher(String fqName, Project project) {
-            this.fqName = fqName;
+        public OuterClassSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
             this.project = project;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement elem = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
             Element outerCl = elem.getEnclosingElement();
             if (outerCl == null || outerCl.asType().getKind() != TypeKind.DECLARED){
                 return;
@@ -87,18 +91,17 @@ public class ClassSearchers {
  
     public static class VisibilitySearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private Visibility visibility = null;
-        private final Project project;
         
-        public VisibilitySearcher(String fqName, Project project) {
-            this.fqName = fqName;
-            this.project = project;
+        public VisibilitySearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement member = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement member = (TypeElement) handle.resolve(info);
             if (NetBeansJavaElementUtil.isPublic(member.getModifiers())){
                 visibility = Visibilities.PUBLIC;
                 return;
@@ -121,18 +124,17 @@ public class ClassSearchers {
     
     public static class IsAbstractSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private boolean isAbstract = false;
-        private final Project project;
         
-        public IsAbstractSearcher(String fqName, Project project) {
-            this.fqName = fqName;
-            this.project = project;
+        public IsAbstractSearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement member = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement member = (TypeElement) handle.resolve(info);
             isAbstract = NetBeansJavaElementUtil.isAbstract(member.getModifiers());
         }
         
@@ -143,18 +145,17 @@ public class ClassSearchers {
     
     public static class IsStaticSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private boolean isStatic = false;
-        private final Project project;
         
-        public IsStaticSearcher(String fqName, Project project) {
-            this.fqName = fqName;
-            this.project = project;
+        public IsStaticSearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement member = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement member = (TypeElement) handle.resolve(info);
             isStatic = NetBeansJavaElementUtil.isStatic(member.getModifiers());
         }
         
@@ -165,18 +166,17 @@ public class ClassSearchers {
     
     public static class IsFinalSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private boolean isFinal = false;
-        private final Project project;
         
-        public IsFinalSearcher(String fqName, Project project) {
-            this.fqName = fqName;
-            this.project = project;
+        public IsFinalSearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement member = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement member = (TypeElement) handle.resolve(info);
             isFinal = NetBeansJavaElementUtil.isFinal(member.getModifiers());
         }
         
@@ -187,16 +187,17 @@ public class ClassSearchers {
     
     public static class IsDeprecatedSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private boolean isDeprecated;
         
-        public IsDeprecatedSearcher(String fqName) {
-            this.fqName = fqName;
+        public IsDeprecatedSearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement element = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = (TypeElement) handle.resolve(info);
             isDeprecated = info.getElements().isDeprecated(element);
         }
         
@@ -207,21 +208,43 @@ public class ClassSearchers {
     
     public static class ElementKindSearcher implements Task<CompilationController> {
 
-        private final String fqName;
+        private final ElementHandle handle;
         private ElementKind kind;
         
-        public ElementKindSearcher(String fqName) {
-            this.fqName = fqName;
+        public ElementKindSearcher(ElementHandle handle) {
+            this.handle = handle;
         }
         
         @Override
         public void run(CompilationController info) throws Exception {
-            TypeElement element = info.getElements().getTypeElement(fqName);
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = (TypeElement) handle.resolve(info);
             kind = element.getKind();
         }
         
         public ElementKind getKind() {
             return kind;
+        }
+    }
+    
+    public static class ElementHandleSearcher implements Task<CompilationController> {
+
+        private final String fqName;
+        private ElementHandle handle;
+        
+        public ElementHandleSearcher(String fqName) {
+            this.fqName = fqName;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement element = info.getElements().getTypeElement(fqName);
+            handle = ElementHandle.create(element);
+        }
+        
+        public ElementHandle getElementHandle() {
+            return handle;
         }
     }
     

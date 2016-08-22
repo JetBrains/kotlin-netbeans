@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
@@ -44,9 +45,9 @@ public class NetBeansJavaClassifier extends NetBeansJavaElement implements JavaC
         if (handle.getKind() == TypeKind.TYPEVAR){
             return new NetBeansJavaTypeParameter(fqName, project, handle);
         }
-        ElementKind elementKind = NBElementUtils.getElementKind(fqName, project);
-        if (elementKind.isClass() || elementKind.isInterface() 
-                || elementKind == ElementKind.ENUM){
+        ElementHandle elementHandle = NBElementUtils.getElementHandle(fqName, project);
+        if (elementHandle.getKind().isClass() || elementHandle.getKind().isInterface() 
+                || elementHandle.getKind() == ElementKind.ENUM){
             return new NetBeansJavaClass(fqName, project);
         }
         else

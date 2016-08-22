@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaClass {
 
-    private final ElementKind kind;
+    private final ElementHandle handle;
     
     public NetBeansJavaClass(FqName fqName, Project project) {
         super(fqName, project);
-        kind = NBElementUtils.getElementKind(fqName, project);
+        handle = NBElementUtils.getElementHandle(fqName, project);
     }
     
     @Override
@@ -31,27 +32,27 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
 
     @Override
     public Collection<JavaClass> getInnerClasses() {
-        return NBElementUtils.getInnerClasses(getFqName(), getProject());
+        return NBElementUtils.getInnerClasses(handle, getProject());
     }
 
     @Override
     public JavaClass getOuterClass() {
-        return NBElementUtils.getOuterClass(getFqName(), getProject());
+        return NBElementUtils.getOuterClass(handle, getProject());
     }
 
     @Override
     public boolean isInterface() {
-        return kind == ElementKind.INTERFACE;
+        return handle.getKind() == ElementKind.INTERFACE;
     }
 
     @Override
     public boolean isAnnotationType() {
-        return kind == ElementKind.ANNOTATION_TYPE;
+        return handle.getKind() == ElementKind.ANNOTATION_TYPE;
     }
 
     @Override
     public boolean isEnum() {
-        return kind == ElementKind.ENUM;
+        return handle.getKind() == ElementKind.ENUM;
     }
 
     @Override
@@ -86,27 +87,27 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        return NBElementUtils.isDeprecated(getFqName(), getProject());
+        return NBElementUtils.isDeprecated(handle, getProject());
     }
 
     @Override
     public boolean isAbstract() {
-        return NBElementUtils.isAbstract(getFqName(), getProject());
+        return NBElementUtils.isAbstract(handle, getProject());
     }
 
     @Override
     public boolean isStatic() {
-        return NBElementUtils.isStatic(getFqName(), getProject());
+        return NBElementUtils.isStatic(handle, getProject());
     }
 
     @Override
     public boolean isFinal() {
-        return NBElementUtils.isFinal(getFqName(), getProject());
+        return NBElementUtils.isFinal(handle, getProject());
     }
 
     @Override
     public Visibility getVisibility() {
-        return NBElementUtils.getVisibility(getFqName(), getProject());
+        return NBElementUtils.getVisibility(handle, getProject());
     }
 
     @Override

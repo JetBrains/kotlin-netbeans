@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.InnerClassesSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsAbstractSearcher;
@@ -133,57 +134,57 @@ public class NBElementUtils {
         }
     }
     
-    public static Collection<JavaClass> getInnerClasses(FqName fqName, Project project) {
+    public static Collection<JavaClass> getInnerClasses(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        InnerClassesSearcher searcher = new InnerClassesSearcher(fqName.asString(), project);
+        InnerClassesSearcher searcher = new InnerClassesSearcher(handle, project);
         execute(searcher, project);
         
         return searcher.getInnerClasses();
     }
     
-    public static JavaClass getOuterClass(FqName fqName, Project project) {
+    public static JavaClass getOuterClass(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        OuterClassSearcher searcher = new OuterClassSearcher(fqName.asString(), project);
+        OuterClassSearcher searcher = new OuterClassSearcher(handle, project);
         execute(searcher, project);
         
         return searcher.getOuterClass();
     }
     
-    public static Visibility getVisibility(FqName fqName, Project project) {
+    public static Visibility getVisibility(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        VisibilitySearcher searcher = new VisibilitySearcher(fqName.asString(), project);
+        VisibilitySearcher searcher = new VisibilitySearcher(handle);
         execute(searcher, project);
         
         return searcher.getVisibility();
     }
     
-    public static boolean isAbstract(FqName fqName, Project project) {
+    public static boolean isAbstract(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        IsAbstractSearcher searcher = new IsAbstractSearcher(fqName.asString(), project);
+        IsAbstractSearcher searcher = new IsAbstractSearcher(handle);
         execute(searcher, project);
         
         return searcher.isAbstract();
     }
     
-    public static boolean isStatic(FqName fqName, Project project) {
+    public static boolean isStatic(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        IsStaticSearcher searcher = new IsStaticSearcher(fqName.asString(), project);
+        IsStaticSearcher searcher = new IsStaticSearcher(handle);
         execute(searcher, project);
         
         return searcher.isStatic();
     }
     
-    public static boolean isFinal(FqName fqName, Project project) {
+    public static boolean isFinal(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        IsFinalSearcher searcher = new IsFinalSearcher(fqName.asString(), project);
+        IsFinalSearcher searcher = new IsFinalSearcher(handle);
         execute(searcher, project);
         
         return searcher.isFinal();
     }
     
-    public static boolean isDeprecated(FqName fqName, Project project) {
+    public static boolean isDeprecated(ElementHandle handle, Project project) {
         checkJavaSource(project);
-        IsDeprecatedSearcher searcher = new IsDeprecatedSearcher(fqName.asString());
+        IsDeprecatedSearcher searcher = new IsDeprecatedSearcher(handle);
         execute(searcher, project);
         
         return searcher.isDeprecated();
@@ -318,12 +319,12 @@ public class NBElementUtils {
         return searcher.isRaw();
     }
     
-    public static ElementKind getElementKind(FqName fqName, Project project) {
+    public static ElementHandle getElementHandle(FqName fqName, Project project) {
         checkJavaSource(project);
-        ElementKindSearcher searcher = new ElementKindSearcher(fqName.asString());
+        ElementHandleSearcher searcher = new ElementHandleSearcher(fqName.asString());
         execute(searcher, project);
         
-        return searcher.getKind();
+        return searcher.getElementHandle();
     }
     
     public static TypeElement findTypeElement(Project kotlinProject, String fqName){
