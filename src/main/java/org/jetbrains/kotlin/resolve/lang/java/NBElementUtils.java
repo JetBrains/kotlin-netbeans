@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.ComponentTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsExtendsSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.ClassIndex;
@@ -241,6 +242,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.isExtends();
+    }
+    
+    public static JavaType getComponentType(Project project, TypeMirrorHandle handle) {
+        checkJavaSource(project);
+        ComponentTypeSearcher searcher = new ComponentTypeSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getComponentType();
     }
     
     public static ElementKind getElementKind(FqName fqName, Project project) {
