@@ -19,11 +19,14 @@
 package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
@@ -35,12 +38,16 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement {
 
     private final Project project;
     private final ElementHandle fromElement;
-    private final String name;
+    private final String mirrorName;
     
     public NetBeansJavaAnnotation(ElementHandle fromElement, Project project, String name) {
         this.project = project;
         this.fromElement = fromElement;
-        this.name = name;
+        this.mirrorName = name;
+    }
+    
+    public JavaAnnotationArgument findArgument(@NotNull Name name) {
+        return NBElementUtils.findArgument(fromElement, mirrorName, name, project);
     }
     
     @Override

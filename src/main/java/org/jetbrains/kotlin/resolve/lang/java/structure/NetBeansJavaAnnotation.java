@@ -47,7 +47,7 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement{
     
     protected NetBeansJavaAnnotation(AnnotationMirror javaAnnotation){
         this.binding = javaAnnotation;
-        this.kotlinProject = NBElementUtils.getProject(binding.getAnnotationType().asElement());
+        this.kotlinProject = NBElementUtils.getProject(binding.getAnnotationType().asElement()); 
     }
     
     public JavaAnnotationArgument findArgument(@NotNull Name name) {

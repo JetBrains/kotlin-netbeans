@@ -26,10 +26,12 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaAnnotationArgument;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.api.java.source.Task;
+import org.netbeans.api.project.Project;
 
 /**
  *
@@ -43,16 +45,19 @@ public class AnnotationSearchers {
         private final Name name;
         private final String mirrorName;
         private JavaAnnotationArgument argument;
-
-        public ArgumentSearcher(ElementHandle from, String mirrorName, Name name) {
+        private final Project project;
+        
+        public ArgumentSearcher(ElementHandle from, String mirrorName, Name name, Project project) {
             this.from = from;
             this.mirrorName = mirrorName;
             this.name = name;
+            this.project = project;
         }
 
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
+            
             Element fromElement = from.resolve(info);
             List<? extends AnnotationMirror> mirrors = info.getElements().getAllAnnotationMirrors(fromElement);
             AnnotationMirror mirror = null;
@@ -69,9 +74,8 @@ public class AnnotationSearchers {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
                     : mirror.getElementValues().entrySet()) {
                 if (name.asString().equals(entry.getKey().getSimpleName().toString())) {
-                    return NetBeansJavaAnnotationArgument.create(entry.getValue().getValue(),
-                            name,
-                            kotlinProject);
+                    argument = NetBeansJavaAnnotationArgument.create(entry.getValue().getValue(),
+                            name,project, ElementHandle.create(fromElement));
                 }
             }
 

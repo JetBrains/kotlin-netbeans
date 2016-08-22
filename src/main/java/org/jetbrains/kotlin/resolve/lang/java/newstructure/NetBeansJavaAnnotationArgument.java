@@ -43,10 +43,11 @@ public class NetBeansJavaAnnotationArgument extends NetBeansJavaElement implemen
         return Name.identifier(getFqName().shortName().asString());
     }
     
-    public static JavaAnnotationArgument create(Object value, Name name, Project project){
+    public static JavaAnnotationArgument create(Object value, Name name, Project project, ElementHandle fromElement){
         
         if (value instanceof AnnotationMirror){
-            return new NetBeansJavaAnnotationAsAnnotationArgument((AnnotationMirror) value, name);
+            return new NetBeansJavaAnnotationAsAnnotationArgument(fromElement, project, 
+                    ((AnnotationMirror) value).toString(), name);
         }
         else if (value instanceof VariableElement){
             return new NetBeansJavaReferenceAnnotationArgument(new FqName(((VariableElement) value).getSimpleName().toString()),
@@ -59,9 +60,10 @@ public class NetBeansJavaAnnotationArgument extends NetBeansJavaElement implemen
             return new NetBeansJavaClassObjectAnnotationArgument((Class) value, name, project);
         }
         else if (value instanceof Collection<?>){
-            return new NetBeansJavaArrayAnnotationArgument((Collection) value, name, project);
-        } else if (value instanceof AnnotationValue){
-            return create(((AnnotationValue) value).getValue(), name, project);
+            return new NetBeansJavaArrayAnnotationArgument((Collection) value, name, project, fromElement);
+        } 
+        else if (value instanceof AnnotationValue){
+            return create(((AnnotationValue) value).getValue(), name, project, fromElement);
         } else return null;
     }
     

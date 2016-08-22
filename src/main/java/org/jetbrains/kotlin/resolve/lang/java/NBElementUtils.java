@@ -29,6 +29,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
@@ -37,8 +38,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
+import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ArgumentSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ConstructorsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
@@ -261,6 +264,14 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getJavaClass();
+    }
+    
+    public static JavaAnnotationArgument findArgument(ElementHandle from, String mirrorName, Name name, Project project) {
+        checkJavaSource(project);
+        ArgumentSearcher searcher = new ArgumentSearcher(from, mirrorName, name, project);
+        execute(searcher, project);
+        
+        return searcher.getArgument();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
