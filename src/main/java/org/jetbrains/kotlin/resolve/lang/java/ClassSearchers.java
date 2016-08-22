@@ -7,15 +7,18 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansElementFactory;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaConstructor;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaField;
@@ -355,6 +358,30 @@ public class ClassSearchers {
             return fields;
         }
         
+    }
+    
+    public static class SuperTypesSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private Collection<JavaClassifierType> superTypes;
+        private final Project project;
+        
+        public SuperTypesSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            TypeMirror[] mirrors = NetBeansJavaElementUtil.getSuperTypesWithObject(elem);
+            superTypes = NetBeansElementFactory.classifierTypes(mirrors, project);
+        }
+        
+        public Collection<JavaClassifierType> getSuperTypes() {
+            return superTypes;
+        }
     }
     
 }

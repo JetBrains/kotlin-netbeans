@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.MethodsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.SuperTypesSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationParameterDefaultValueSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ElementHandleForMemberSearcher;
@@ -70,7 +71,7 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.TypeMirrorHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ValueParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
-import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.FqNameForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeMirrorHandleFromFQNameSearcher;
@@ -213,12 +214,20 @@ public class NBElementUtils {
         return searcher.getBounds();
     }
     
-    public static ElementHandle getElementHandleForTypeVariable(TypeMirrorHandle handle, Project project) {
+    public static String getFqNameForTypeVariable(TypeMirrorHandle handle, Project project) {
         checkJavaSource(project);
-        ElementHandleForTypeVariable searcher = new ElementHandleForTypeVariable(handle);
+        FqNameForTypeVariable searcher = new FqNameForTypeVariable(handle);
         execute(searcher, project);
         
-        return searcher.getElementHandle();
+        return searcher.getFqName();
+    }
+    
+    public static Collection<JavaClassifierType> getSuperTypes(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        SuperTypesSearcher searcher = new SuperTypesSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getSuperTypes();
     }
     
     public static JavaType getReturnType(ElementHandle handle, Project project) {

@@ -48,8 +48,8 @@ public class NetBeansJavaClassifierType extends NetBeansJavaType implements Java
                 return NetBeansJavaClassifier.create(new FqName(elementHandle.getQualifiedName()), 
                         getProject(), getHandle());
             case TYPEVAR:
-                ElementHandle el = NBElementUtils.getElementHandleForTypeVariable(getHandle(), getProject());
-                return NetBeansJavaClassifier.create(new FqName(el.getQualifiedName()), 
+                String fqName = NBElementUtils.getFqNameForTypeVariable(getHandle(), getProject());
+                return NetBeansJavaClassifier.create(new FqName(fqName), 
                         getProject(), getHandle());
             default:
                 return null;

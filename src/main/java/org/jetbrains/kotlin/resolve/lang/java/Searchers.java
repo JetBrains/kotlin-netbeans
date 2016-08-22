@@ -136,12 +136,12 @@ public class Searchers {
         }
     }
     
-    public static class ElementHandleForTypeVariable implements Task<CompilationController> {
+    public static class FqNameForTypeVariable implements Task<CompilationController> {
 
         private final TypeMirrorHandle typeHandle;
-        private ElementHandle handle;
+        private String fqName;
         
-        public ElementHandleForTypeVariable(TypeMirrorHandle typeHandle) {
+        public FqNameForTypeVariable(TypeMirrorHandle typeHandle) {
             this.typeHandle = typeHandle;
         }
         
@@ -149,11 +149,11 @@ public class Searchers {
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
             TypeVariable type = (TypeVariable) typeHandle.resolve(info);
-            handle = ElementHandle.create(type.asElement());
+            fqName = type.asElement().getSimpleName().toString();
         }
         
-        public ElementHandle getElementHandle() {
-            return handle;
+        public String getFqName() {
+            return fqName;
         }
         
     }

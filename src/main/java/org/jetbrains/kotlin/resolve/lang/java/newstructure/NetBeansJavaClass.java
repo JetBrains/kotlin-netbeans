@@ -27,7 +27,7 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
     
     @Override
     public Collection<JavaClassifierType> getSupertypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getSuperTypes(handle, getProject());
     }
 
     @Override
