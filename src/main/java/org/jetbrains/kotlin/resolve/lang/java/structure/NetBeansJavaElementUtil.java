@@ -51,57 +51,27 @@ import org.netbeans.api.project.ui.OpenProjects;
 public class NetBeansJavaElementUtil {
 
     public static boolean isPublic(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.PUBLIC){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.PUBLIC);
     }
     
     public static boolean isPrivate(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.PRIVATE){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.PRIVATE);
     }
     
     public static boolean isProtected(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.PROTECTED){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.PROTECTED);
     }
     
     public static boolean isStatic(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.STATIC){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.STATIC);
     }
     
     public static boolean isAbstract(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.ABSTRACT){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.ABSTRACT);
     }
     
     public static boolean isFinal(Set<Modifier> modifiers){
-        for (Modifier modifier : modifiers){
-            if (modifier == Modifier.FINAL){
-                return true;
-            }
-        }
-        return false;
+        return modifiers.contains(Modifier.FINAL);
     }
     
     @NotNull

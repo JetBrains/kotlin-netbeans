@@ -25,16 +25,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.InnerClassesSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsAbstractSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsDeprecatedSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsFinalSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
-import org.jetbrains.kotlin.resolve.lang.java.Searchers.IsDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
@@ -122,6 +129,54 @@ public class NBElementUtils {
         return searcher.getOuterClass();
     }
     
+    public static Visibility getVisibility(FqName fqName, Project project) {
+        checkJavaSource(project);
+        VisibilitySearcher searcher = new VisibilitySearcher(fqName.asString(), project);
+        execute(searcher, project);
+        
+        return searcher.getVisibility();
+    }
+    
+    public static boolean isAbstract(FqName fqName, Project project) {
+        checkJavaSource(project);
+        IsAbstractSearcher searcher = new IsAbstractSearcher(fqName.asString(), project);
+        execute(searcher, project);
+        
+        return searcher.isAbstract();
+    }
+    
+    public static boolean isStatic(FqName fqName, Project project) {
+        checkJavaSource(project);
+        IsStaticSearcher searcher = new IsStaticSearcher(fqName.asString(), project);
+        execute(searcher, project);
+        
+        return searcher.isStatic();
+    }
+    
+    public static boolean isFinal(FqName fqName, Project project) {
+        checkJavaSource(project);
+        IsFinalSearcher searcher = new IsFinalSearcher(fqName.asString(), project);
+        execute(searcher, project);
+        
+        return searcher.isFinal();
+    }
+    
+    public static boolean isDeprecated(FqName fqName, Project project) {
+        checkJavaSource(project);
+        IsDeprecatedSearcher searcher = new IsDeprecatedSearcher(fqName.asString());
+        execute(searcher, project);
+        
+        return searcher.isDeprecated();
+    }
+    
+    public static ElementKind getElementKind(FqName fqName, Project project) {
+        checkJavaSource(project);
+        ElementKindSearcher searcher = new ElementKindSearcher(fqName.asString());
+        execute(searcher, project);
+        
+        return searcher.getKind();
+    }
+    
     public static TypeElement findTypeElement(Project kotlinProject, String fqName){
         checkJavaSource(kotlinProject);
         TypeElementSearcher searcher = new TypeElementSearcher(fqName);
@@ -188,7 +243,8 @@ public class NBElementUtils {
         }
         
         checkJavaSource(kotlinProject);
-        IsDeprecatedSearcher searcher = new IsDeprecatedSearcher(element);
+        org.jetbrains.kotlin.resolve.lang.java.Searchers.IsDeprecatedSearcher searcher 
+                = new org.jetbrains.kotlin.resolve.lang.java.Searchers.IsDeprecatedSearcher(element);
         execute(searcher, kotlinProject);
         
         

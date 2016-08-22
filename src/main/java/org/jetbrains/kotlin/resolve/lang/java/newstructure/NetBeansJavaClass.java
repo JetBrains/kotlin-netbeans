@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import java.util.Collection;
 import java.util.List;
+import javax.lang.model.element.ElementKind;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.netbeans.api.project.Project;
 
@@ -19,10 +21,12 @@ public class NetBeansJavaClass implements JavaClass {
 
     private final FqName fqName;
     private final Project project;
+    private final ElementKind kind;
     
     public NetBeansJavaClass(FqName fqName, Project project) {
         this.fqName = fqName;
         this.project = project;
+        kind = NBElementUtils.getElementKind(fqName, project);
     }
     
     @Override
@@ -47,17 +51,17 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public boolean isInterface() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return kind == ElementKind.INTERFACE;
     }
 
     @Override
     public boolean isAnnotationType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return kind == ElementKind.ANNOTATION_TYPE;
     }
 
     @Override
     public boolean isEnum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return kind == ElementKind.ENUM;
     }
 
     @Override
@@ -92,32 +96,32 @@ public class NetBeansJavaClass implements JavaClass {
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.isDeprecated(fqName, project);
     }
 
     @Override
     public Name getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return SpecialNames.safeIdentifier(fqName.shortName().asString());
     }
 
     @Override
     public boolean isAbstract() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.isAbstract(fqName, project);
     }
 
     @Override
     public boolean isStatic() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.isStatic(fqName, project);
     }
 
     @Override
     public boolean isFinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.isFinal(fqName, project);
     }
 
     @Override
     public Visibility getVisibility() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getVisibility(fqName, project);
     }
 
     @Override
