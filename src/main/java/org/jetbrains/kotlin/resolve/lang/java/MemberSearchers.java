@@ -20,16 +20,21 @@ package org.jetbrains.kotlin.resolve.lang.java;
 
 import java.util.List;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource;
+import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.api.java.source.Task;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -181,6 +186,54 @@ public class MemberSearchers {
         public Visibility getVisibility() {
             return visibility;
         }
+    }
+    
+    public static class ReturnTypeSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final Project project;
+        private JavaType returnType;
+        
+        public ReturnTypeSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement exec = (ExecutableElement) handle.resolve(info);
+            returnType = NetBeansJavaType.create(TypeMirrorHandle.create(exec.getReturnType()), project);
+        }
+        
+        public JavaType getReturnType() {
+            return returnType;
+        }
+        
+    }
+    
+    public static class AnnotationParameterDefaultValueSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final Project project;
+        private boolean hasDefaultValue = false;
+        
+        public AnnotationParameterDefaultValueSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement exec = (ExecutableElement) handle.resolve(info);
+            hasDefaultValue = exec.getDefaultValue() != null;
+        }
+        
+        public boolean hasDefaultValue() {
+            return hasDefaultValue;
+        }
+        
     }
     
 }

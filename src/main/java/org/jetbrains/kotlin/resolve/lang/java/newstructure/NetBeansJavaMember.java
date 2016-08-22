@@ -49,6 +49,10 @@ public abstract class NetBeansJavaMember extends NetBeansJavaElement implements 
         return containingClass;
     }
 
+    public ElementHandle getHandle() {
+        return handle;
+    }
+    
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

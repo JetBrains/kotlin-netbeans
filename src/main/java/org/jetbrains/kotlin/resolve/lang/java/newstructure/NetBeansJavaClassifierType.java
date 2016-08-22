@@ -18,6 +18,7 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
+import java.util.Collections;
 import java.util.List;
 import javax.lang.model.type.TypeKind;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
@@ -57,7 +58,11 @@ public class NetBeansJavaClassifierType extends NetBeansJavaType implements Java
 
     @Override
     public List<JavaType> getTypeArguments() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (getHandle().getKind() == TypeKind.DECLARED){
+            
+            //TODO
+            return null;
+        } else return Collections.emptyList();
     }
 
     @Override

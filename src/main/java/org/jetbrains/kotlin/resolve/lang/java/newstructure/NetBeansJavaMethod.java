@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.netbeans.api.project.Project;
 
 public class NetBeansJavaMethod extends NetBeansJavaMember implements JavaMethod {
@@ -23,12 +24,12 @@ public class NetBeansJavaMethod extends NetBeansJavaMember implements JavaMethod
 
     @Override
     public JavaType getReturnType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getReturnType(getHandle(), getProject());
     }
 
     @Override
     public boolean getHasAnnotationParameterDefaultValue() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.hasDefaultValue(getHandle(), getProject());
     }
 
     @Override

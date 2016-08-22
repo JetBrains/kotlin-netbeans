@@ -43,12 +43,14 @@ import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationParameterDefaultValueSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ElementHandleForMemberSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberAbstractSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.ElementHandleForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
@@ -198,6 +200,23 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getElementHandle();
+    }
+    
+    public static JavaType getReturnType(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        ReturnTypeSearcher searcher = new ReturnTypeSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getReturnType();
+    }
+    
+    public static boolean hasDefaultValue(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        AnnotationParameterDefaultValueSearcher searcher = 
+                new AnnotationParameterDefaultValueSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.hasDefaultValue();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {
