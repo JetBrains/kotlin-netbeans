@@ -23,13 +23,16 @@ import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansElementFactory;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
@@ -310,6 +313,32 @@ public class MemberSearchers {
         
         public JavaClass getJavaClass() {
             return javaClass;
+        }
+        
+    }
+    
+    public static class MemberTypeParametersSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final Project project;
+        private List<JavaTypeParameter> typeParams;
+        
+        public MemberTypeParametersSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement elem = (ExecutableElement) handle.resolve(info);
+            List<? extends TypeParameterElement> typeParameters = elem.getTypeParameters();
+            typeParams = NetBeansElementFactory.typeParameters(typeParameters.
+                    toArray(new TypeParameterElement[typeParameters.size()]), project);
+        }
+        
+        public List<JavaTypeParameter> getTypeParameters() {
+            return typeParams;
         }
         
     }

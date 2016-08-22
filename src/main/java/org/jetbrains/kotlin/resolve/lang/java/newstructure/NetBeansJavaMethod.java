@@ -34,7 +34,7 @@ public class NetBeansJavaMethod extends NetBeansJavaMember implements JavaMethod
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getTypeParametersForMember(getHandle(), getProject());
     }
     
 }

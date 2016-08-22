@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecated
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberStaticSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberClassSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberTypeParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.TypeMirrorHandleSearcher;
@@ -235,6 +236,14 @@ public class NBElementUtils {
     public static List<JavaTypeParameter> getTypeParametersForTypeElement(ElementHandle handle, Project project) {
         checkJavaSource(project);
         TypeParametersSearcher searcher = new TypeParametersSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getTypeParameters();
+    }
+    
+    public static List<JavaTypeParameter> getTypeParametersForMember(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        MemberTypeParametersSearcher searcher = new MemberTypeParametersSearcher(handle, project);
         execute(searcher, project);
         
         return searcher.getTypeParameters();
