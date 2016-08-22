@@ -18,19 +18,28 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
+import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaAnnotationArgument;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
+import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.api.java.source.Task;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -86,5 +95,96 @@ public class AnnotationSearchers {
         }
         
     }
+    
+    
+    public static class ArgumentsSearcher implements Task<CompilationController> {
 
+        private final ElementHandle from;
+        private final String mirrorName;
+        private Collection<JavaAnnotationArgument> arguments;
+        private final Project project;
+        
+        public ArgumentsSearcher(ElementHandle from, String mirrorName, Project project) {
+            this.from = from;
+            this.mirrorName = mirrorName;
+            this.project = project;
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            
+            Element fromElement = from.resolve(info);
+            List<? extends AnnotationMirror> mirrors = info.getElements().getAllAnnotationMirrors(fromElement);
+            AnnotationMirror mirror = null;
+            for (AnnotationMirror mir : mirrors) {
+                if (mirrorName.equals(mir.toString())) {
+                    mirror = mir;
+                    break;
+                }
+            }
+            if (mirror == null) {
+                return;
+            }
+
+            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry :
+                    mirror.getElementValues().entrySet()){
+                arguments.add(NetBeansJavaAnnotationArgument.create(entry.getValue().getValue(), 
+                        Name.identifier(entry.getKey().getSimpleName().toString()), 
+                        project, ElementHandle.create(fromElement)));
+            }
+        }
+
+        public Collection<JavaAnnotationArgument> getArguments() {
+            return arguments;
+        }
+        
+    }
+    
+    public static class ClassIdSearcher implements Task<CompilationController> {
+
+        private final TypeMirrorHandle handle;
+        private ClassId classId;
+        
+        public ClassIdSearcher(TypeMirrorHandle handle) {
+            this.handle = handle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            DeclaredType type = (DeclaredType) handle.resolve(info);
+            classId = NetBeansJavaElementUtil.computeClassId((TypeElement) type.asElement());
+        }
+        
+        public ClassId getClassId() {
+            return classId;
+        }
+        
+    }
+
+    public static class JavaClassForAnnotationSearcher implements Task<CompilationController> {
+
+        private final TypeMirrorHandle handle;
+        private final Project project;
+        private JavaClass javaClass;
+        
+        public JavaClassForAnnotationSearcher(TypeMirrorHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            DeclaredType type = (DeclaredType) handle.resolve(info);
+            String fqName = ((TypeElement) type.asElement()).getQualifiedName().toString();
+            javaClass = new NetBeansJavaClass(new FqName(fqName), project);
+        }
+        
+        public JavaClass getJavaClass() {
+            return javaClass;
+        }
+    }
+    
 }

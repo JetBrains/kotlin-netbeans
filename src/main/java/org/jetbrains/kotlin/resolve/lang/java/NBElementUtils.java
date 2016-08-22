@@ -37,11 +37,15 @@ import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ArgumentSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ArgumentsSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ClassIdSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.JavaClassForAnnotationSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ConstructorsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
@@ -272,6 +276,30 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getArgument();
+    }
+    
+    public static Collection<JavaAnnotationArgument> getArguments(ElementHandle from, String mirrorName, Project project) {
+        checkJavaSource(project);
+        ArgumentsSearcher searcher = new ArgumentsSearcher(from, mirrorName, project);
+        execute(searcher, project);
+        
+        return searcher.getArguments();
+    }
+    
+    public static ClassId getClassId(TypeMirrorHandle handle, Project project) {
+        checkJavaSource(project);
+        ClassIdSearcher searcher = new ClassIdSearcher(handle);
+        execute(searcher, project);
+        
+        return searcher.getClassId();
+    }
+    
+    public static JavaClass getJavaClassForAnnotation(TypeMirrorHandle handle, Project project) {
+        checkJavaSource(project);
+        JavaClassForAnnotationSearcher searcher = new JavaClassForAnnotationSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getJavaClass();
     }
     
     public static ElementHandle getElementhandleForMember(FqName fqName, Project project, JavaClass containingClass) {

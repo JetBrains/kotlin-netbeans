@@ -61,12 +61,12 @@ public class NetBeansJavaValueParameter extends NetBeansJavaElement implements J
 
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;//temp
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;//temp
     }
 
     @Override

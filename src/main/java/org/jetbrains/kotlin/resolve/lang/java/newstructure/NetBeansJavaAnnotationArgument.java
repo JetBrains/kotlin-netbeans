@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -46,8 +47,9 @@ public class NetBeansJavaAnnotationArgument extends NetBeansJavaElement implemen
     public static JavaAnnotationArgument create(Object value, Name name, Project project, ElementHandle fromElement){
         
         if (value instanceof AnnotationMirror){
+            TypeMirrorHandle typeHandle = TypeMirrorHandle.create(((AnnotationMirror) value).getAnnotationType());
             return new NetBeansJavaAnnotationAsAnnotationArgument(fromElement, project, 
-                    ((AnnotationMirror) value).toString(), name);
+                    ((AnnotationMirror) value).toString(), name, typeHandle);
         }
         else if (value instanceof VariableElement){
             return new NetBeansJavaReferenceAnnotationArgument(new FqName(((VariableElement) value).getSimpleName().toString()),

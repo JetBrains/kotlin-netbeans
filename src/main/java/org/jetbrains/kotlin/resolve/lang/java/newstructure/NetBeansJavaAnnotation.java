@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -39,11 +40,25 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement {
     private final Project project;
     private final ElementHandle fromElement;
     private final String mirrorName;
+    private final TypeMirrorHandle typeHandle;
     
-    public NetBeansJavaAnnotation(ElementHandle fromElement, Project project, String name) {
+    public NetBeansJavaAnnotation(ElementHandle fromElement, Project project, String name, TypeMirrorHandle typeHandle) {
         this.project = project;
         this.fromElement = fromElement;
         this.mirrorName = name;
+        this.typeHandle = typeHandle;
+    }
+    
+    public Project getProject() {
+        return project;
+    }
+    
+    public ElementHandle getFromElement() {
+        return fromElement;
+    }
+    
+    public String getName() {
+        return mirrorName;
     }
     
     public JavaAnnotationArgument findArgument(@NotNull Name name) {
@@ -52,17 +67,29 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement {
     
     @Override
     public Collection<JavaAnnotationArgument> getArguments() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getArguments(fromElement, mirrorName, project);
     }
 
     @Override
     public ClassId getClassId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getClassId(typeHandle, project);
     }
 
     @Override
     public JavaClass resolve() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getJavaClassForAnnotation(typeHandle, project);
     }
     
+    
+    @Override
+    public int hashCode() {
+        return project.hashCode() + fromElement.hashCode() + mirrorName.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof NetBeansJavaAnnotation && project.equals(((NetBeansJavaAnnotation) obj).getProject())
+                && fromElement.equals(((NetBeansJavaAnnotation) obj).getFromElement())
+                && mirrorName.equals(((NetBeansJavaAnnotation) obj).getName());
+    }
 }

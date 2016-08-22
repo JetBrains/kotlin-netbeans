@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationAsAnnotationArgument;
 import org.jetbrains.kotlin.name.Name;
 import org.netbeans.api.java.source.ElementHandle;
+import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 
 /**
@@ -34,18 +35,20 @@ public class NetBeansJavaAnnotationAsAnnotationArgument  implements JavaAnnotati
     private final Project project;
     private final String mirrorName;
     private final Name name;
+    private final TypeMirrorHandle typeHandle;
     
     public NetBeansJavaAnnotationAsAnnotationArgument(ElementHandle from, Project project, 
-            String mirrorName, Name name) {
+            String mirrorName, Name name, TypeMirrorHandle typeHandle) {
         this.from = from;
         this.project = project;
         this.mirrorName = mirrorName;
         this.name = name;
+        this.typeHandle = typeHandle;
     }
     
     @Override
     public JavaAnnotation getAnnotation() {
-        return new NetBeansJavaAnnotation(from, project, mirrorName);
+        return new NetBeansJavaAnnotation(from, project, mirrorName, typeHandle);
     }
 
     @Override
