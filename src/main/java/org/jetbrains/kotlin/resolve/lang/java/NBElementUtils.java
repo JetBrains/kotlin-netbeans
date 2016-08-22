@@ -31,18 +31,24 @@ import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
+import org.jetbrains.kotlin.load.java.structure.JavaField;
+import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.ClassPathExtender;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ConstructorsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.FieldsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.InnerClassesSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsAbstractSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsDeprecatedSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsFinalSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.IsStaticSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.MethodsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationParameterDefaultValueSearcher;
@@ -317,6 +323,30 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.isRaw();
+    }
+    
+    public static Collection<JavaMethod> getMethods(ElementHandle handle, JavaClass containingClass, Project project) {
+        checkJavaSource(project);
+        MethodsSearcher searcher = new MethodsSearcher(handle, containingClass, project);
+        execute(searcher, project);
+        
+        return searcher.getMethods();
+    }
+    
+    public static Collection<JavaConstructor> getConstructors(ElementHandle handle, JavaClass containingClass, Project project) {
+        checkJavaSource(project);
+        ConstructorsSearcher searcher = new ConstructorsSearcher(handle, containingClass, project);
+        execute(searcher, project);
+        
+        return searcher.getConstructors();
+    }
+    
+    public static Collection<JavaField> getFields(ElementHandle handle, JavaClass containingClass, Project project) {
+        checkJavaSource(project);
+        FieldsSearcher searcher = new FieldsSearcher(handle, containingClass, project);
+        execute(searcher, project);
+        
+        return searcher.getFields();
     }
     
     public static ElementHandle getElementHandle(FqName fqName, Project project) {

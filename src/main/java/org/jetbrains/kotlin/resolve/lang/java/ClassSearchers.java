@@ -11,8 +11,15 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
+import org.jetbrains.kotlin.load.java.structure.JavaField;
+import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaConstructor;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaField;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaMethod;
 import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
@@ -41,7 +48,7 @@ public class ClassSearchers {
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
             TypeElement elem = (TypeElement) handle.resolve(info);
-            List<? extends Element> enclosedElements = elem.getEnclosedElements();
+            List<? extends Element> enclosedElements = info.getElements().getAllMembers(elem);
             for (Element element : enclosedElements){
                 if (element.asType().getKind() == TypeKind.DECLARED 
                         && element instanceof TypeElement){
@@ -246,6 +253,108 @@ public class ClassSearchers {
         public ElementHandle getElementHandle() {
             return handle;
         }
+    }
+    
+    public static class MethodsSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final JavaClass containingClass;
+        private final Project project;
+        private Collection<JavaMethod> methods = Lists.newArrayList();
+        
+        public MethodsSearcher(ElementHandle handle, JavaClass containingClass, Project project) {
+            this.handle = handle;
+            this.containingClass = containingClass;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            List<? extends Element> members = info.getElements().getAllMembers(elem);
+            
+            for (Element element : members){
+            if (element.getKind() == ElementKind.METHOD){
+                methods.add(new NetBeansJavaMethod(new FqName(element.getSimpleName().toString()),
+                    project, containingClass));
+            }
+        }
+        }
+        
+        public Collection<JavaMethod> getMethods() {
+            return methods;
+        }
+        
+    }
+    
+    public static class ConstructorsSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final JavaClass containingClass;
+        private final Project project;
+        private Collection<JavaConstructor> constructors = Lists.newArrayList();
+        
+        public ConstructorsSearcher(ElementHandle handle, JavaClass containingClass, Project project) {
+            this.handle = handle;
+            this.containingClass = containingClass;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            List<? extends Element> members = info.getElements().getAllMembers(elem);
+            
+            for (Element element : members){
+            if (element.getKind() == ElementKind.CONSTRUCTOR){
+                constructors.add(new NetBeansJavaConstructor(new FqName(element.getSimpleName().toString()),
+                    project, containingClass));
+            }
+        }
+        }
+        
+        public Collection<JavaConstructor> getConstructors() {
+            return constructors;
+        }
+        
+    }
+    
+    public static class FieldsSearcher implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private final JavaClass containingClass;
+        private final Project project;
+        private Collection<JavaField> fields = Lists.newArrayList();
+        
+        public FieldsSearcher(ElementHandle handle, JavaClass containingClass, Project project) {
+            this.handle = handle;
+            this.containingClass = containingClass;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            List<? extends Element> members = info.getElements().getAllMembers(elem);
+            
+            for (Element element : members){
+                if (element.getKind().isField()){
+                    String name = element.getSimpleName().toString();
+                    if (Name.isValidIdentifier(name)){
+                        fields.add(new NetBeansJavaField(new FqName(element.getSimpleName().toString()),
+                            project, containingClass));
+                    }
+                }
+             }
+        }
+        
+        public Collection<JavaField> getFields() {
+            return fields;
+        }
+        
     }
     
 }

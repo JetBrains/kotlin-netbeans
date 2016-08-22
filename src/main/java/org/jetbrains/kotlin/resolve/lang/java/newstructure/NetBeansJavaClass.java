@@ -62,27 +62,17 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
 
     @Override
     public Collection<JavaMethod> getMethods() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getMethods(handle, this, getProject());
     }
 
     @Override
     public Collection<JavaField> getFields() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getFields(handle, this, getProject());
     }
 
     @Override
     public Collection<JavaConstructor> getConstructors() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public JavaAnnotation findAnnotation(FqName fqname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return NBElementUtils.getConstructors(handle, this, getProject());
     }
 
     @Override
