@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.resolve.lang.java;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
@@ -53,7 +54,7 @@ public class AnnotationSearchers {
         private final ElementHandle from;
         private final Name name;
         private final String mirrorName;
-        private JavaAnnotationArgument argument;
+        private JavaAnnotationArgument argument = null;
         private final Project project;
         
         public ArgumentSearcher(ElementHandle from, String mirrorName, Name name, Project project) {
@@ -71,7 +72,7 @@ public class AnnotationSearchers {
             List<? extends AnnotationMirror> mirrors = info.getElements().getAllAnnotationMirrors(fromElement);
             AnnotationMirror mirror = null;
             for (AnnotationMirror mir : mirrors) {
-                if (mirrorName.equals(mir.toString())) {
+                if (mirrorName.equals(mir.getAnnotationType().toString())) {
                     mirror = mir;
                     break;
                 }
@@ -101,7 +102,7 @@ public class AnnotationSearchers {
 
         private final ElementHandle from;
         private final String mirrorName;
-        private Collection<JavaAnnotationArgument> arguments;
+        private Collection<JavaAnnotationArgument> arguments = Collections.emptyList();
         private final Project project;
         
         public ArgumentsSearcher(ElementHandle from, String mirrorName, Project project) {
@@ -118,7 +119,7 @@ public class AnnotationSearchers {
             List<? extends AnnotationMirror> mirrors = info.getElements().getAllAnnotationMirrors(fromElement);
             AnnotationMirror mirror = null;
             for (AnnotationMirror mir : mirrors) {
-                if (mirrorName.equals(mir.toString())) {
+                if (mirrorName.equals(mir.getAnnotationType().toString())) {
                     mirror = mir;
                     break;
                 }

@@ -19,6 +19,8 @@
 package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import java.util.Collection;
+import java.util.Collections;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
@@ -42,6 +44,16 @@ public class NetBeansJavaTypeParameter extends NetBeansJavaClassifier implements
     @Override
     public Collection<JavaClassifierType> getUpperBounds() {
         return NBElementUtils.getUpperBounds(handle, getProject());
+    }
+    
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public JavaAnnotation findAnnotation(FqName fqname) {
+        return null;
     }
     
 }

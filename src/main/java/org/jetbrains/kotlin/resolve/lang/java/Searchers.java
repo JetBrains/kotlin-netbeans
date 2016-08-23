@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.resolve.lang.java;
 
 import com.google.common.collect.Lists;
+import java.util.Collection;
 import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -9,6 +10,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClassifierType;

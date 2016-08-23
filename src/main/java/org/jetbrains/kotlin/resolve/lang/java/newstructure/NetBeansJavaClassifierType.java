@@ -59,9 +59,7 @@ public class NetBeansJavaClassifierType extends NetBeansJavaType implements Java
     @Override
     public List<JavaType> getTypeArguments() {
         if (getHandle().getKind() == TypeKind.DECLARED){
-            
-            //TODO
-            return null;
+            return NBElementUtils.getTypeArgumentsForDeclaredType(getHandle(), getProject());
         } else return Collections.emptyList();
     }
 

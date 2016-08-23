@@ -33,22 +33,19 @@ public class NetBeansJavaAnnotationAsAnnotationArgument  implements JavaAnnotati
 
     private final ElementHandle from;
     private final Project project;
-    private final String mirrorName;
     private final Name name;
     private final TypeMirrorHandle typeHandle;
     
-    public NetBeansJavaAnnotationAsAnnotationArgument(ElementHandle from, Project project, 
-            String mirrorName, Name name, TypeMirrorHandle typeHandle) {
+    public NetBeansJavaAnnotationAsAnnotationArgument(ElementHandle from, Project project, Name name, TypeMirrorHandle typeHandle) {
         this.from = from;
         this.project = project;
-        this.mirrorName = mirrorName;
         this.name = name;
         this.typeHandle = typeHandle;
     }
     
     @Override
     public JavaAnnotation getAnnotation() {
-        return new NetBeansJavaAnnotation(from, project, mirrorName, typeHandle);
+        return new NetBeansJavaAnnotation(from, project, typeHandle);
     }
 
     @Override

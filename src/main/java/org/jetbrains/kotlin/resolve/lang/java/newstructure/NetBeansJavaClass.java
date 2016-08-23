@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
 import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
@@ -102,6 +103,16 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
         return NBElementUtils.getTypeParametersForTypeElement(handle, getProject());
+    }
+    
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return NBElementUtils.getAnnotationsForClass(handle, getProject());
+    }
+
+    @Override
+    public JavaAnnotation findAnnotation(FqName fqName) {
+        return NBElementUtils.findAnnotationForClass(handle, getProject(), fqName);
     }
     
 }

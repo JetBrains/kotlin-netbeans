@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import java.util.Collection;
+import java.util.Collections;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.type.TypeKind;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
@@ -56,12 +57,12 @@ public class NetBeansJavaClassifier extends NetBeansJavaElement implements JavaC
     
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.emptyList();
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override

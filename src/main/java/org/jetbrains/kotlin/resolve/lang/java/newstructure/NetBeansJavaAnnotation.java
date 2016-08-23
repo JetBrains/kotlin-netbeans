@@ -42,10 +42,10 @@ public class NetBeansJavaAnnotation implements JavaAnnotation, JavaElement {
     private final String mirrorName;
     private final TypeMirrorHandle typeHandle;
     
-    public NetBeansJavaAnnotation(ElementHandle fromElement, Project project, String name, TypeMirrorHandle typeHandle) {
+    public NetBeansJavaAnnotation(ElementHandle fromElement, Project project, TypeMirrorHandle typeHandle) {
         this.project = project;
         this.fromElement = fromElement;
-        this.mirrorName = name;
+        this.mirrorName = typeHandle.toString();
         this.typeHandle = typeHandle;
     }
     

@@ -29,6 +29,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
@@ -47,6 +48,8 @@ import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ArgumentSearch
 import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ArgumentsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.ClassIdSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.AnnotationSearchers.JavaClassForAnnotationSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.AnnotationForClassSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.AnnotationsForClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ConstructorsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.ElementKindSearcher;
@@ -83,6 +86,7 @@ import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.ComponentTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsExtendsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.IsRawSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.TypeArgumentsForDeclaredTypeSearcher;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.source.ClassIndex;
 import org.netbeans.api.java.source.ClasspathInfo;
@@ -247,6 +251,30 @@ public class NBElementUtils {
         execute(searcher, project);
         
         return searcher.getTypeParameters();
+    }
+    
+    public static List<JavaType> getTypeArgumentsForDeclaredType(TypeMirrorHandle handle, Project project) {
+        checkJavaSource(project);
+        TypeArgumentsForDeclaredTypeSearcher searcher = new TypeArgumentsForDeclaredTypeSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getTypeArguments();
+    }
+    
+    public static Collection<JavaAnnotation> getAnnotationsForClass(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        AnnotationsForClassSearcher searcher = new AnnotationsForClassSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getAnnotations();
+    }
+    
+    public static JavaAnnotation findAnnotationForClass(ElementHandle handle, Project project, FqName fqName) {
+        checkJavaSource(project);
+        AnnotationForClassSearcher searcher = new AnnotationForClassSearcher(handle, project, fqName);
+        execute(searcher, project);
+        
+        return searcher.getAnnotation();
     }
     
     public static JavaType getReturnType(ElementHandle handle, Project project) {

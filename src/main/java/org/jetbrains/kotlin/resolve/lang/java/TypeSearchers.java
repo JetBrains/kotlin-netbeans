@@ -18,11 +18,15 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
+import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.WildcardType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import static org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansElementFactory.types;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.JavaSource;
@@ -132,4 +136,33 @@ public class TypeSearchers {
         }
     }
 
+    public static class TypeArgumentsForDeclaredTypeSearcher implements Task<CompilationController> {
+
+        private final TypeMirrorHandle handle;
+        private final Project project;
+        private List<JavaType> typeArguments = Collections.emptyList();
+        
+        public TypeArgumentsForDeclaredTypeSearcher(TypeMirrorHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            DeclaredType type = (DeclaredType) handle.resolve(info);
+            List<TypeMirror> typeArgs = Lists.newArrayList();
+            for (TypeMirror elem : type.getTypeArguments()){
+                typeArgs.add(elem);
+            }
+            
+            typeArguments = types(typeArgs.toArray(new TypeMirror[typeArgs.size()]), project);
+        }
+        
+        public List<JavaType> getTypeArguments() {
+            return typeArguments;
+        }
+        
+    }
+    
 }

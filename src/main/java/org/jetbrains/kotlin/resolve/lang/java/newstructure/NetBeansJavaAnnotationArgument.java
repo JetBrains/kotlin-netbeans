@@ -48,8 +48,7 @@ public class NetBeansJavaAnnotationArgument extends NetBeansJavaElement implemen
         
         if (value instanceof AnnotationMirror){
             TypeMirrorHandle typeHandle = TypeMirrorHandle.create(((AnnotationMirror) value).getAnnotationType());
-            return new NetBeansJavaAnnotationAsAnnotationArgument(fromElement, project, 
-                    ((AnnotationMirror) value).toString(), name, typeHandle);
+            return new NetBeansJavaAnnotationAsAnnotationArgument(fromElement, project, name, typeHandle);
         }
         else if (value instanceof VariableElement){
             return new NetBeansJavaReferenceAnnotationArgument(new FqName(((VariableElement) value).getSimpleName().toString()),
