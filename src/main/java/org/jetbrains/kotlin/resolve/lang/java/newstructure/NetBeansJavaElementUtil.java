@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  *******************************************************************************/
-package org.jetbrains.kotlin.resolve.lang.java.structure;
+package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.CommonClassNames;
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.TypeMirrorHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
@@ -89,6 +90,10 @@ public class NetBeansJavaElementUtil {
         return JavaVisibilities.PACKAGE_VISIBILITY;
     }
     
+    public static ClassId computeClassId(ElementHandle handle, Project project) {
+        return NBElementUtils.getClassId(handle, project);
+    }
+    
     @Nullable
     public static ClassId computeClassId(@NotNull TypeElement classBinding){
         Element container = classBinding.getEnclosingElement();
@@ -101,18 +106,6 @@ public class NetBeansJavaElementUtil {
         
         String fqName = classBinding.getQualifiedName().toString();
         return ClassId.topLevel(new FqName(fqName));
-    }
-    
-    public static JavaAnnotation findAnnotation(@NotNull List<? extends AnnotationMirror> annotations, @NotNull FqName fqName){
-        
-        for (AnnotationMirror annotation : annotations){
-            String annotationFQName = annotation.getAnnotationType().toString();
-            if (fqName.asString().equals(annotationFQName)){
-                return new NetBeansJavaAnnotation(annotation);
-            }
-        }
-        
-        return null;
     }
     
     private static List<TypeMirror> getSuperTypes(@NotNull TypeElement typeBinding){
@@ -162,8 +155,8 @@ public class NetBeansJavaElementUtil {
             }
         }
         
-        TypeMirror javaType = NBElementUtils.findTypeElement(
-                project, CommonClassNames.JAVA_LANG_OBJECT).asType();
+        TypeMirror javaType = NBElementUtils.findTypeMirror(
+                project, CommonClassNames.JAVA_LANG_OBJECT);
         return javaType;
     }
     
@@ -177,12 +170,9 @@ public class NetBeansJavaElementUtil {
         for (int i = 0; i < parameterTypesCount; i++){
             boolean isLastParameter = i == parameterTypesCount-1;
             TypeMirrorHandle handle = TypeMirrorHandle.create(valueParameters.get(i).asType());
-            org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter valueParameter = 
-                    new org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaValueParameter(
-                        new FqName(parameterNames[i]), project, isLastParameter ? method.isVarArgs() : false, handle);
+            NetBeansJavaValueParameter valueParameter = 
+                    new NetBeansJavaValueParameter(new FqName(parameterNames[i]), project, isLastParameter ? method.isVarArgs() : false, handle);
             parameters.add(valueParameter);
-//            parameters.add(new NetBeansJavaValueParameter(valueParameters.get(i), 
-//                    parameterNames[i], isLastParameter ? method.isVarArgs() : false, handle));
             
         }
         

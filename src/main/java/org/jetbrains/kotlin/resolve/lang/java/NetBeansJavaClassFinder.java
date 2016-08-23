@@ -26,8 +26,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaClass;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaPackage;
+//import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaClass;
+//import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaPackage;
 import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +38,9 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaPackage;
+import org.netbeans.api.java.source.ElementHandle;
 
 /**
  *
@@ -59,9 +62,9 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     @Override
     @Nullable
     public JavaClass findClass(ClassId classId) {
-        TypeElement element = findType(classId.asSingleFqName(), kotlinProject);
+        ElementHandle<TypeElement> element = findType(classId.asSingleFqName(), kotlinProject);
         if (element != null) {
-            return new NetBeansJavaClass(element);
+            return new NetBeansJavaClass(new FqName(element.getQualifiedName()), kotlinProject);
         }
         
         return null;
@@ -69,7 +72,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
 
     @Override
     public JavaPackage findPackage(FqName fqName) {
-        PackageElement packageEl = NBElementUtils.findPackageElement(kotlinProject, fqName.asString());
+        ElementHandle<PackageElement> packageEl = NBElementUtils.findPackageElement(kotlinProject, fqName.asString());
         if (packageEl != null){
             return new NetBeansJavaPackage(packageEl, kotlinProject);
         } 
@@ -78,23 +81,19 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
     }
 
     @Nullable
-    public static TypeElement findType(@NotNull FqName fqName, @NotNull org.netbeans.api.project.Project project){
-        TypeElement type = NBElementUtils.findTypeElement(project, fqName.asString());
-        if (type != null){
-            return !isInKotlinBinFolder(type) ? type : null;
-        }
-        
-        return null;
+    public static ElementHandle<TypeElement> findType(@NotNull FqName fqName, @NotNull org.netbeans.api.project.Project project){
+        ElementHandle<TypeElement> type = NBElementUtils.findTypeElement(project, fqName.asString());
+        return type;
     }
 
     
     @Nullable 
-    public static PackageElement[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String name,
+    public static ElementHandle<PackageElement>[] findPackageFragments(org.netbeans.api.project.Project kotlinProject, String name,
             boolean partialMatch, boolean patternMatch){
         Set<String> packages = NBElementUtils.getPackages(kotlinProject, name);
-        List<PackageElement> subpackageElements = Lists.newArrayList();
+        List<ElementHandle<PackageElement>> subpackageElements = Lists.newArrayList();
         for (String pack : packages) {
-            PackageElement subpackageElement = NBElementUtils.
+            ElementHandle<PackageElement> subpackageElement = NBElementUtils.
                     findPackageElement(kotlinProject,pack);
             if (subpackageElement == null){
                 continue;
@@ -106,7 +105,7 @@ public class NetBeansJavaClassFinder implements JavaClassFinder {
             return null;
         }
         
-        return subpackageElements.toArray(new PackageElement[subpackageElements.size()]);
+        return subpackageElements.toArray(new ElementHandle[subpackageElements.size()]);
     }
     
     public static boolean isInKotlinBinFolder(@NotNull Element element){

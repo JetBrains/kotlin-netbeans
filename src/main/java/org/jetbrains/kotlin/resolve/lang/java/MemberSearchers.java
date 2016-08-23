@@ -18,24 +18,30 @@
  */
 package org.jetbrains.kotlin.resolve.lang.java;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansElementFactory;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaAnnotation;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaType;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource;
@@ -339,6 +345,126 @@ public class MemberSearchers {
         
         public List<JavaTypeParameter> getTypeParameters() {
             return typeParams;
+        }
+        
+    }
+    
+    public static class AnnotationsForFieldSearcher implements Task<CompilationController> {
+
+        private Collection<JavaAnnotation> annotations = Lists.newArrayList();
+        private final ElementHandle handle;
+        private final Project project;
+        
+        public AnnotationsForFieldSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            VariableElement elem = (VariableElement) handle.resolve(info);
+            List<? extends AnnotationMirror> mirrors = elem.getAnnotationMirrors();
+            for (AnnotationMirror mirror : mirrors) {
+                annotations.add(new NetBeansJavaAnnotation(handle, project, TypeMirrorHandle.create(mirror.getAnnotationType())));
+            }
+        }
+        
+        public Collection<JavaAnnotation> getAnnotations() {
+            return annotations;
+        }
+        
+    }
+    
+    public static class AnnotationsForExecutableSearcher implements Task<CompilationController> {
+
+        private Collection<JavaAnnotation> annotations = Lists.newArrayList();
+        private final ElementHandle handle;
+        private final Project project;
+        
+        public AnnotationsForExecutableSearcher(ElementHandle handle, Project project) {
+            this.handle = handle;
+            this.project = project;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement elem = (ExecutableElement) handle.resolve(info);
+            List<? extends AnnotationMirror> mirrors = elem.getAnnotationMirrors();
+            for (AnnotationMirror mirror : mirrors) {
+                annotations.add(new NetBeansJavaAnnotation(handle, project, TypeMirrorHandle.create(mirror.getAnnotationType())));
+            }
+        }
+        
+        public Collection<JavaAnnotation> getAnnotations() {
+            return annotations;
+        }
+        
+    }
+    
+    public static class AnnotationForFieldSearcher implements Task<CompilationController> {
+
+        private JavaAnnotation annotation = null;
+        private final ElementHandle handle;
+        private final Project project;
+        private final FqName fqName;
+        
+        public AnnotationForFieldSearcher(ElementHandle handle, Project project, FqName fqName) {
+            this.handle = handle;
+            this.project = project;
+            this.fqName = fqName;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            VariableElement elem = (VariableElement) handle.resolve(info);
+            List<? extends AnnotationMirror> mirrors = elem.getAnnotationMirrors();
+            for (AnnotationMirror mirror : mirrors) {
+                String annotationFQName = mirror.getAnnotationType().toString();
+                if (fqName.asString().equals(annotationFQName)){
+                    annotation = new NetBeansJavaAnnotation(handle, project, TypeMirrorHandle.create(mirror.getAnnotationType()));
+                    break;
+                }
+            }
+        }
+        
+        public JavaAnnotation getAnnotation() {
+            return annotation;
+        }
+        
+    }
+    
+    public static class AnnotationForExecutableSearcher implements Task<CompilationController> {
+
+        private JavaAnnotation annotation = null;
+        private final ElementHandle handle;
+        private final Project project;
+        private final FqName fqName;
+        
+        public AnnotationForExecutableSearcher(ElementHandle handle, Project project, FqName fqName) {
+            this.handle = handle;
+            this.project = project;
+            this.fqName = fqName;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            ExecutableElement elem = (ExecutableElement) handle.resolve(info);
+            List<? extends AnnotationMirror> mirrors = elem.getAnnotationMirrors();
+            for (AnnotationMirror mirror : mirrors) {
+                String annotationFQName = mirror.getAnnotationType().toString();
+                if (fqName.asString().equals(annotationFQName)){
+                    annotation = new NetBeansJavaAnnotation(handle, project, TypeMirrorHandle.create(mirror.getAnnotationType()));
+                    break;
+                }
+            }
+        }
+        
+        public JavaAnnotation getAnnotation() {
+            return annotation;
         }
         
     }

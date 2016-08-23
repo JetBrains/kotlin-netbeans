@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaAnnotationArgument;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;

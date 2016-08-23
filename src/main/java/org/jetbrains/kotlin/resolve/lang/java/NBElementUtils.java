@@ -28,6 +28,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
@@ -64,7 +66,11 @@ import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.OuterClassSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.SuperTypesSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.TypeParametersSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.ClassSearchers.VisibilitySearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationForExecutableSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationForFieldSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationParameterDefaultValueSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationsForExecutableSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.AnnotationsForFieldSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ElementHandleForMemberSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberAbstractSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.IsMemberDeprecatedSearcher;
@@ -76,11 +82,14 @@ import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.MemberVisibilitySe
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ReturnTypeSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.TypeMirrorHandleSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.MemberSearchers.ValueParametersSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.PackageSearchers.ClassesInPackageSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.BinaryNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.ClassIdComputer;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.FqNameForTypeVariable;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.PackageElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeElementSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeMirrorHandleFromFQNameSearcher;
+import org.jetbrains.kotlin.resolve.lang.java.Searchers.TypeMirrorSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.Searchers.UpperBoundsSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.BoundSearcher;
 import org.jetbrains.kotlin.resolve.lang.java.TypeSearchers.ComponentTypeSearcher;
@@ -269,6 +278,22 @@ public class NBElementUtils {
         return searcher.getAnnotations();
     }
     
+    public static Collection<JavaAnnotation> getAnnotationsForField(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        AnnotationsForFieldSearcher searcher = new AnnotationsForFieldSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getAnnotations();
+    }
+    
+    public static Collection<JavaAnnotation> getAnnotationsForExecutable(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        AnnotationsForExecutableSearcher searcher = new AnnotationsForExecutableSearcher(handle, project);
+        execute(searcher, project);
+        
+        return searcher.getAnnotations();
+    }
+    
     public static JavaAnnotation findAnnotationForClass(ElementHandle handle, Project project, FqName fqName) {
         checkJavaSource(project);
         AnnotationForClassSearcher searcher = new AnnotationForClassSearcher(handle, project, fqName);
@@ -276,6 +301,32 @@ public class NBElementUtils {
         
         return searcher.getAnnotation();
     }
+    
+    public static JavaAnnotation findAnnotationForField(ElementHandle handle, Project project, FqName fqName) {
+        checkJavaSource(project);
+        AnnotationForFieldSearcher searcher = new AnnotationForFieldSearcher(handle, project, fqName);
+        execute(searcher, project);
+        
+        return searcher.getAnnotation();
+    }
+    
+    public static JavaAnnotation findAnnotationForExecutable(ElementHandle handle, Project project, FqName fqName) {
+        checkJavaSource(project);
+        AnnotationForExecutableSearcher searcher = new AnnotationForExecutableSearcher(handle, project, fqName);
+        execute(searcher, project);
+        
+        return searcher.getAnnotation();
+    }
+    
+    public static List<JavaClass> getJavaClassesInPackage(ElementHandle<PackageElement> handle, Function1<? super Name, ? extends Boolean> nameFilter,
+                Project project) {
+        checkJavaSource(project);
+        ClassesInPackageSearcher searcher = new ClassesInPackageSearcher(handle, nameFilter, project);
+        execute(searcher, project);
+        
+        return searcher.getJavaClasses();
+    }
+    
     
     public static JavaType getReturnType(ElementHandle handle, Project project) {
         checkJavaSource(project);
@@ -470,7 +521,7 @@ public class NBElementUtils {
         return searcher.getElementHandle();
     }
     
-    public static TypeElement findTypeElement(Project kotlinProject, String fqName){
+    public static ElementHandle<TypeElement> findTypeElement(Project kotlinProject, String fqName){
         checkJavaSource(kotlinProject);
         TypeElementSearcher searcher = new TypeElementSearcher(fqName);
         execute(searcher, kotlinProject);
@@ -478,7 +529,15 @@ public class NBElementUtils {
         return searcher.getElement();
     }
     
-    public static PackageElement findPackageElement(Project kotlinProject, String fqName){
+    public static TypeMirror findTypeMirror(Project kotlinProject, String fqName){
+        checkJavaSource(kotlinProject);
+        TypeMirrorSearcher searcher = new TypeMirrorSearcher(fqName);
+        execute(searcher, kotlinProject);
+        
+        return searcher.getMirror();
+    }
+    
+    public static ElementHandle<PackageElement> findPackageElement(Project kotlinProject, String fqName){
         checkJavaSource(kotlinProject);
         PackageElementSearcher searcher = new PackageElementSearcher(fqName);
         execute(searcher, kotlinProject);
@@ -553,6 +612,14 @@ public class NBElementUtils {
         return searcher.getBinaryName();
     }
     
+    public static ClassId getClassId(ElementHandle handle, Project project) {
+        checkJavaSource(project);
+        ClassIdComputer computer = new ClassIdComputer(handle);
+        execute(computer, project);
+        
+        return computer.getClassId();
+    }
+    
     public static FileObject getFileObjectForElement(Element element, Project kotlinProject){
         if (element == null){
             return null;
@@ -561,8 +628,8 @@ public class NBElementUtils {
         return SourceUtils.getFile(handle, CLASSPATH_INFO.get(kotlinProject));
     }
     
-    public static void openElementInEditor(Element element, Project kotlinProject){
-        ElementHandle<? extends Element> handle = ElementHandle.create(element);
+    public static void openElementInEditor(ElementHandle handle, Project kotlinProject){
+//        ElementHandle<? extends Element> handle = ElementHandle.create(element);
         ElementOpen.open(CLASSPATH_INFO.get(kotlinProject), handle);
     }
     

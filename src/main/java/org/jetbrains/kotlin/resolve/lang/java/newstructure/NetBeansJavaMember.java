@@ -36,56 +36,59 @@ import org.netbeans.api.project.Project;
 public abstract class NetBeansJavaMember extends NetBeansJavaElement implements JavaMember {
 
     private final JavaClass containingClass;
-    private final ElementHandle handle;
     
     public NetBeansJavaMember(FqName fqName, Project project, JavaClass containingClass) {
         super(fqName, project);
         this.containingClass = containingClass;
-        this.handle = NBElementUtils.getElementhandleForMember(fqName, project, containingClass);
+        super.setHandle(NBElementUtils.getElementhandleForMember(fqName, project, containingClass));
     }
     
     @Override
     public JavaClass getContainingClass() {
         return containingClass;
     }
-
-    public ElementHandle getHandle() {
-        return handle;
-    }
     
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (getHandle().getKind().isField()) {
+            return NBElementUtils.getAnnotationsForField(getHandle(), getProject());
+        } else {
+            return NBElementUtils.getAnnotationsForExecutable(getHandle(), getProject());
+        }
     }
 
     @Override
-    public JavaAnnotation findAnnotation(FqName fqname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public JavaAnnotation findAnnotation(FqName fqName) {
+        if (getHandle().getKind().isField()) {
+            return NBElementUtils.findAnnotationForField(getHandle(), getProject(), fqName);
+        } else {
+            return NBElementUtils.findAnnotationForExecutable(getHandle(), getProject(), fqName);
+        }
     }
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        return NBElementUtils.isMemberDeprecated(getProject(), handle);
+        return NBElementUtils.isMemberDeprecated(getProject(), getHandle());
     }
 
     @Override
     public boolean isAbstract() {
-        return NBElementUtils.isMemberAbstract(getProject(), handle);
+        return NBElementUtils.isMemberAbstract(getProject(), getHandle());
     }
 
     @Override
     public boolean isStatic() {
-        return NBElementUtils.isMemberStatic(getProject(), handle);
+        return NBElementUtils.isMemberStatic(getProject(), getHandle());
     }
 
     @Override
     public boolean isFinal() {
-        return NBElementUtils.isMemberFinal(getProject(), handle);
+        return NBElementUtils.isMemberFinal(getProject(), getHandle());
     }
 
     @Override
     public Visibility getVisibility() {
-        return NBElementUtils.getMemberVisibility(getProject(), handle);
+        return NBElementUtils.getMemberVisibility(getProject(), getHandle());
     }
 
     @Override

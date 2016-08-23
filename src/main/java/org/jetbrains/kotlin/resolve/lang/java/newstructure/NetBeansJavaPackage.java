@@ -1,4 +1,5 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,61 +14,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *******************************************************************************/
-package org.jetbrains.kotlin.resolve.lang.java.structure;
+ ******************************************************************************
+ */
+package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
 import kotlin.jvm.functions.Function1;
-import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaClassFinder;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaElement;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
+import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaClassFinder;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 /**
  *
- * @author Александр
+ * @author Alexander.Baratynski
  */
-public class NetBeansJavaPackage implements JavaElement, JavaPackage{
+public class NetBeansJavaPackage implements JavaElement, JavaPackage {
+
+    private final List<ElementHandle<PackageElement>> packages = Lists.newArrayList();
+    private final Project project;
     
-    private final List<PackageElement> packages = Lists.newArrayList();
-    private final Project kotlinProject;
-    
-    public NetBeansJavaPackage(List<PackageElement> packages, Project project){
+    public NetBeansJavaPackage(List<ElementHandle<PackageElement>> packages, Project project) {
         this.packages.addAll(packages);
-        this.kotlinProject = project; 
+        this.project = project;
     }
     
-    public NetBeansJavaPackage(PackageElement pack, Project project){
+    public NetBeansJavaPackage(ElementHandle<PackageElement> pack, Project project) {
         this(Collections.singletonList(pack), project);
+    }
+    
+    @Override
+    public FqName getFqName() {
+        return new FqName(packages.get(0).getQualifiedName());
     }
 
     @Override
-    @NotNull
     public Collection<JavaPackage> getSubPackages() {
         String thisPackageName = getFqName().asString();
         String pattern = thisPackageName.isEmpty() ? "*" : thisPackageName + ".";
         
-        PackageElement[] packageFragments = NetBeansJavaClassFinder.findPackageFragments(kotlinProject, pattern, true, true);
+        ElementHandle<PackageElement>[] packageFragments = 
+                NetBeansJavaClassFinder.findPackageFragments(project, pattern, true, true);
         
         int thisNestedLevel = thisPackageName.split("\\.").length;
         List<JavaPackage> javaPackages = Lists.newArrayList();
         if (packageFragments != null && packageFragments.length > 0){
-            for (PackageElement packageFragment : packageFragments){
-                int subNestedLevel = packageFragment.getQualifiedName().toString().split("\\.").length;
+            for (ElementHandle<PackageElement> packageFragment : packageFragments){
+                int subNestedLevel = packageFragment.getQualifiedName().split("\\.").length;
                 boolean applicableForRootPackage = thisNestedLevel == 1 && thisNestedLevel == subNestedLevel;
-                if (!packageFragment.getQualifiedName().toString().isEmpty() &&
+                if (!packageFragment.getQualifiedName().isEmpty() &&
                         (applicableForRootPackage || (thisNestedLevel + 1 == subNestedLevel))){
-                    javaPackages.add(new NetBeansJavaPackage(packageFragment, kotlinProject));
+                    javaPackages.add(new NetBeansJavaPackage(packageFragment, project));
                 }
             }
         }
@@ -76,43 +82,19 @@ public class NetBeansJavaPackage implements JavaElement, JavaPackage{
     }
 
     @Override
-    @NotNull
-    public FqName getFqName() {
-        return new FqName(packages.get(0).getQualifiedName().toString());
-    }
-
-    @Override
     public Collection<JavaClass> getClasses(Function1<? super Name, Boolean> nameFilter) {
         List<JavaClass> javaClasses = Lists.newArrayList();
         
-        for (PackageElement pckg : packages){
+        for (ElementHandle<PackageElement> pckg : packages){
             javaClasses.addAll(getClassesInPackage(pckg, nameFilter));
         }
         
         return javaClasses;
     }
     
-    private List<JavaClass> getClassesInPackage(PackageElement javaPackage, 
+    private List<JavaClass> getClassesInPackage(ElementHandle<PackageElement> pack, 
             Function1<? super Name, ? extends Boolean> nameFilter){
-        List<JavaClass> javaClasses = Lists.newArrayList();
-        List<? extends Element> classes = javaPackage.getEnclosedElements();
-        
-        for (Element cl : classes){
-            if (isOuterClass((TypeElement) cl)){
-                String elementName = cl.getSimpleName().toString();
-                if (Name.isValidIdentifier(elementName) && nameFilter.invoke(Name.identifier(elementName))){
-                        javaClasses.add(new NetBeansJavaClass((TypeElement) cl));
-                }
-            }
-        }
-        
-        return javaClasses;
+        return NBElementUtils.getJavaClassesInPackage(pack, nameFilter, project);
     }
-    
-    private boolean isOuterClass(TypeElement classFile){
-        return !classFile.getSimpleName().toString().contains("$");
-    }
-    
-    
     
 }

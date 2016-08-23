@@ -13,46 +13,43 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
-import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 
 public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaClass {
-
-    private final ElementHandle handle;
     
     public NetBeansJavaClass(FqName fqName, Project project) {
         super(fqName, project);
-        handle = NBElementUtils.getElementHandle(fqName, project);
+        setHandle(NBElementUtils.getElementHandle(fqName, project));
     }
     
     @Override
     public Collection<JavaClassifierType> getSupertypes() {
-        return NBElementUtils.getSuperTypes(handle, getProject());
+        return NBElementUtils.getSuperTypes(getHandle(), getProject());
     }
 
     @Override
     public Collection<JavaClass> getInnerClasses() {
-        return NBElementUtils.getInnerClasses(handle, getProject());
+        return NBElementUtils.getInnerClasses(getHandle(), getProject());
     }
 
     @Override
     public JavaClass getOuterClass() {
-        return NBElementUtils.getOuterClass(handle, getProject());
+        return NBElementUtils.getOuterClass(getHandle(), getProject());
     }
 
     @Override
     public boolean isInterface() {
-        return handle.getKind() == ElementKind.INTERFACE;
+        return getHandle().getKind() == ElementKind.INTERFACE;
     }
 
     @Override
     public boolean isAnnotationType() {
-        return handle.getKind() == ElementKind.ANNOTATION_TYPE;
+        return getHandle().getKind() == ElementKind.ANNOTATION_TYPE;
     }
 
     @Override
     public boolean isEnum() {
-        return handle.getKind() == ElementKind.ENUM;
+        return getHandle().getKind() == ElementKind.ENUM;
     }
 
     @Override
@@ -62,57 +59,57 @@ public class NetBeansJavaClass extends NetBeansJavaClassifier implements JavaCla
 
     @Override
     public Collection<JavaMethod> getMethods() {
-        return NBElementUtils.getMethods(handle, this, getProject());
+        return NBElementUtils.getMethods(getHandle(), this, getProject());
     }
 
     @Override
     public Collection<JavaField> getFields() {
-        return NBElementUtils.getFields(handle, this, getProject());
+        return NBElementUtils.getFields(getHandle(), this, getProject());
     }
 
     @Override
     public Collection<JavaConstructor> getConstructors() {
-        return NBElementUtils.getConstructors(handle, this, getProject());
+        return NBElementUtils.getConstructors(getHandle(), this, getProject());
     }
 
     @Override
     public boolean isDeprecatedInJavaDoc() {
-        return NBElementUtils.isDeprecated(handle, getProject());
+        return NBElementUtils.isDeprecated(getHandle(), getProject());
     }
 
     @Override
     public boolean isAbstract() {
-        return NBElementUtils.isAbstract(handle, getProject());
+        return NBElementUtils.isAbstract(getHandle(), getProject());
     }
 
     @Override
     public boolean isStatic() {
-        return NBElementUtils.isStatic(handle, getProject());
+        return NBElementUtils.isStatic(getHandle(), getProject());
     }
 
     @Override
     public boolean isFinal() {
-        return NBElementUtils.isFinal(handle, getProject());
+        return NBElementUtils.isFinal(getHandle(), getProject());
     }
 
     @Override
     public Visibility getVisibility() {
-        return NBElementUtils.getVisibility(handle, getProject());
+        return NBElementUtils.getVisibility(getHandle(), getProject());
     }
 
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        return NBElementUtils.getTypeParametersForTypeElement(handle, getProject());
+        return NBElementUtils.getTypeParametersForTypeElement(getHandle(), getProject());
     }
     
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return NBElementUtils.getAnnotationsForClass(handle, getProject());
+        return NBElementUtils.getAnnotationsForClass(getHandle(), getProject());
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqName) {
-        return NBElementUtils.findAnnotationForClass(handle, getProject(), fqName);
+        return NBElementUtils.findAnnotationForClass(getHandle(), getProject(), fqName);
     }
     
 }

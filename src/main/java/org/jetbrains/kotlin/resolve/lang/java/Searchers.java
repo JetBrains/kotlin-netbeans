@@ -12,8 +12,10 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClassifierType;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;
@@ -29,7 +31,7 @@ public class Searchers {
 
     public static class TypeElementSearcher implements Task<CompilationController> {
 
-        private TypeElement element;
+        private ElementHandle<TypeElement> element;
         private final String fqName;
 
         public TypeElementSearcher(String fqName) {
@@ -39,18 +41,39 @@ public class Searchers {
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
-            element = info.getElements().getTypeElement(fqName);
+            element = ElementHandle.create(info.getElements().getTypeElement(fqName));
         }
 
-        public TypeElement getElement() {
+        public ElementHandle<TypeElement> getElement() {
             return element;
+        }
+
+    }
+    
+    public static class TypeMirrorSearcher implements Task<CompilationController> {
+
+        private TypeMirror mirror;
+        private final String fqName;
+
+        public TypeMirrorSearcher(String fqName) {
+            this.fqName = fqName;
+        }
+
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            mirror = info.getElements().getTypeElement(fqName).asType();
+        }
+
+        public TypeMirror getMirror() {
+            return mirror;
         }
 
     }
 
     public static class PackageElementSearcher implements Task<CompilationController> {
 
-        private PackageElement element;
+        private ElementHandle<PackageElement> element;
         private final String fqName;
 
         public PackageElementSearcher(String fqName) {
@@ -60,10 +83,10 @@ public class Searchers {
         @Override
         public void run(CompilationController info) throws Exception {
             info.toPhase(Phase.RESOLVED);
-            element = info.getElements().getPackageElement(fqName);
+            element = ElementHandle.create(info.getElements().getPackageElement(fqName));
         }
 
-        public PackageElement getElement() {
+        public ElementHandle<PackageElement> getElement() {
             return element;
         }
 
@@ -183,6 +206,28 @@ public class Searchers {
         public TypeMirrorHandle getHandle() {
             return handle;
         }
+    }
+    
+    public static class ClassIdComputer implements Task<CompilationController> {
+
+        private final ElementHandle handle;
+        private ClassId classId = null;
+        
+        public ClassIdComputer(ElementHandle handle) {
+            this.handle = handle;
+        }
+        
+        @Override
+        public void run(CompilationController info) throws Exception {
+            info.toPhase(Phase.RESOLVED);
+            TypeElement elem = (TypeElement) handle.resolve(info);
+            classId = NetBeansJavaElementUtil.computeClassId(elem);
+        }
+        
+        public ClassId getClassId() {
+            return classId;
+        }
+        
     }
     
 }

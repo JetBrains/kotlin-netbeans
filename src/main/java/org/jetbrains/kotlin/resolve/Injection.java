@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaClassFinder;
 import org.jetbrains.kotlin.resolve.lang.java.resolver.NetBeansExternalAnnotationResolver;
 import org.jetbrains.kotlin.resolve.lang.java.resolver.NetBeansJavaSourceElementFactory;
 import org.jetbrains.kotlin.resolve.lang.java.resolver.NetBeansTraceBasedJavaResolverCache;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaPropertyInitializerEvaluator;
 import org.jetbrains.kotlin.container.StorageComponentContainer;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
@@ -53,6 +52,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.config.LanguageFeatureSettings;
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaPropertyInitializerEvaluator;
 
 /**
  *

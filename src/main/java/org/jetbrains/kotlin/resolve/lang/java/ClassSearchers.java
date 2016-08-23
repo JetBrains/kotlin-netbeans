@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaConstructor;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaField;
 import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaMethod;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElementUtil;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.java.source.JavaSource.Phase;

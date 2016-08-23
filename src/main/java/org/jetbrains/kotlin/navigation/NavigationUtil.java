@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.navigation.references.ReferenceUtils;
 import org.jetbrains.kotlin.resolve.NetBeansDescriptorUtils;
 import org.jetbrains.kotlin.resolve.lang.java.NBElementUtils;
 import org.jetbrains.kotlin.resolve.lang.java.resolver.NetBeansJavaSourceElement;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElement;
 import org.jetbrains.kotlin.utils.LineEndUtil;
 import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +58,13 @@ import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClass;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaConstructor;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElement;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaMember;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.netbeans.api.java.source.ElementHandle;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.editor.NbEditorUtilities;
 import org.openide.cookies.LineCookie;
@@ -125,9 +129,15 @@ public class NavigationUtil {
             KtElement fromElement, Project project, FileObject currentFile){
         
         if (element instanceof NetBeansJavaSourceElement){
-            Element binding = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
-                    getJavaElement()).getBinding();
-            gotoJavaDeclaration(binding, project);
+            ElementHandle handle = ((NetBeansJavaElement)((NetBeansJavaSourceElement) element).
+                    getJavaElement()).getHandle();
+            if (handle != null && handle.getKind() == ElementKind.CONSTRUCTOR) {
+                NetBeansJavaClass javaClass = (NetBeansJavaClass) ((NetBeansJavaConstructor)((NetBeansJavaSourceElement) element).
+                        getJavaElement()).getContainingClass();
+                handle = javaClass.getHandle();
+            }
+            gotoJavaDeclaration(handle, project);
+            
         } else if (element instanceof KotlinSourceElement){
             return gotoKotlinDeclaration(((KotlinSourceElement) element).getPsi(), fromElement, project, currentFile);        
         } else if (element instanceof KotlinJvmBinarySourceElement){
@@ -295,15 +305,15 @@ public class NavigationUtil {
         return new Pair<Document, Integer>(document, startOffset);
     }
     
-    private static void gotoJavaDeclaration(Element binding, Project project) {
-        Element javaElement = binding;
-        if (binding.getKind() == ElementKind.CONSTRUCTOR){
-            javaElement = ((ExecutableElement) binding).getEnclosingElement();
-        }
+    private static void gotoJavaDeclaration(ElementHandle handle, Project project) {
+//        ElementHandle javaElement = handle;
+//        if (handle.getKind() == ElementKind.CONSTRUCTOR){
+//            javaElement = ((ExecutableElement) binding).getEnclosingElement();
+//        }
         
-        if (javaElement != null){
-            NBElementUtils.openElementInEditor(javaElement, project);
-        }
+//        if (javaElement != null){
+            NBElementUtils.openElementInEditor(handle, project);
+//        }
         
     }
     

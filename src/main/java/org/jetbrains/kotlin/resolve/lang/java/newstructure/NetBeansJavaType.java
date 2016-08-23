@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.resolve.lang.java.newstructure;
 
 import java.util.Collection;
+import java.util.Collections;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.WildcardType;
@@ -70,12 +71,18 @@ public class NetBeansJavaType implements JavaType, JavaAnnotationOwner {
     
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        if (handle.getKind() == TypeKind.TYPEVAR) {
+            return Collections.emptyList();
+//        }
+        
     }
 
     @Override
     public JavaAnnotation findAnnotation(FqName fqname) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        if (handle.getKind() == TypeKind.TYPEVAR) {
+            return null;
+//        } 
+        
     }
 
     @Override

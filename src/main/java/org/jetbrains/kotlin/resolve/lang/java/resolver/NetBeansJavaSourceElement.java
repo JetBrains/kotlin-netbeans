@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.jetbrains.kotlin.resolve.lang.java.resolver;
 
-import javax.lang.model.element.Element;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.SourceFile;
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
@@ -45,11 +43,6 @@ public class NetBeansJavaSourceElement implements JavaSourceElement {
     @NotNull
     public SourceFile getContainingFile() {
         return SourceFile.NO_SOURCE_FILE;
-    }
-    
-    @NotNull
-    public Element getElementBinding() {
-        return ((NetBeansJavaElement<?>) javaElement).getBinding();
     }
     
 }

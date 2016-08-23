@@ -22,8 +22,7 @@ import javax.lang.model.element.TypeElement;
 import org.jetbrains.kotlin.model.KotlinEnvironment;
 import org.jetbrains.kotlin.projectsextensions.KotlinProjectHelper;
 import org.jetbrains.kotlin.resolve.lang.java.NetBeansJavaClassFinder;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaClassifier;
-import org.jetbrains.kotlin.resolve.lang.java.structure.NetBeansJavaElementUtil;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaElementUtil;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
@@ -33,7 +32,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.lang.java.newstructure.NetBeansJavaClassifier;
 import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.source.ElementHandle;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -116,8 +117,11 @@ public class NetBeansVirtualFileFinder extends VirtualFileKotlinClassFinder impl
         }
         
         
-        ClassId classId = NetBeansJavaElementUtil.computeClassId(
-                (TypeElement)((NetBeansJavaClassifier)javaClass).getBinding());
+        ElementHandle handle = ((NetBeansJavaClassifier)javaClass).getHandle();
+        if (handle == null) {
+            return null;
+        }
+        ClassId classId = NetBeansJavaElementUtil.computeClassId(handle, project);
         if (classId == null){
             return null;
         }
