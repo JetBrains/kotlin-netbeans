@@ -18,6 +18,8 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
+import com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.netbeans.modules.refactoring.api.Problem;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ProgressProviderAdapter;
@@ -31,9 +33,13 @@ import org.netbeans.modules.refactoring.spi.RefactoringPlugin;
 public class KotlinRenameRefactoring extends ProgressProviderAdapter implements RefactoringPlugin {
 
     private final RenameRefactoring refactoing;
+    private final KtFile ktFile;
+    private final PsiElement psi;
     
     public KotlinRenameRefactoring(RenameRefactoring refactoring) {
         this.refactoing = refactoring;
+        this.ktFile = refactoring.getRefactoringSource().lookup(KtFile.class);
+        this.psi = refactoring.getRefactoringSource().lookup(PsiElement.class);
     }
     
     @Override

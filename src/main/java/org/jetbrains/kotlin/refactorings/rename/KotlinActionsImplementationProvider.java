@@ -18,14 +18,18 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
+import com.intellij.psi.PsiElement;
+import java.io.IOException;
+import javax.swing.JEditorPane;
 import javax.swing.text.StyledDocument;
+import org.jetbrains.kotlin.builder.KotlinPsiManager;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ProjectUtils;
-import org.netbeans.modules.refactoring.java.ui.RenameRefactoringUI;
 import org.netbeans.modules.refactoring.spi.ui.ActionsImplementationProvider;
 import org.netbeans.modules.refactoring.spi.ui.UI;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -57,8 +61,21 @@ public class KotlinActionsImplementationProvider extends ActionsImplementationPr
     @Override
     public void doRename(Lookup lookup) {
         EditorCookie ec = lookup.lookup(EditorCookie.class);
+        JEditorPane pane = ec.getOpenedPanes()[0];
+        int caretPosition = pane.getCaretPosition();
         StyledDocument doc = ec.getDocument();
         FileObject fo = ProjectUtils.getFileObjectForDocument(doc);
+        KtFile ktFile = null;
+        try {
+            ktFile = KotlinPsiManager.INSTANCE.getParsedFile(fo);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        if (ktFile == null) {
+            return;
+        }
+        PsiElement psi = ktFile.findElementAt(caretPosition);
+        UI.openRefactoringUI(new KotlinRenameRefactoringUI(ktFile, psi));
     }
     
 }
