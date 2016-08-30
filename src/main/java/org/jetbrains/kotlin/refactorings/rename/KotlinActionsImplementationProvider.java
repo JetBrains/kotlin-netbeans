@@ -25,12 +25,14 @@ import javax.swing.text.StyledDocument;
 import org.jetbrains.kotlin.builder.KotlinPsiManager;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ProjectUtils;
+import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ui.ActionsImplementationProvider;
 import org.netbeans.modules.refactoring.spi.ui.UI;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -65,17 +67,13 @@ public class KotlinActionsImplementationProvider extends ActionsImplementationPr
         int caretPosition = pane.getCaretPosition();
         StyledDocument doc = ec.getDocument();
         FileObject fo = ProjectUtils.getFileObjectForDocument(doc);
-        KtFile ktFile = null;
         try {
-            ktFile = KotlinPsiManager.INSTANCE.getParsedFile(fo);
+            final KtFile ktFile = KotlinPsiManager.INSTANCE.getParsedFile(fo);
+            final PsiElement psi = ktFile.findElementAt(caretPosition);
+            UI.openRefactoringUI(new KotlinRenameRefactoringUI(ktFile, psi, new RenameRefactoring(Lookups.fixed(ktFile, psi))));  
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-        if (ktFile == null) {
-            return;
-        }
-        PsiElement psi = ktFile.findElementAt(caretPosition);
-        UI.openRefactoringUI(new KotlinRenameRefactoringUI(ktFile, psi));
     }
     
 }

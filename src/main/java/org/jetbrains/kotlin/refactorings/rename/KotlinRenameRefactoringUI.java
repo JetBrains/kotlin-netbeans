@@ -37,14 +37,16 @@ import org.openide.util.lookup.Lookups;
 public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     private final String name = "Rename refactoring";
+    private final RenameRefactoring refactoring;
     private final KtFile ktFile;
     private final PsiElement psi;
-    private final Lookup look;
+    private String newName;
+    private KotlinRenamePanel panel = null;
     
-    public KotlinRenameRefactoringUI(KtFile ktFile, PsiElement psi) {
+    public KotlinRenameRefactoringUI(KtFile ktFile, PsiElement psi, RenameRefactoring refactoring) {
         this.ktFile = ktFile;
         this.psi = psi;
-        look = Lookups.fixed(ktFile, psi);
+        this.refactoring = refactoring;
     }
     
     @Override
@@ -64,17 +66,21 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     @Override
     public CustomRefactoringPanel getPanel(ChangeListener parent) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (panel == null) {
+            panel = new KotlinRenamePanel(psi.getText(), parent);
+        }
+        return panel;
     }
 
     @Override
     public Problem setParameters() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        refactoring.setNewName(newName);
+        return null;
     }
 
     @Override
     public Problem checkParameters() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override
@@ -84,7 +90,7 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     @Override
     public AbstractRefactoring getRefactoring() {
-        return new RenameRefactoring(look);
+        return refactoring;
     }
 
     @Override
