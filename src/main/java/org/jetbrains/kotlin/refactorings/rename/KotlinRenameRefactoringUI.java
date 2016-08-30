@@ -27,8 +27,6 @@ import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ui.CustomRefactoringPanel;
 import org.netbeans.modules.refactoring.spi.ui.RefactoringUI;
 import org.openide.util.HelpCtx;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -47,6 +45,7 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
         this.ktFile = ktFile;
         this.psi = psi;
         this.refactoring = refactoring;
+        this.refactoring.getContext().add(true);
     }
     
     @Override
@@ -80,6 +79,8 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     @Override
     public Problem checkParameters() {
+//        refactoring.setNewName(newName);
+        refactoring.fastCheckParameters();
         return null;
     }
 

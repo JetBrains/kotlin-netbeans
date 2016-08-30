@@ -33,13 +33,9 @@ import org.netbeans.modules.refactoring.spi.RefactoringPlugin;
 public class KotlinRenameRefactoring extends ProgressProviderAdapter implements RefactoringPlugin {
 
     private final RenameRefactoring refactoring;
-    private final KtFile ktFile;
-    private final PsiElement psi;
     
     public KotlinRenameRefactoring(RenameRefactoring refactoring) {
         this.refactoring = refactoring;
-        this.ktFile = refactoring.getRefactoringSource().lookup(KtFile.class);
-        this.psi = refactoring.getRefactoringSource().lookup(PsiElement.class);
     }
     
     @Override
