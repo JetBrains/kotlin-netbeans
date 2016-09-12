@@ -73,6 +73,9 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     @Override
     public Problem setParameters() {
+        if (panel != null) {
+            newName = panel.getNameValue();
+        } else newName = psi.getText();
         refactoring.setNewName(newName);
         return null;
     }
