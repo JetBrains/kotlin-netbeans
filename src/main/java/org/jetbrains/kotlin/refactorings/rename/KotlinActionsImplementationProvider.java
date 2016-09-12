@@ -25,10 +25,9 @@ import javax.swing.text.StyledDocument;
 import org.jetbrains.kotlin.builder.KotlinPsiManager;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ProjectUtils;
-import org.netbeans.modules.refactoring.api.RefactoringSession;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
+import org.netbeans.modules.refactoring.spi.impl.RefactoringPanel;
 import org.netbeans.modules.refactoring.spi.ui.ActionsImplementationProvider;
-import org.netbeans.modules.refactoring.spi.ui.UI;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
@@ -72,7 +71,7 @@ public class KotlinActionsImplementationProvider extends ActionsImplementationPr
         try {
             final KtFile ktFile = KotlinPsiManager.INSTANCE.getParsedFile(fo);
             final PsiElement psi = ktFile.findElementAt(caretPosition);
-            UI.openRefactoringUI(new KotlinRenameRefactoringUI(ktFile, psi, new RenameRefactoring(Lookups.fixed(ktFile, psi))),
+            new RefactoringPanel(new KotlinRenameRefactoringUI(ktFile, psi, new RenameRefactoring(Lookups.fixed(ktFile, psi))),
                     TopComponent.getRegistry().getActivated());  
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
