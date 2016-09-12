@@ -19,12 +19,18 @@
 package org.jetbrains.kotlin.refactorings.rename;
 
 import com.intellij.psi.PsiElement;
+import javax.swing.text.Position;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.netbeans.modules.csl.spi.GsfUtilities;
 import org.netbeans.modules.refactoring.api.Problem;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ProgressProviderAdapter;
 import org.netbeans.modules.refactoring.spi.RefactoringElementsBag;
 import org.netbeans.modules.refactoring.spi.RefactoringPlugin;
+import org.openide.filesystems.FileObject;
+import org.openide.text.CloneableEditorSupport;
+import org.openide.text.PositionBounds;
+import org.openide.text.PositionRef;
 
 /**
  *
@@ -59,8 +65,22 @@ public class KotlinRenameRefactoring extends ProgressProviderAdapter implements 
     }
 
     @Override
-    public Problem prepare(RefactoringElementsBag reb) {
+    public Problem prepare(RefactoringElementsBag bag) {
         String name = refactoring.getNewName();
+        FileObject fo = refactoring.getRefactoringSource().lookup(FileObject.class);
+        PsiElement psi = refactoring.getRefactoringSource().lookup(PsiElement.class);
+        
+        CloneableEditorSupport ces = GsfUtilities.findCloneableEditorSupport(fo);
+        
+        int startOffset = psi.getTextRange().getStartOffset();
+        int endOffset = psi.getTextRange().getEndOffset();
+        
+        PositionRef startRef = ces.createPositionRef(startOffset, Position.Bias.Forward);
+        PositionRef endRef = ces.createPositionRef(endOffset, Position.Bias.Forward);
+        
+        PositionBounds bounds = new PositionBounds(startRef, endRef);
+        KotlinRefactoringElement refactoringElement = new KotlinRefactoringElement(fo, bounds, name);
+        bag.add(refactoring, refactoringElement);
         
         return null;
     }
