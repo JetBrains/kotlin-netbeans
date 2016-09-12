@@ -88,6 +88,8 @@ public class KotlinToggleBreakpointActionProvider extends ActionsProviderSupport
         DebuggerManager manager = DebuggerManager.getDebuggerManager();
         JPDABreakpoint breakpoint;
         
+        if (EditorContextBridge.getContext().getCurrentURL().endsWith(".java")) { return; }
+        
         final int lineNumber = EditorContextBridge.getContext().getCurrentLineNumber();
         if (lineNumber < 0) {
             return;

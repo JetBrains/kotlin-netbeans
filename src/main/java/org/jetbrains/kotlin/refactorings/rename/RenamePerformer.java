@@ -18,27 +18,25 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
-import org.netbeans.modules.refactoring.api.AbstractRefactoring;
-import org.netbeans.modules.refactoring.api.RenameRefactoring;
-import org.netbeans.modules.refactoring.spi.RefactoringPlugin;
-import org.netbeans.modules.refactoring.spi.RefactoringPluginFactory;
-import org.openide.util.lookup.ServiceProvider;
-
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtFile;
 
 /**
  *
  * @author Alexander.Baratynski
  */
-@ServiceProvider(service = RefactoringPluginFactory.class, position = 100)
-public class KotlinRefactoringsFactory implements RefactoringPluginFactory {
-
-    @Override
-    public RefactoringPlugin createInstance(AbstractRefactoring refactoring) {
-        if (refactoring instanceof RenameRefactoring) {
-            return new KotlinRenameRefactoring((RenameRefactoring) refactoring);
+public class RenamePerformer {
+    
+    public void perform(KtFile ktFile, PsiElement psi, String newName) {
+        KtElement ktElement = PsiTreeUtil.getNonStrictParentOfType(psi, KtElement.class);
+        if (ktElement == null) {
+            return;
         }
         
-        return null;
+        
+        
     }
     
 }
