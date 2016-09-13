@@ -18,10 +18,12 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
-import org.netbeans.modules.csl.spi.support.ModificationResult.Difference;
+import java.io.IOException;
+import javax.swing.text.BadLocationException;
 import org.netbeans.modules.refactoring.spi.SimpleRefactoringElementImplementation;
 import org.openide.filesystems.FileObject;
 import org.openide.text.PositionBounds;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
@@ -31,44 +33,42 @@ import org.openide.util.lookup.Lookups;
  */
 public class KotlinRefactoringElement extends SimpleRefactoringElementImplementation {
 
-    private final FileObject fo;
+    private final String newName;
     private final PositionBounds bounds;
-    private final String text;
-    private final Difference diff;
+    private final FileObject fo;
     
-    public KotlinRefactoringElement(FileObject fo, PositionBounds bounds, String text, Difference diff) {
+    public KotlinRefactoringElement(FileObject fo, String newName, PositionBounds bounds) {
+        this.newName = newName;
         this.bounds = bounds;
         this.fo = fo;
-        this.text = text;
-        this.diff = diff;
     }
     
     @Override
     public String getText() {
-        return text;
+        return newName;
     }
 
     @Override
     public String getDisplayText() {
-        return text;
+        return newName;
     }
 
     @Override
     public void performChange() {
-        
+        try {
+            bounds.setText(newName);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     @Override
     public Lookup getLookup() {
-        return Lookups.fixed(fo, diff);
+        return Lookups.fixed();
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        diff.exclude(!enabled);
-        super.setEnabled(enabled);
-    }
-    
     @Override
     public FileObject getParentFile() {
         return fo;
@@ -77,11 +77,6 @@ public class KotlinRefactoringElement extends SimpleRefactoringElementImplementa
     @Override
     public PositionBounds getPosition() {
         return bounds;
-    }
-
-    @Override
-    public String getNewFileContent() {
-        return "HDHDH";
     }
     
 }

@@ -36,16 +36,13 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     private final String name = "Rename refactoring";
     private final RenameRefactoring refactoring;
-    private final KtFile ktFile;
     private final PsiElement psi;
     private String newName;
     private KotlinRenamePanel panel = null;
     
-    public KotlinRenameRefactoringUI(KtFile ktFile, PsiElement psi, RenameRefactoring refactoring) {
-        this.ktFile = ktFile;
+    public KotlinRenameRefactoringUI(PsiElement psi, RenameRefactoring refactoring) {
         this.psi = psi;
         this.refactoring = refactoring;
-        this.refactoring.getContext().add(true);
     }
     
     @Override
@@ -82,7 +79,6 @@ public class KotlinRenameRefactoringUI implements RefactoringUI {
 
     @Override
     public Problem checkParameters() {
-//        refactoring.setNewName(newName);
         refactoring.fastCheckParameters();
         return null;
     }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.highlighter.occurrences.OccurrencesUtils;
 import org.jetbrains.kotlin.navigation.references.ReferenceUtils;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -69,8 +70,16 @@ public class RenamePerformer {
                 ranges.put(fileObject, occurrencesRanges);
             }
         }
+     
+        for (SourceElement searchElement : searchingElements) {
+            if (!(searchElement instanceof KotlinSourceElement)) {
+                continue;
+            }
+            KotlinSourceElement ktSourceElement = (KotlinSourceElement) searchElement;
+            
+        }
         
         return ranges;
     }
-   
+    
 }
