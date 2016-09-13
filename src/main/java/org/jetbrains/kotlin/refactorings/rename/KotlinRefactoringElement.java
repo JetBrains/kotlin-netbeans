@@ -18,6 +18,7 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
+import org.netbeans.modules.csl.spi.support.ModificationResult.Difference;
 import org.netbeans.modules.refactoring.spi.SimpleRefactoringElementImplementation;
 import org.openide.filesystems.FileObject;
 import org.openide.text.PositionBounds;
@@ -33,11 +34,13 @@ public class KotlinRefactoringElement extends SimpleRefactoringElementImplementa
     private final FileObject fo;
     private final PositionBounds bounds;
     private final String text;
+    private final Difference diff;
     
-    public KotlinRefactoringElement(FileObject fo, PositionBounds bounds, String text) {
+    public KotlinRefactoringElement(FileObject fo, PositionBounds bounds, String text, Difference diff) {
         this.bounds = bounds;
         this.fo = fo;
         this.text = text;
+        this.diff = diff;
     }
     
     @Override
@@ -57,9 +60,15 @@ public class KotlinRefactoringElement extends SimpleRefactoringElementImplementa
 
     @Override
     public Lookup getLookup() {
-        return Lookups.fixed(fo, bounds);
+        return Lookups.fixed(fo, diff);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        diff.exclude(!enabled);
+        super.setEnabled(enabled);
+    }
+    
     @Override
     public FileObject getParentFile() {
         return fo;
@@ -70,6 +79,9 @@ public class KotlinRefactoringElement extends SimpleRefactoringElementImplementa
         return bounds;
     }
 
-
+    @Override
+    public String getNewFileContent() {
+        return "HDHDH";
+    }
     
 }

@@ -71,7 +71,7 @@ public class KotlinActionsImplementationProvider extends ActionsImplementationPr
         try {
             final KtFile ktFile = KotlinPsiManager.INSTANCE.getParsedFile(fo);
             final PsiElement psi = ktFile.findElementAt(caretPosition);
-            new RefactoringPanel(new KotlinRenameRefactoringUI(ktFile, psi, new RenameRefactoring(Lookups.fixed(ktFile, psi, fo))),
+            new RefactoringPanel(new KotlinRenameRefactoringUI(ktFile, psi, new RenameRefactoring(Lookups.fixed(psi, fo))),
                     TopComponent.getRegistry().getActivated());  
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

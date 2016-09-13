@@ -19,9 +19,14 @@
 package org.jetbrains.kotlin.refactorings.rename;
 
 import com.intellij.psi.PsiElement;
+import java.io.IOException;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
+import javax.swing.text.StyledDocument;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.netbeans.modules.csl.spi.GsfUtilities;
+import org.netbeans.modules.csl.spi.support.ModificationResult.Difference;
 import org.netbeans.modules.refactoring.api.Problem;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ProgressProviderAdapter;
@@ -31,6 +36,7 @@ import org.openide.filesystems.FileObject;
 import org.openide.text.CloneableEditorSupport;
 import org.openide.text.PositionBounds;
 import org.openide.text.PositionRef;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -79,8 +85,14 @@ public class KotlinRenameRefactoring extends ProgressProviderAdapter implements 
         PositionRef endRef = ces.createPositionRef(endOffset, Position.Bias.Forward);
         
         PositionBounds bounds = new PositionBounds(startRef, endRef);
-        KotlinRefactoringElement refactoringElement = new KotlinRefactoringElement(fo, bounds, name);
-        bag.add(refactoring, refactoringElement);
+        
+        try {
+            bounds.setText(name);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         
         return null;
     }
