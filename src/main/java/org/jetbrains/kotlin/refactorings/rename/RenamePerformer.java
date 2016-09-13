@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.text.Position;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.highlighter.occurrences.OccurrencesUtils;
 import org.jetbrains.kotlin.navigation.references.ReferenceUtils;
@@ -34,8 +35,12 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement;
 import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.csl.api.OffsetRange;
+import org.netbeans.modules.csl.spi.GsfUtilities;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.text.CloneableEditorSupport;
+import org.openide.text.PositionBounds;
+import org.openide.text.PositionRef;
 
 /**
  *
@@ -80,6 +85,24 @@ public class RenamePerformer {
         }
         
         return ranges;
+    }
+    
+    public static List<PositionBounds> createPositionBoundsForFO(FileObject fo, List<OffsetRange> ranges) {
+        List<PositionBounds> bounds = Lists.newArrayList();
+        CloneableEditorSupport ces = GsfUtilities.findCloneableEditorSupport(fo);
+        
+        if (ces == null) {
+            return bounds;
+        }
+        
+        for (OffsetRange range : ranges) {
+            PositionRef startRef = ces.createPositionRef(range.getStart(), Position.Bias.Forward);
+            PositionRef endRef = ces.createPositionRef(range.getEnd(), Position.Bias.Forward);
+            
+            bounds.add(new PositionBounds(startRef, endRef));
+        }
+        
+        return bounds;
     }
     
 }

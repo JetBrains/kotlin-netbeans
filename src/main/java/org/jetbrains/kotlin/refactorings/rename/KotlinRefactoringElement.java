@@ -34,11 +34,13 @@ import org.openide.util.lookup.Lookups;
 public class KotlinRefactoringElement extends SimpleRefactoringElementImplementation {
 
     private final String newName;
+    private final String oldName;
     private final PositionBounds bounds;
     private final FileObject fo;
     
-    public KotlinRefactoringElement(FileObject fo, String newName, PositionBounds bounds) {
+    public KotlinRefactoringElement(FileObject fo, String newName, String oldName, PositionBounds bounds) {
         this.newName = newName;
+        this.oldName = oldName;
         this.bounds = bounds;
         this.fo = fo;
     }
@@ -64,6 +66,17 @@ public class KotlinRefactoringElement extends SimpleRefactoringElementImplementa
         }
     }
 
+    @Override
+    public void undoChange() {
+        try {
+            bounds.setText(oldName);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
     @Override
     public Lookup getLookup() {
         return Lookups.fixed();
