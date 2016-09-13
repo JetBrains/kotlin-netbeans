@@ -18,31 +18,18 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
 import javax.swing.text.StyledDocument;
 import org.jetbrains.kotlin.utils.ProjectUtils;
 import org.netbeans.modules.csl.api.OffsetRange;
-import org.netbeans.modules.csl.spi.GsfUtilities;
-import org.netbeans.modules.csl.spi.support.ModificationResult;
 import org.netbeans.modules.refactoring.api.Problem;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ProgressProviderAdapter;
-import org.netbeans.modules.refactoring.spi.RefactoringCommit;
 import org.netbeans.modules.refactoring.spi.RefactoringElementsBag;
 import org.netbeans.modules.refactoring.spi.RefactoringPlugin;
 import org.openide.filesystems.FileObject;
-import org.openide.text.CloneableEditorSupport;
-import org.openide.text.PositionBounds;
-import org.openide.text.PositionRef;
-import org.openide.util.Exceptions;
 
 /**
  *
