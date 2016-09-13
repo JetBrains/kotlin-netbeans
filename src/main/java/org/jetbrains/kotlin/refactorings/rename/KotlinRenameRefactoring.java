@@ -18,15 +18,16 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
-import javax.swing.text.StyledDocument;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.utils.ProjectUtils;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.modules.csl.spi.GsfUtilities;
-import org.netbeans.modules.csl.spi.support.ModificationResult.Difference;
 import org.netbeans.modules.refactoring.api.Problem;
 import org.netbeans.modules.refactoring.api.RenameRefactoring;
 import org.netbeans.modules.refactoring.spi.ProgressProviderAdapter;
@@ -72,29 +73,41 @@ public class KotlinRenameRefactoring extends ProgressProviderAdapter implements 
 
     @Override
     public Problem prepare(RefactoringElementsBag bag) {
-        String name = refactoring.getNewName();
+        List<PositionBounds> bounds = Lists.newArrayList();
+        String newName = refactoring.getNewName();
         FileObject fo = refactoring.getRefactoringSource().lookup(FileObject.class);
         PsiElement psi = refactoring.getRefactoringSource().lookup(PsiElement.class);
         
-        CloneableEditorSupport ces = GsfUtilities.findCloneableEditorSupport(fo);
+        Map<FileObject, List<OffsetRange>> renameMap = RenamePerformer.getRenameRefactoringMap(fo, psi, newName);
+        for (Entry<FileObject, List<OffsetRange>> entry : renameMap.entrySet()) {
+            bounds.addAll(createPositionBoundsForFO(entry.getKey(), entry.getValue()));
+        }
         
-        int startOffset = psi.getTextRange().getStartOffset();
-        int endOffset = psi.getTextRange().getEndOffset();
-        
-        PositionRef startRef = ces.createPositionRef(startOffset, Position.Bias.Forward);
-        PositionRef endRef = ces.createPositionRef(endOffset, Position.Bias.Forward);
-        
-        PositionBounds bounds = new PositionBounds(startRef, endRef);
-        
-        try {
-            bounds.setText(name);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } catch (BadLocationException ex) {
-            Exceptions.printStackTrace(ex);
+        for (PositionBounds bound : bounds) {
+            try {
+                bound.setText(newName);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
         
         return null;
+    }
+    
+    private List<PositionBounds> createPositionBoundsForFO(FileObject fo, List<OffsetRange> ranges) {
+        List<PositionBounds> bounds = Lists.newArrayList();
+        CloneableEditorSupport ces = GsfUtilities.findCloneableEditorSupport(fo);
+        
+        for (OffsetRange range : ranges) {
+            PositionRef startRef = ces.createPositionRef(range.getStart(), Position.Bias.Forward);
+            PositionRef endRef = ces.createPositionRef(range.getEnd(), Position.Bias.Forward);
+            
+            bounds.add(new PositionBounds(startRef, endRef));
+        }
+        
+        return bounds;
     }
     
 }
