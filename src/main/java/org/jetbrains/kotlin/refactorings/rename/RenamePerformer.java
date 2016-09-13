@@ -18,8 +18,10 @@
  */
 package org.jetbrains.kotlin.refactorings.rename;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +30,11 @@ import org.jetbrains.kotlin.highlighter.occurrences.OccurrencesUtils;
 import org.jetbrains.kotlin.navigation.references.ReferenceUtils;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.utils.ProjectUtils;
+import org.netbeans.api.project.Project;
 import org.netbeans.modules.csl.api.OffsetRange;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 
 /**
  *
@@ -40,7 +45,6 @@ public class RenamePerformer {
     public static Map<FileObject, List<OffsetRange>> getRenameRefactoringMap(FileObject fo, PsiElement psi, String newName) {
         Map<FileObject, List<OffsetRange>> ranges = 
             new HashMap<FileObject, List<OffsetRange>>();
-        KtFile ktFile = (KtFile) psi.getContainingFile();
         KtElement ktElement = PsiTreeUtil.getNonStrictParentOfType(psi, KtElement.class);
         if (ktElement == null) {
             return ranges;
@@ -52,12 +56,21 @@ public class RenamePerformer {
         }
         
         List<? extends SourceElement> searchingElements = OccurrencesUtils.getSearchingElements(sourceElements);
-        List<OffsetRange> occurrencesRanges = OccurrencesUtils.search(searchingElements, ktFile);
+        Project project = ProjectUtils.getKotlinProjectForFileObject(fo);
+        if (project == null) {
+            return ranges;
+        }
         
-        ranges.put(fo, occurrencesRanges);
+        for (KtFile file : ProjectUtils.getSourceFiles(project)) {
+            List<OffsetRange> occurrencesRanges = OccurrencesUtils.search(searchingElements, file);
+            File f = new File(file.getVirtualFile().getPath());
+            FileObject fileObject = FileUtil.toFileObject(f);
+            if (fileObject != null) {
+                ranges.put(fileObject, occurrencesRanges);
+            }
+        }
         
         return ranges;
     }
-    
-    
+   
 }

@@ -100,6 +100,10 @@ public class KotlinRenameRefactoring extends ProgressProviderAdapter implements 
         List<PositionBounds> bounds = Lists.newArrayList();
         CloneableEditorSupport ces = GsfUtilities.findCloneableEditorSupport(fo);
         
+        if (ces == null) {
+            return bounds;
+        }
+        
         for (OffsetRange range : ranges) {
             PositionRef startRef = ces.createPositionRef(range.getStart(), Position.Bias.Forward);
             PositionRef endRef = ces.createPositionRef(range.getEnd(), Position.Bias.Forward);
