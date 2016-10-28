@@ -23,15 +23,13 @@ import java.net.URLConnection
 import org.jetbrains.kotlin.log.KotlinLogger
 
 object KotlinStatisticsUpdater {
-    
-    private var updated = false
-    
+
+    var updated = false
+        private set
+
     @Synchronized fun updateStatistics() {
         if (updated) return
-        sendRequest()
-    }
-    
-    private fun sendRequest() {
+        
         val url = URL("https://plugins.jetbrains.com/netbeans-plugins/kotlin/last")//this url doesn't exist yet
         val connection = url.openConnection()
         if (connection is HttpURLConnection) {
@@ -46,5 +44,4 @@ object KotlinStatisticsUpdater {
             }
         }
     }
-    
 }

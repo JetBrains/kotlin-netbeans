@@ -34,10 +34,12 @@ class KotlinInstaller : Yenta() {
                 "org.netbeans.modules.debugger.jpda.projects",
                 "org.netbeans.modules.java.api.common")
     
-    override fun restored() {
+    override fun restored() {        
         WindowManager.getDefault().invokeWhenUIReady { 
-            WindowManager.getDefault().registry.addPropertyChangeListener {
+            WindowManager.getDefault().registry.addPropertyChangeListener listener@{
                 if (it.propertyName.equals("opened")) {
+                    if (KotlinStatisticsUpdater.updated) return@listener
+                    
                     val newHashSet = it.newValue as HashSet<TopComponent>
                     val oldHashSet = it.oldValue as HashSet<TopComponent>
                     newHashSet.filter {!oldHashSet.contains(it)}
