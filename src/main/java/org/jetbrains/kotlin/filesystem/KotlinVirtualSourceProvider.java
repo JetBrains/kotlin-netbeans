@@ -27,11 +27,8 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalysisResultWithProvider;
 import org.jetbrains.kotlin.resolve.KotlinAnalyzer;
 import org.jetbrains.kotlin.utils.ProjectUtils;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.netbeans.modules.java.preprocessorbridge.spi.VirtualSourceProvider;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -60,17 +57,20 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
             FileObject fo = FileUtil.toFileObject(normalizedFile);
             if (fo == null) continue;
             
-            byte[] byteCode = codeList.get(0);
-     
-            Pair<ClassNode, String> nameAndStub = JavaStubGenerator.INSTANCE.generate(byteCode);
-            String code = nameAndStub.getSecond();
-            
-            String className = JavaStubGenerator.INSTANCE.getClassName(nameAndStub.getFirst());
-            String packageName = nameAndStub.getFirst().name
-                    .substring(0, nameAndStub.getFirst().name.lastIndexOf("/")).replace("/", ".");
-            
-            KotlinLogger.INSTANCE.logInfo(code);
-            result.add(normalizedFile, packageName, className, code);
+            for (byte[] byteCode : codeList) {
+                Pair<ClassNode, String> nameAndStub = JavaStubGenerator.INSTANCE.generate(byteCode);
+                if (nameAndStub.getFirst() == null) continue;
+                
+                String code = nameAndStub.getSecond();
+
+                String className = JavaStubGenerator.INSTANCE.getClassName(nameAndStub.getFirst());
+                String packageName = nameAndStub.getFirst().name
+                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/")).replace("/", ".");
+                
+                
+                
+                result.add(normalizedFile, packageName, className, code);
+            }
         }
     }
     

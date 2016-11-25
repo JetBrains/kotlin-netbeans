@@ -25,12 +25,15 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 object JavaStubGenerator {
 
-    fun generate(byteCode: ByteArray): Pair<ClassNode, String> {
+    fun generate(byteCode: ByteArray): Pair<ClassNode?, String> {
         val javaStub = StringBuilder()
         
         val classNode = ClassNode()
-        ClassReader(byteCode).accept(classNode, 0)
-        
+        try {
+            ClassReader(byteCode).accept(classNode, 0)
+        } catch(ex: Exception) {
+            return Pair(null, "")
+        }
         javaStub.append(classNode.packageString)
         javaStub.append(classNode.classDeclaration())
         javaStub.append(classNode.methods())
@@ -61,16 +64,14 @@ object JavaStubGenerator {
     private fun ClassNode.methods(): String {
         val methodsStub = StringBuilder()
         
-        for (it in methods) {
-            if (it.name == "<init>") continue
-            
-            methodsStub.append(it.getString())
+        methods.forEach {
+            methodsStub.append(it.getString(className))
         }
         
         return methodsStub.toString()
     }
     
-    private fun MethodNode.getString(): String {
+    private fun MethodNode.getString(className: String): String {
         val method = StringBuilder()
         
         method.append(getAccess(access)).append(" ")
@@ -79,12 +80,15 @@ object JavaStubGenerator {
         method.append(getAbstract(access)).append(" ")
         
         val indexOfRightBracket = desc.indexOf(")")
-        if (indexOfRightBracket == -1) return method.append("void ").append(name).append("(){}").toString()
+        val methodName = if (name == "<init>") className else name
+        if (indexOfRightBracket == -1) return ""
         
         val returnTypeSig = desc.substring(indexOfRightBracket + 1)
         val returnType = returnTypeSig.replace("/", ".").toType().replace(";", "")
         
-        method.append(returnType).append(" ").append(name).append("(")
+        if (name != "<init>") method.append(returnType).append(" ")
+        
+        method.append(methodName).append("(")
         
         val argsSig = desc.substring(1, indexOfRightBracket)
         if (argsSig.isEmpty()) return method.append("){}").toString()
@@ -92,9 +96,13 @@ object JavaStubGenerator {
         val args = argsSig.split(";")
         args.forEachIndexed { i, it -> 
             val argument = "${args[i].replace("/", ".").toType()} a$i"
-            method.append(argument)
-            if (i != args.size - 1) method.append(",")
+            val void = argument == "void a$i"
+            if (!void) {
+                method.append(argument)
+                if (i != args.size - 1) method.append(",")
+            }
         }
+        if (method.endsWith(",")) method.deleteCharAt(method.length - 1)
         method.append("){}\n")
         
         return method.toString()
