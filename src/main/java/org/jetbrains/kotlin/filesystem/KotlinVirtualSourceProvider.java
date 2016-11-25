@@ -44,7 +44,7 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
 
     @Override
     public boolean index() {
-        return true;
+        return false;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
                 KotlinLogger.INSTANCE.logInfo(code);
                 KotlinLogger.INSTANCE.logInfo("\n\n\n\n\n");
                 
-                result.add(normalizedFile, packageName, className, code);
+                result.add(normalizedFile, packageName, fo.getName(), code);
             }
         }
     }
