@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
 
 object JavaStubGenerator {
 
@@ -36,6 +37,7 @@ object JavaStubGenerator {
         }
         javaStub.append(classNode.packageString)
         javaStub.append(classNode.classDeclaration())
+        javaStub.append(classNode.fields())
         javaStub.append(classNode.methods())
         
         javaStub.append("}")
@@ -77,6 +79,28 @@ object JavaStubGenerator {
         declaration.append("{\n")
         
         return declaration.toString();
+    }
+    
+    private fun ClassNode.fields(): String {
+        val fieldsStub = StringBuilder()
+        
+        fields.forEach {
+            fieldsStub.append(it.getString())
+        }
+        
+        return fieldsStub.toString()
+    }
+    
+    private fun FieldNode.getString(): String {
+        val field = StringBuilder()
+        
+        field.append(getAccess(access)).append(" ")
+        field.append(getFinal(access)).append(" ")
+        field.append(getStatic(access)).append(" ")
+        field.append(desc.toType().replace("/", ".").replace(";", "")).append(" ")
+        field.append(name).append(";\n")
+        
+        return field.toString()
     }
     
     private fun ClassNode.methods(): String {
