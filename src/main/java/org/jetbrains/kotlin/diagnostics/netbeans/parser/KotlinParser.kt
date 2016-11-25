@@ -28,6 +28,7 @@ import org.netbeans.modules.parsing.api.Task
 import org.netbeans.modules.parsing.spi.Parser
 import org.netbeans.modules.parsing.spi.Parser.Result
 import org.netbeans.modules.parsing.spi.SourceModificationEvent
+import org.netbeans.modules.csl.spi.GsfUtilities
 
 class KotlinParser : Parser() {
     
@@ -60,7 +61,9 @@ class KotlinParser : Parser() {
         }
         
         file = ProjectUtils.getKtFile(snapshot.text.toString(), snapshot.source.fileObject)
-        if (event.affectedEndOffset <= 0) {
+        val caretOffset = GsfUtilities.getLastKnownCaretOffset(snapshot, event)
+        
+        if (caretOffset <= 0) {
             CACHE.put(file!!.virtualFile.path, KotlinAnalysisProjectCache.getAnalysisResult(project!!))
             return
         }
