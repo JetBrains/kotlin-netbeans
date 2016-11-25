@@ -50,13 +50,31 @@ object JavaStubGenerator {
     
     private fun ClassNode.classDeclaration(): String {
         val declaration = StringBuilder()
-        
         declaration.append(getAccess(access)).append(" ")
         declaration.append(getFinal(access)).append(" ")
         declaration.append(getStatic(access)).append(" ")
         declaration.append(getAbstract(access)).append(" ")
-        declaration.append(getClassType(access)).append(" ")
-        declaration.append(className).append("{\n")
+        
+        val classType = getClassType(access)
+        
+        declaration.append(classType).append(" ")
+        declaration.append(className)
+        
+        if (classType == "class") declaration.append(" extends ${superName.replace("/", ".")}")
+        
+        if (interfaces != null && interfaces.isNotEmpty()) {
+            when(classType) {
+                "interface" -> declaration.append(" extends ")
+                "class" -> declaration.append(" implements ")
+            }
+        }
+        
+        interfaces.forEachIndexed { i, it->
+            declaration.append(it.replace("/", "."))
+            if (i != interfaces.size - 1) declaration.append(",")
+        }
+        
+        declaration.append("{\n")
         
         return declaration.toString();
     }
