@@ -57,10 +57,10 @@ public class KotlinIndexer extends EmbeddingIndexer {
 //        thread.start();
     }
     
-    private void generateLightClass(FileObject fo, Project project, AnalysisResult analysisResult) {
-        synchronized (LOCK) {
-            KotlinLightClassGeneration.INSTANCE.generate(fo, project, analysisResult);
-        }
-    }
+//    private void generateLightClass(FileObject fo, Project project, AnalysisResult analysisResult) {
+//        synchronized (LOCK) {
+//            KotlinLightClassGeneration.INSTANCE.generate(fo, project, analysisResult);
+//        }
+//    }
     
 }
