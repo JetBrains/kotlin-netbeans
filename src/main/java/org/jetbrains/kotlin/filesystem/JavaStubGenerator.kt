@@ -84,10 +84,16 @@ object JavaStubGenerator {
     private fun ClassNode.fields(): String {
         val fieldsStub = StringBuilder()
         
-        fields.forEach {
-            fieldsStub.append(it.getString())
+        if (getClassType(access) == "enum") {
+            fields.forEachIndexed {i, it ->
+                fieldsStub.append(it.name)
+                if (i != fields.size - 1) fieldsStub.append(", ") else fieldsStub.append(";")
+            }
+        } else {
+            fields.forEach {
+                fieldsStub.append(it.getString())
+            }
         }
-        
         return fieldsStub.toString()
     }
     
@@ -106,7 +112,9 @@ object JavaStubGenerator {
     private fun ClassNode.methods(): String {
         val methodsStub = StringBuilder()
         
-        methods.forEach {
+        for (it in methods) {
+            if (getClassType(access) == "enum" && it.name == "<init>") continue
+            
             methodsStub.append(it.getString(className))
         }
         
@@ -172,17 +180,20 @@ object JavaStubGenerator {
     private fun Int.contains(opcode: Int) = (this and opcode) == opcode
     
     private fun String.toType() = when {
-        this.startsWith("Z") -> "boolean"
-        this.startsWith("V") -> "void"
-        this.startsWith("B") -> "byte"
-        this.startsWith("C") -> "char"
-        this.startsWith("S") -> "short"
-        this.startsWith("I") -> "int"
-        this.startsWith("J") -> "long"
-        this.startsWith("F") -> "float"
-        this.startsWith("D") -> "double"
-        this.startsWith("L") -> this.substring(1)
-        this.startsWith("[") -> this.substring(1) + "[]"
+        startsWith("Z") -> "boolean"
+        startsWith("V") -> "void"
+        startsWith("B") -> "byte"
+        startsWith("C") -> "char"
+        startsWith("S") -> "short"
+        startsWith("I") -> "int"
+        startsWith("J") -> "long"
+        startsWith("F") -> "float"
+        startsWith("D") -> "double"
+        startsWith("L") -> substring(1)
+        startsWith("[") -> {
+            val type = substring(1)
+            if (type.startsWith("L")) type.substring(1) + "[]" else type + "[]"
+        }
         else -> "void"
     }
     
