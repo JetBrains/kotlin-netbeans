@@ -27,33 +27,58 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.util.TraceSignatureVisitor
+import java.util.HashMap
 
 object JavaStubGenerator {
 
-    fun generate(byteCode: ByteArray): Pair<ClassNode?, String> {
-        val javaStub = StringBuilder()
+    fun gen(byteCodeList: List<ByteArray>): List<Pair<ClassNode, String>> {
+        val classNodes = byteCodeList.mapNotNull { it.getClassNode() }.distinctBy { it.name }
+        val innerClasses = hashMapOf<ClassNode, List<ClassNode>>()
+        val classes = classNodes.filter { !it.name.contains("$") }
         
-        val classNode = ClassNode()
-        try {
-            ClassReader(byteCode).accept(classNode, 0)
-        } catch(ex: Exception) {
-            return Pair(null, "")
+        classNodes.forEach { classNode ->
+            val innerClassesList = classNode.innerClasses
+                    .mapNotNull { inner -> 
+                        classNodes.find { it.name == inner.name && classNode.name != inner.name} 
+                    }
+            innerClasses.put(classNode, innerClassesList)
         }
         
-        javaStub.append(classNode.packageString)
+        return classes.map { generate(it, innerClasses) }  
+    }
+    
+    private fun generate(classNode: ClassNode, 
+                 innerClassesMap: HashMap<ClassNode, List<ClassNode>>): Pair<ClassNode, String> {
+        val javaStub = StringBuilder()
+        
+        if (!classNode.name.contains("$")) javaStub.append(classNode.packageString)
         javaStub.append(classNode.classDeclaration())
         javaStub.append(classNode.fields())
         javaStub.append(classNode.methods())
+        for (entry in innerClassesMap[classNode]!!) {
+            javaStub.append(generate(entry, innerClassesMap).second).append("\n")
+        }
         
         javaStub.append("}")
         return Pair(classNode, javaStub.toString())
+    }
+    
+    private fun ByteArray.getClassNode(): ClassNode? {
+        val classNode = ClassNode()
+        try {
+            ClassReader(this).accept(classNode, 0)
+        } catch (ex: Exception) {
+            return null
+        }
+        
+        return classNode
     }
     
     val ClassNode.packageString: String
         get() = "package ${name.substringBeforeLast("/").replace("/", ".")};\n"
     
     val ClassNode.className: String
-        get() = name.substringAfterLast("/")
+        get() = if (!name.contains("$")) name.substringAfterLast("/") else name.substringAfterLast("$")
     
     private fun ClassNode.classDeclaration(): String {
         val declaration = StringBuilder()
@@ -68,7 +93,8 @@ object JavaStubGenerator {
             val signatureReader = SignatureReader(signature)
             val traceSigVisitor = TraceSignatureVisitor(access)
             signatureReader.accept(traceSigVisitor)
-            traceSigVisitor.declaration
+            
+            traceSigVisitor.declaration.replace("$", ".")
         } else ""
         
         declaration.append(classType).append(" ")
@@ -83,7 +109,12 @@ object JavaStubGenerator {
     private fun ClassNode.fields(): String {
         val fieldsStub = StringBuilder()
         
-        fields.forEach {
+        if (getClassType(access) == "enum") {
+            fields.forEachIndexed {i, it ->
+               fieldsStub.append(it.name)
+                if (i != fields.size - 1) fieldsStub.append(", ") else fieldsStub.append(";")
+            }
+        } else fields.forEach {
             fieldsStub.append(it.getString())
         }
         return fieldsStub.toString()
@@ -103,7 +134,7 @@ object JavaStubGenerator {
         field.append(getAccess(access)).append(" ")
         field.append(getFinal(access)).append(" ")
         field.append(getStatic(access)).append(" ")
-        field.append(type).append(" ")
+        field.append(type.replace("$", ".")).append(" ")
         field.append(name).append(";\n")
         
         return field.toString()
@@ -136,15 +167,15 @@ object JavaStubGenerator {
 
         val returnType = if (name == "<init>") "" else traceSigVisitor.returnType
         
-        method.append(returnType).append(" ").append(methodName)
-                .append(traceSigVisitor.declaration).append("{}\n")
+        method.append(returnType.replace("$", ".")).append(" ").append(methodName)
+                .append(traceSigVisitor.declaration.replace("$", ".")).append("{}\n")
         
         return method.toString()
     }
     
     private fun getClassType(access: Int) = when {
         access.contains(Opcodes.ACC_INTERFACE) -> "interface"
-//        access.contains(Opcodes.ACC_ENUM) -> "enum"
+        access.contains(Opcodes.ACC_ENUM) -> "enum"
         else -> "class"
     }
     

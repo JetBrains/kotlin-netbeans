@@ -57,23 +57,15 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
             FileObject fo = FileUtil.toFileObject(normalizedFile);
             if (fo == null) continue;
             
-            
-            for (byte[] byteCode : codeList) {
-                Pair<ClassNode, String> nameAndStub = JavaStubGenerator.INSTANCE.generate(byteCode);
-                if (nameAndStub.getFirst() == null) continue;
-
+            List<Pair<ClassNode, String>> list = JavaStubGenerator.INSTANCE.gen(codeList);
+            for (Pair<ClassNode, String> nameAndStub : list) {
                 String code = nameAndStub.getSecond();
-
-                String className = JavaStubGenerator.INSTANCE.getClassName(nameAndStub.getFirst());
-
                 String packageName = nameAndStub.getFirst().name
                         .substring(0, nameAndStub.getFirst().name.lastIndexOf("/")).replace("/", ".");
 
-                KotlinLogger.INSTANCE.logInfo("Normalized file: " + normalizedFile.getAbsolutePath());
-                KotlinLogger.INSTANCE.logInfo("Class name: " + className);
                 KotlinLogger.INSTANCE.logInfo("Package name: " + packageName);
                 KotlinLogger.INSTANCE.logInfo(code);
-                KotlinLogger.INSTANCE.logInfo("\n\n\n\n\n");
+                KotlinLogger.INSTANCE.logInfo("\n");
 
                 result.add(normalizedFile, packageName, fo.getName(), code);
             }
