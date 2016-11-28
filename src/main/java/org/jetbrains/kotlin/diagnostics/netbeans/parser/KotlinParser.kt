@@ -47,6 +47,14 @@ class KotlinParser : Parser() {
             file = ktFile
             CACHE.put(ktFile.virtualFile.path, analysisResult)
         }
+        
+        @JvmStatic fun getAnalysisResult(file: KtFile, proj: Project): AnalysisResultWithProvider {
+            if (!CACHE.contains(file.virtualFile.path)) {
+                CACHE.put(file.virtualFile.path, KotlinAnalysisProjectCache.getAnalysisResult(proj))
+            }
+            return CACHE[file.virtualFile.path]!!
+        }
+        
     }
     
     private lateinit var snapshot: Snapshot

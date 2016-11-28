@@ -27,7 +27,6 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.util.TraceSignatureVisitor
-import java.util.HashMap
 
 object JavaStubGenerator {
 
@@ -40,7 +39,7 @@ object JavaStubGenerator {
             val innerClassesList = classNode.innerClasses
                     .mapNotNull { inner -> 
                         classNodes.find { it.name == inner.name && classNode.name != inner.name} 
-                    }
+            }
             innerClasses.put(classNode, innerClassesList)
         }
         
@@ -48,7 +47,7 @@ object JavaStubGenerator {
     }
     
     private fun generate(classNode: ClassNode, 
-                 innerClassesMap: HashMap<ClassNode, List<ClassNode>>): Pair<ClassNode, String> {
+                 innerClassesMap: Map<ClassNode, List<ClassNode>>): Pair<ClassNode, String> {
         val javaStub = StringBuilder()
         
         if (!classNode.name.contains("$")) javaStub.append(classNode.packageString)

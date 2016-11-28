@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 import kotlin.Pair;
+import org.jetbrains.kotlin.diagnostics.netbeans.parser.KotlinParser;
 import org.jetbrains.kotlin.filesystem.lightclasses.KotlinLightClassGeneration;
 import org.jetbrains.kotlin.log.KotlinLogger;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -63,10 +64,6 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
                 String packageName = nameAndStub.getFirst().name
                         .substring(0, nameAndStub.getFirst().name.lastIndexOf("/")).replace("/", ".");
 
-                KotlinLogger.INSTANCE.logInfo("Package name: " + packageName);
-                KotlinLogger.INSTANCE.logInfo(code);
-                KotlinLogger.INSTANCE.logInfo("\n");
-
                 result.add(normalizedFile, packageName, fo.getName(), code);
             }
         }
@@ -76,7 +73,7 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
         FileObject fo = FileUtil.toFileObject(file);
         Project project = ProjectUtils.getKotlinProjectForFileObject(fo);
         KtFile ktFile = ProjectUtils.getKtFile(fo);
-        AnalysisResultWithProvider result = KotlinAnalyzer.analyzeFile(project, ktFile);
+        AnalysisResultWithProvider result = KotlinParser.getAnalysisResult(ktFile, project);
         
         return KotlinLightClassGeneration.INSTANCE.getByteCode(fo, project, result.getAnalysisResult());
     }
