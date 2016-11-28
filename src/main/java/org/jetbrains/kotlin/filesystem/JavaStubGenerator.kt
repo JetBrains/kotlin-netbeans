@@ -38,10 +38,12 @@ object JavaStubGenerator {
         classNodes.forEach { classNode ->
             val innerClassesList = classNode.innerClasses
                     .mapNotNull { inner -> 
-                        classNodes.find { it.name == inner.name && classNode.name != inner.name} 
+                        classNodes.find { it.name == inner.name && inner.name.length > classNode.name.length} 
             }
             innerClasses.put(classNode, innerClassesList)
         }
+        
+        
         
         return classes.map { generate(it, innerClasses) }  
     }
@@ -54,8 +56,8 @@ object JavaStubGenerator {
         javaStub.append(classNode.classDeclaration())
         javaStub.append(classNode.fields())
         javaStub.append(classNode.methods())
-        for (entry in innerClassesMap[classNode]!!) {
-            javaStub.append(generate(entry, innerClassesMap).second).append("\n")
+        for (node in innerClassesMap[classNode]!!) {
+            javaStub.append(generate(node, innerClassesMap).second).append("\n")
         }
         
         javaStub.append("}")

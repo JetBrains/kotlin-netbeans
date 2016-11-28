@@ -64,8 +64,7 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
                 int lastIndexOfSlash = nameAndStub.getFirst().name.lastIndexOf("/");
                 String packageName;
                 if (lastIndexOfSlash != -1) {
-                    packageName = nameAndStub.getFirst().name
-                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/"));
+                    packageName = nameAndStub.getFirst().name.substring(0, lastIndexOfSlash);
                 } else packageName = nameAndStub.getFirst().name;
                 result.add(normalizedFile, packageName, fo.getName(), code);
             }
