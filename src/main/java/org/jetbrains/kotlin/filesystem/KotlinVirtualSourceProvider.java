@@ -61,9 +61,12 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
             List<Pair<ClassNode, String>> list = JavaStubGenerator.INSTANCE.gen(codeList);
             for (Pair<ClassNode, String> nameAndStub : list) {
                 String code = nameAndStub.getSecond();
-                String packageName = nameAndStub.getFirst().name
-                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/"));//.replace("/", ".");
-
+                int lastIndexOfSlash = nameAndStub.getFirst().name.lastIndexOf("/");
+                String packageName;
+                if (lastIndexOfSlash != -1) {
+                    packageName = nameAndStub.getFirst().name
+                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/"));
+                } else packageName = nameAndStub.getFirst().name;
                 result.add(normalizedFile, packageName, fo.getName(), code);
             }
         }
