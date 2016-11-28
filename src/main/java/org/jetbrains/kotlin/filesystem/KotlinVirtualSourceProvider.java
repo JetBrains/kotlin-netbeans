@@ -62,7 +62,7 @@ public class KotlinVirtualSourceProvider implements VirtualSourceProvider {
             for (Pair<ClassNode, String> nameAndStub : list) {
                 String code = nameAndStub.getSecond();
                 String packageName = nameAndStub.getFirst().name
-                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/")).replace("/", ".");
+                        .substring(0, nameAndStub.getFirst().name.lastIndexOf("/"));//.replace("/", ".");
 
                 result.add(normalizedFile, packageName, fo.getName(), code);
             }
