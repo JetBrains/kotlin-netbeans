@@ -46,9 +46,11 @@ class KotlinResolutionFacade(val kotlinProject : NBProject,
     
     override fun analyze(element : KtElement, bodyResolveMode : BodyResolveMode) : BindingContext = throw UnsupportedOperationException()
     
+    override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext = throw UnsupportedOperationException()
+    
     override fun analyzeFullyAndGetResult(elements : Collection<KtElement>) : AnalysisResult = throw UnsupportedOperationException()
     
-    override fun resolveToDescriptor(declaration : KtDeclaration) : DeclarationDescriptor = throw UnsupportedOperationException()
+    override fun resolveToDescriptor(declaration : KtDeclaration, bodyResolveMode: BodyResolveMode) : DeclarationDescriptor = throw UnsupportedOperationException()
     
     override fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T = throw UnsupportedOperationException()
     

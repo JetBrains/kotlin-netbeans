@@ -18,12 +18,14 @@
  */
 package com.intellij.formatting;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.formatting.engine.BlockRangesMap;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Extends {@link SpacingImpl} in order to add notion of dependency range.
@@ -45,7 +47,6 @@ public class DependantSpacingImpl extends SpacingImpl {
         super(minSpaces, maxSpaces, 0, false, false, keepLineBreaks, keepBlankLines, false, 0);
         myDependentRegionRanges = ContainerUtil.newSmartList(dependency);
         myRule = rule;
-        
     }
     
     public DependantSpacingImpl(final int minSpaces, final int maxSpaces, @NotNull List<TextRange> dependencyRanges,
@@ -85,14 +86,14 @@ public class DependantSpacingImpl extends SpacingImpl {
     }
     
     @Override
-    public void refresh(FormatProcessor formatter) {
+    public void refresh(BlockRangesMap helper) {
         if (isDependentRegionLinefeedStatusChanged()) {
             return;
         }
         
         boolean atLeastOneDependencyRangeContainsLf = false;
         for (TextRange dependency : myDependentRegionRanges) {
-            atLeastOneDependencyRangeContainsLf |= formatter.containsLineFeeds(dependency);
+            atLeastOneDependencyRangeContainsLf |= helper.containsLineFeeds(dependency);
         }
         
         if (atLeastOneDependencyRangeContainsLf)

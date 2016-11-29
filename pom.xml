@@ -9,7 +9,7 @@
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
     <netbeans.version>RELEASE82</netbeans.version>  
-    <kotlin.version>1.0.4</kotlin.version> 
+    <kotlin.version>1.1-M03-eap-24</kotlin.version> 
   </properties>  
   <name>Kotlin</name>  
   <description url="http://kotlinlang.org/">Kotlin language support</description>  
@@ -220,8 +220,42 @@
     <repository> 
       <id>local-maven-repo</id>  
       <url>file:///${project.parent.basedir}/local-maven-repo</url> 
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-kotlin-kotlin-eap</id>
+      <name>bintray</name>
+      <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-kotlin-kotlin-dev</id>
+      <name>bintray</name>
+      <url>http://dl.bintray.com/kotlin/kotlin-dev</url>
     </repository> 
   </repositories>  
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+	<enabled>false</enabled>
+      </snapshots>
+      <id>bintray-kotlin-kotlin-eap</id>
+      <name>bintray-plugins</name>
+      <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+    </pluginRepository>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-kotlin-kotlin-dev</id>
+      <name>bintray-plugins</name>
+      <url>http://dl.bintray.com/kotlin/kotlin-dev</url>
+    </pluginRepository>  
+  </pluginRepositories>
   <dependencies> 
     <dependency> 
       <groupId>org.jetbrains.kotlin</groupId>  

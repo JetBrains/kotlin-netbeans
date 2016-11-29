@@ -15,8 +15,13 @@ import org.jetbrains.kotlin.model.KotlinAnalysisFileCache
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.netbeans.api.project.Project as NBProject
+import com.intellij.psi.PsiFile
 
 class KotlinCacheServiceImpl(val ideaProject: Project, val project : NBProject) : KotlinCacheService {
+    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade {
+        throw UnsupportedOperationException()
+    }
+    
     override fun getSuppressionCache(): KotlinSuppressCache {
         throw UnsupportedOperationException()
     }
@@ -33,8 +38,20 @@ class KotlinSimpleResolutionFacade(
     override val moduleDescriptor: ModuleDescriptor
         get() = throw UnsupportedOperationException()
     
+    override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
+        throw UnsupportedOperationException()
+    }
+    
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         val ktFile = element.getContainingKtFile()
+        return KotlinAnalysisFileCache.INSTANCE.getAnalysisResult(ktFile, nbProject).analysisResult.bindingContext
+    }
+    
+    override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
+        if (elements.isEmpty()) {
+            return BindingContext.EMPTY
+        }
+        val ktFile = elements.first().getContainingKtFile()
         return KotlinAnalysisFileCache.INSTANCE.getAnalysisResult(ktFile, nbProject).analysisResult.bindingContext
     }
     
@@ -60,10 +77,6 @@ class KotlinSimpleResolutionFacade(
     }
     
     override fun <T : Any> getIdeService(serviceClass: Class<T>): T {
-        throw UnsupportedOperationException()
-    }
-    
-    override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor {
         throw UnsupportedOperationException()
     }
 }

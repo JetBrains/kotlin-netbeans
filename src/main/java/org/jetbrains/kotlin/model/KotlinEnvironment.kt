@@ -16,13 +16,12 @@
  *******************************************************************************/
 package org.jetbrains.kotlin.model
 
-import org.jetbrains.kotlin.resolve.lang.kotlin.NetBeansVirtualFileFinder
+import org.jetbrains.kotlin.resolve.lang.kotlin.NetBeansVirtualFileFinderFactory
 import java.io.File
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -68,7 +67,8 @@ import com.intellij.formatting.KotlinLanguageCodeStyleSettingsProvider
 import com.intellij.formatting.KotlinSettingsProvider
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
-import org.jetbrains.kotlin.cli.jvm.compiler.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
@@ -82,6 +82,10 @@ import org.netbeans.api.project.Project as NBProject
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.model.KotlinNullableNotNullManager
 import com.intellij.openapi.util.SystemInfo
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
+import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 
 //copied from kotlin eclipse plugin to avoid RuntimeException: Could not find installation home path. 
 //Please make sure bin/idea.properties is present in the installation directory
@@ -127,6 +131,10 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
     val project: MockProject
     val roots = hashSetOf<JavaRoot>()
     
+    val configuration = CompilerConfiguration()
+    
+    val index by lazy { JvmDependenciesIndexImpl(roots.toList()) }
+    
     init {
         val startTime = System.nanoTime()
 
@@ -143,6 +151,11 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
         project = projectEnvironment.project
         
         with (project) {
+            val scriptDefinitionProvider = KotlinScriptDefinitionProvider()
+            registerService(KotlinScriptDefinitionProvider::class.java, scriptDefinitionProvider)
+            registerService(
+                    KotlinScriptExternalImportsProvider::class.java,
+                    KotlinScriptExternalImportsProvider(project, scriptDefinitionProvider))
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
             registerService(NullableNotNullManager::class.java, KotlinNullableNotNullManager(kotlinProject))
             registerService(CoreJavaFileManager::class.java,
@@ -156,12 +169,13 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
             registerService(BuiltInsReferenceResolver::class.java, BuiltInsReferenceResolver(project))
             registerService(KotlinSourceIndex::class.java, KotlinSourceIndex())
             registerService(KotlinCacheService::class.java, KotlinCacheServiceImpl(project, kotlinProject))
-            registerService(JvmVirtualFileFinderFactory::class.java, NetBeansVirtualFileFinder(kotlinProject))
+            registerService(JvmVirtualFileFinderFactory::class.java, NetBeansVirtualFileFinderFactory(kotlinProject))
         }
+    
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, project.getName())
         
         configureClasspath(kotlinProject)
         
-        ExternalDeclarationsProvider.Companion.registerExtensionPoint(project)
         ExpressionCodegenExtension.Companion.registerExtensionPoint(project)
         
         getExtensionsFromCommonXml()
@@ -185,8 +199,6 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
                 ExtensionPointName<DefaultErrorMessages.Extension>("org.jetbrains.kotlin.defaultErrorMessages"), DefaultErrorMessages.Extension::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(
                 ExtensionPointName<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider"), SuppressStringProvider::class.java)
-        CoreApplicationEnvironment.registerApplicationExtensionPoint(
-                ExtensionPointName<ExternalDeclarationsProvider>("org.jetbrains.kotlin.externalDeclarationsProvider"), ExternalDeclarationsProvider::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(
                 ExtensionPointName<ExpressionCodegenExtension>(("org.jetbrains.kotlin.expressionCodegenExtension")), ExpressionCodegenExtension::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(
