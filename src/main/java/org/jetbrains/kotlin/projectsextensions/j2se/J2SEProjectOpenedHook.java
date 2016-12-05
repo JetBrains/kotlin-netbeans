@@ -72,23 +72,35 @@ public class J2SEProjectOpenedHook extends ProjectOpenedHook {
                 J2SEProjectPropertiesModifier propsModifier = new J2SEProjectPropertiesModifier(project);
                 propsModifier.turnOffCompileOnSave();
                 propsModifier.addKotlinRuntime();
-                
+
                 JavaEnvironment.INSTANCE.checkJavaSource(project);
                 try {
                     JavaEnvironment.INSTANCE.getJAVA_SOURCE().get(project).runWhenScanFinished(
-                        new Task<CompilationController>(){
+                            new Task<CompilationController>() {
+                        Runnable run = new Runnable() {
                             @Override
-                            public void run(CompilationController parameter) {
+                            public void run() {
+                                final ProgressHandle progressbar
+                                        = ProgressHandleFactory.createHandle("Kotlin files analysis...");
+                                progressbar.start();
+
                                 for (KtFile ktFile : ProjectUtils.getSourceFiles(project)) {
                                     KotlinParser.getAnalysisResult(ktFile, project);
                                 }
                                 for (FileObject ktFile : new KotlinSources(project).getAllKtFiles()) {
                                     IndexingManager.getDefault().refreshAllIndices(ktFile);
                                 }
+
+                                progressbar.finish();
                             }
-                        }, true);
+                        };
+
+                        @Override
+                        public void run(CompilationController parameter) {
+                            KotlinProjectHelper.INSTANCE.postTask(run);
+                        }
+                    }, true);
                 } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
                 }
             }
         };

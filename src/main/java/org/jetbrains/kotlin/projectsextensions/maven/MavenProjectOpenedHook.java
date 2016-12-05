@@ -89,21 +89,31 @@ public class MavenProjectOpenedHook extends ProjectOpenedHook{
                         try {
                             JavaEnvironment.INSTANCE.getJAVA_SOURCE().get(project).runWhenScanFinished(
                                     new Task<CompilationController>(){
+                                        Runnable run = new Runnable(){
+                                            @Override
+                                            public void run(){
+                                                final ProgressHandle progressbar = 
+                                                    ProgressHandleFactory.createHandle("Kotlin files analysis...");
+                                                progressbar.start();
+
+                                                for (KtFile ktFile : ProjectUtils.getSourceFiles(project)) {
+                                                    KotlinParser.getAnalysisResult(ktFile, project);
+                                                }
+                                                for (FileObject ktFile : new KotlinSources(project).getAllKtFiles()) {
+                                                    IndexingManager.getDefault().refreshAllIndices(ktFile);
+                                                }
+
+                                                progressbar.finish();
+                                            }
+                                        };
+
                                         @Override
                                         public void run(CompilationController parameter) {
-                                            for (KtFile ktFile : ProjectUtils.getSourceFiles(project)) {
-                                                KotlinParser.getAnalysisResult(ktFile, project);
-                                            }
-                                            for (FileObject ktFile : new KotlinSources(project).getAllKtFiles()) {
-                                                IndexingManager.getDefault().refreshAllIndices(ktFile);
-                                            }
+                                            KotlinProjectHelper.INSTANCE.postTask(run);
                                         }
                                     }, true);
-                        } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
-                        }
-                        
-                    }
+                        } catch (IOException ex) {}
+                }
             };
         thread.start();
     }
