@@ -48,18 +48,13 @@ object KotlinAnalysisProjectCache {
             cache.put(project, result)
             KotlinLogger.INSTANCE.logInfo("Project ${project.projectDirectory.path} analysis result cached")
             KotlinLogger.INSTANCE.logInfo("Kotlin analysis took ${(System.nanoTime() - startTime)}")
-            
-//            JavaEnvironment.checkJavaSource(project)
-//            JavaEnvironment.JAVA_SOURCE[project]!!.runWhenScanFinished({
-//                KotlinSources(project).allKtFiles.forEach {
-//                    IndexingManager.getDefault().refreshAllIndices(it)
-//                }
-//            }, true)
         }
         
         return cache[project]!!
     }
     
-    @Synchronized fun removeProjectCache(project: Project) = cache.remove(project)
+    @Synchronized fun removeProjectCache(project: Project) {
+        cache.remove(project)
+    }
     
 }
