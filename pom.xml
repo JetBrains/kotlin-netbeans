@@ -9,7 +9,7 @@
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
     <netbeans.version>RELEASE82</netbeans.version>  
-    <kotlin.version>1.0.4</kotlin.version> 
+    <kotlin.version>1.0.6</kotlin.version> 
   </properties>  
   <name>Kotlin</name>  
   <description url="http://kotlinlang.org/">Kotlin language support</description>  
@@ -152,6 +152,11 @@
             <goals> 
               <goal>compile</goal> 
             </goals> 
+            <configuration>
+              <args>
+                <arg>-Xskip-metadata-version-check</arg>
+              </args> 
+            </configuration>
           </execution>  
           <execution> 
             <id>test-compile</id>  
@@ -159,7 +164,7 @@
             <goals> 
               <goal>test-compile</goal> 
             </goals> 
-          </execution> 
+          </execution>
         </executions> 
       </plugin>  
       <plugin> 

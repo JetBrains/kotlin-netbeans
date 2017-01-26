@@ -29,6 +29,7 @@ import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.ANNOTATION_CLASS
@@ -74,7 +75,6 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.psi.KtWithExpressionInitializer
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
@@ -227,7 +227,7 @@ object KeywordCompletion {
                     }
                 }
 
-                is KtWithExpressionInitializer -> {
+                is KtDeclarationWithInitializer -> {
                     val initializer = parent.initializer
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)

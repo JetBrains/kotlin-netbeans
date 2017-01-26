@@ -16,13 +16,22 @@
  *******************************************************************************/
 package org.jetbrains.kotlin.model
 
+import java.util.Comparator
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.imports.ImportPathComparator
+import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lang.kotlin.NetBeansVirtualFileFinder
 import java.io.File
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -126,6 +135,7 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
     val projectEnvironment: JavaCoreProjectEnvironment
     val project: MockProject
     val roots = hashSetOf<JavaRoot>()
+    val configuration = CompilerConfiguration()
     
     init {
         val startTime = System.nanoTime()
@@ -145,9 +155,12 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
         with (project) {
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
             registerService(NullableNotNullManager::class.java, KotlinNullableNotNullManager(kotlinProject))
+            
             registerService(CoreJavaFileManager::class.java,
                 ServiceManager.getService(project, JavaFileManager::class.java) as CoreJavaFileManager)
             val cliLightClassGenerationSupport = CliLightClassGenerationSupport(project)
+            
+            
             registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
             registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
             registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(project))
@@ -157,11 +170,38 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
             registerService(KotlinSourceIndex::class.java, KotlinSourceIndex())
             registerService(KotlinCacheService::class.java, KotlinCacheServiceImpl(project, kotlinProject))
             registerService(JvmVirtualFileFinderFactory::class.java, NetBeansVirtualFileFinder(kotlinProject))
+            registerService(ImportInsertHelper::class.java, object : ImportInsertHelper() {
+                fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
+                    return when {
+                        skipAliasedImports && importPath.hasAlias() -> false
+                        importPath.isAllUnder && !isRoot -> importPath.fqnPart() == this.parent()
+                        else -> importPath.fqnPart() == this
+                    }
+                }
+                
+                fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
+                
+                fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
+                    return if (isAllUnder || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
+                }
+                
+                override val importSortComparator: Comparator<ImportPath> = ImportPathComparator
+
+                override fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean): ImportDescriptorResult {
+                    throw UnsupportedOperationException()
+                }
+
+                override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
+                    val defaultImports = JvmPlatform.defaultImports
+                    return importPath.isImported(defaultImports)
+                }
+
+                override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor) = false
+            })
         }
         
         configureClasspath(kotlinProject)
         
-        ExternalDeclarationsProvider.Companion.registerExtensionPoint(project)
         ExpressionCodegenExtension.Companion.registerExtensionPoint(project)
         
         getExtensionsFromCommonXml()
@@ -185,8 +225,6 @@ class KotlinEnvironment private constructor(kotlinProject: NBProject, disposable
                 ExtensionPointName<DefaultErrorMessages.Extension>("org.jetbrains.kotlin.defaultErrorMessages"), DefaultErrorMessages.Extension::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(
                 ExtensionPointName<SuppressStringProvider>("org.jetbrains.kotlin.suppressStringProvider"), SuppressStringProvider::class.java)
-        CoreApplicationEnvironment.registerApplicationExtensionPoint(
-                ExtensionPointName<ExternalDeclarationsProvider>("org.jetbrains.kotlin.externalDeclarationsProvider"), ExternalDeclarationsProvider::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(
                 ExtensionPointName<ExpressionCodegenExtension>(("org.jetbrains.kotlin.expressionCodegenExtension")), ExpressionCodegenExtension::class.java)
         CoreApplicationEnvironment.registerApplicationExtensionPoint(

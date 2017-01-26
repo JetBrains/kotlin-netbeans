@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
@@ -61,7 +61,7 @@ object NetBeansAnalyzerFacadeForJVM {
                 kotlinProject,
                 LookupTracker.DO_NOTHING,
                 KotlinPackagePartProvider(kotlinProject),
-                LanguageVersion.LATEST)
+                LanguageVersionSettingsImpl.DEFAULT)
         val container = containerAndProvider.first
         val additionalProviders = listOf(container.javaDescriptorResolver.packageFragmentProvider)
         

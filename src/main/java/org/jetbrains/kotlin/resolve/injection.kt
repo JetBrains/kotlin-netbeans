@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.config.LanguageFeatureSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.createContainer
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
@@ -58,12 +59,14 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
         project: Project,
         lookupTracker: LookupTracker,
-        languageFeatureSettings: LanguageFeatureSettings) {
+        languageFeatureSettings: LanguageVersionSettings) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
 
     useImpl<ResolveSession>()
 
+    useImpl<FileScopeProviderImpl>()
+    
     useImpl<LazyTopDownAnalyzer>()
     useImpl<LazyTopDownAnalyzerForTopLevel>()
     useImpl<JavaDescriptorResolver>()
@@ -83,6 +86,7 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useInstance(InternalFlexibleTypeTransformer)
 
     useInstance(languageFeatureSettings)
+    useImpl<CompilerDeserializationConfiguration>()
 }
 
 public fun createContainerForTopDownAnalyzerForJvm(
@@ -92,7 +96,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
         javaProject: NBProject,
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
-        languageFeatureSettings: LanguageFeatureSettings
+        languageFeatureSettings: LanguageVersionSettings
 ): Pair<ContainerForTopDownAnalyzerForJvm, StorageComponentContainer> = createContainer("TopDownAnalyzerForJvm") {
     useInstance(packagePartProvider)
 
@@ -105,7 +109,6 @@ public fun createContainerForTopDownAnalyzerForJvm(
     CompilerEnvironment.configure(this)
 
     useImpl<SingleModuleClassResolver>()
-    useImpl<FileScopeProviderImpl>()
 }.let {
     it.javaAnalysisInit()
 
